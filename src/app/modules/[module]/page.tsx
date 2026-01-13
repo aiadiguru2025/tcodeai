@@ -64,21 +64,21 @@ async function getModuleTCodes(module: string, page: number) {
 }
 
 export default async function ModulePage({ params, searchParams }: Props) {
-  const module = params.module.toUpperCase();
+  const moduleCode = params.module.toUpperCase();
   const page = parseInt(searchParams.page || '1', 10);
 
-  const { tcodes, total, totalPages } = await getModuleTCodes(module, page);
+  const { tcodes, total, totalPages } = await getModuleTCodes(moduleCode, page);
 
   if (tcodes.length === 0 && page === 1) {
     notFound();
   }
 
-  const info = MODULE_INFO[module] || {
-    name: module,
+  const info = MODULE_INFO[moduleCode] || {
+    name: moduleCode,
     description: 'SAP Module',
   };
 
-  const moduleVariant = module.toLowerCase() as
+  const moduleVariant = moduleCode.toLowerCase() as
     | 'mm'
     | 'sd'
     | 'fi'
@@ -104,7 +104,7 @@ export default async function ModulePage({ params, searchParams }: Props) {
           <div className="mb-8">
             <div className="flex items-center gap-3">
               <Badge variant={moduleVariant || 'secondary'} className="text-lg px-3 py-1">
-                {module}
+                {moduleCode}
               </Badge>
               <h1 className="text-2xl font-bold">{info.name}</h1>
             </div>
@@ -136,7 +136,7 @@ export default async function ModulePage({ params, searchParams }: Props) {
             <div className="mt-8 flex items-center justify-center gap-2">
               {page > 1 && (
                 <Link
-                  href={`/modules/${module}?page=${page - 1}`}
+                  href={`/modules/${moduleCode}?page=${page - 1}`}
                   className="rounded-md border px-4 py-2 text-sm hover:bg-muted"
                 >
                   Previous
@@ -147,7 +147,7 @@ export default async function ModulePage({ params, searchParams }: Props) {
               </span>
               {page < totalPages && (
                 <Link
-                  href={`/modules/${module}?page=${page + 1}`}
+                  href={`/modules/${moduleCode}?page=${page + 1}`}
                   className="rounded-md border px-4 py-2 text-sm hover:bg-muted"
                 >
                   Next
