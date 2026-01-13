@@ -10,26 +10,24 @@ datasource db {
 }
 
 model TransactionCode {
-  id                  Int       @id @default(autoincrement())
-  tcode               String    @unique @db.VarChar(40)
-  program             String?   @db.VarChar(100)
-  description         String?   @db.Text
-  descriptionEnriched String?   @map("description_enriched") @db.Text
-  module              String?   @db.VarChar(20)
-  subModule           String?   @map("sub_module") @db.VarChar(40)
-  isDeprecated        Boolean   @default(false) @map("is_deprecated")
-  s4hanaStatus        String?   @map("s4hana_status") @db.VarChar(20)
-  fioriAppId          String?   @map("fiori_app_id") @db.VarChar(50)
-  usageCategory       String?   @map("usage_category") @db.VarChar(30)
-  embedding           Unsupported("vector(1536)")?
-  createdAt           DateTime  @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt           DateTime  @updatedAt @map("updated_at") @db.Timestamptz
-
-  // Relationships
-  sourceRelationships TCodeRelationship[] @relation("SourceTCode")
-  targetRelationships TCodeRelationship[] @relation("TargetTCode")
+  id                  Int                    @id @default(autoincrement())
+  tcode               String                 @unique @db.VarChar(40)
+  program             String?                @db.VarChar(100)
+  description         String?
+  descriptionEnriched String?                @map("description_enriched")
+  module              String?                @db.VarChar(20)
+  subModule           String?                @map("sub_module") @db.VarChar(40)
+  isDeprecated        Boolean                @default(false) @map("is_deprecated")
+  s4hanaStatus        String?                @map("s4hana_status") @db.VarChar(20)
+  fioriAppId          String?                @map("fiori_app_id") @db.VarChar(50)
+  usageCategory       String?                @map("usage_category") @db.VarChar(30)
+  embedding           Unsupported("vector")?
+  createdAt           DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime               @updatedAt @map("updated_at") @db.Timestamptz(6)
   feedback            Feedback[]
   searchLogs          SearchLog[]
+  sourceRelationships TCodeRelationship[]    @relation("SourceTCode")
+  targetRelationships TCodeRelationship[]    @relation("TargetTCode")
 
   @@index([tcode])
   @@index([module])
@@ -51,33 +49,33 @@ model TCodeRelationship {
 }
 
 model FioriApp {
-  id          Int                @id @default(autoincrement())
-  appId       String             @unique @map("app_id") @db.VarChar(50)
-  appName     String?            @map("app_name") @db.VarChar(200)
-  description String?            @db.Text
-  appType     String?            @map("app_type") @db.VarChar(30)
-  s4hanaVersion String?          @map("s4hana_version") @db.VarChar(20)
-  mappings    TCodeFioriMapping[]
+  id            Int                 @id @default(autoincrement())
+  appId         String              @unique @map("app_id") @db.VarChar(50)
+  appName       String?             @map("app_name") @db.VarChar(200)
+  description   String?
+  appType       String?             @map("app_type") @db.VarChar(30)
+  s4hanaVersion String?             @map("s4hana_version") @db.VarChar(20)
+  mappings      TCodeFioriMapping[]
 
   @@map("fiori_apps")
 }
 
 model TCodeFioriMapping {
-  id          Int       @id @default(autoincrement())
-  tcodeId     Int       @map("tcode_id")
-  fioriAppId  Int       @map("fiori_app_id")
-  mappingType String?   @map("mapping_type") @db.VarChar(20)
-  fioriApp    FioriApp  @relation(fields: [fioriAppId], references: [id], onDelete: Cascade)
+  id          Int      @id @default(autoincrement())
+  tcodeId     Int      @map("tcode_id")
+  fioriAppId  Int      @map("fiori_app_id")
+  mappingType String?  @map("mapping_type") @db.VarChar(20)
+  fioriApp    FioriApp @relation(fields: [fioriAppId], references: [id], onDelete: Cascade)
 
   @@unique([tcodeId, fioriAppId])
   @@map("tcode_fiori_mapping")
 }
 
 model SAPModule {
-  code         String      @id @db.VarChar(20)
-  name         String      @db.VarChar(100)
-  description  String?     @db.Text
-  parentModule String?     @map("parent_module") @db.VarChar(20)
+  code         String   @id @db.VarChar(20)
+  name         String   @db.VarChar(100)
+  description  String?
+  parentModule String?  @map("parent_module") @db.VarChar(20)
   keywords     String[]
 
   @@map("sap_modules")
@@ -85,11 +83,11 @@ model SAPModule {
 
 model SearchLog {
   id              Int              @id @default(autoincrement())
-  query           String           @db.Text
+  query           String
   resultsCount    Int?             @map("results_count")
   selectedTcodeId Int?             @map("selected_tcode_id")
   sessionId       String?          @map("session_id") @db.VarChar(100)
-  createdAt       DateTime         @default(now()) @map("created_at") @db.Timestamptz
+  createdAt       DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
   selectedTcode   TransactionCode? @relation(fields: [selectedTcodeId], references: [id])
 
   @@index([createdAt])
@@ -101,8 +99,8 @@ model Feedback {
   tcodeId   Int             @map("tcode_id")
   sessionId String?         @map("session_id") @db.VarChar(100)
   vote      Int             @db.SmallInt
-  comment   String?         @db.Text
-  createdAt DateTime        @default(now()) @map("created_at") @db.Timestamptz
+  comment   String?
+  createdAt DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
   tcode     TransactionCode @relation(fields: [tcodeId], references: [id], onDelete: Cascade)
 
   @@index([tcodeId])
