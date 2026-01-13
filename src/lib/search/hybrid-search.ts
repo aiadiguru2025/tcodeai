@@ -1,23 +1,36 @@
 import prisma from '@/lib/db';
 import type { SearchResult } from '@/types';
+import { executeSemanticSearch } from './semantic-search';
 
 interface SearchOptions {
   query: string;
   modules?: string[];
   limit?: number;
   includeDeprecated?: boolean;
+  enableSemantic?: boolean;
 }
 
 export async function hybridSearch(options: SearchOptions): Promise<SearchResult[]> {
-  const { query, modules, limit = 20, includeDeprecated = false } = options;
+  const { query, modules, limit = 20, includeDeprecated = false, enableSemantic = true } = options;
   const normalizedQuery = query.trim().toLowerCase();
 
-  // Execute all search strategies in parallel
-  const [exactResults, fuzzyResults, ftsResults] = await Promise.all([
+  // Determine if this looks like a natural language query vs a T-code search
+  const isNaturalLanguage = query.includes(' ') && query.length > 5;
+
+  // Execute search strategies in parallel
+  const searchPromises: Promise<SearchResult[]>[] = [
     executeExactSearch(normalizedQuery, modules, includeDeprecated),
     executeFuzzySearch(normalizedQuery, modules, includeDeprecated),
     executeFullTextSearch(query, modules, includeDeprecated),
-  ]);
+  ];
+
+  // Add semantic search for natural language queries if embeddings exist
+  if (enableSemantic && isNaturalLanguage && process.env.OPENAI_API_KEY) {
+    searchPromises.push(executeSemanticSearch(query, modules, includeDeprecated, 15));
+  }
+
+  const [exactResults, fuzzyResults, ftsResults, semanticResults = []] =
+    await Promise.all(searchPromises);
 
   // Merge and deduplicate results
   const resultMap = new Map<string, SearchResult>();
@@ -47,6 +60,17 @@ export async function hybridSearch(options: SearchOptions): Promise<SearchResult
       const existing = resultMap.get(result.tcode)!;
       // Boost score if found in multiple searches
       existing.relevanceScore = Math.min(1.0, existing.relevanceScore * 1.2);
+    }
+  }
+
+  // Semantic search results (weighted slightly lower if already found)
+  for (const result of semanticResults) {
+    if (!resultMap.has(result.tcode)) {
+      resultMap.set(result.tcode, result);
+    } else {
+      const existing = resultMap.get(result.tcode)!;
+      // Boost score significantly if also found by semantic search
+      existing.relevanceScore = Math.min(1.0, existing.relevanceScore * 1.3);
     }
   }
 
