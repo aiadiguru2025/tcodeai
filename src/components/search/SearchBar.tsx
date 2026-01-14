@@ -137,7 +137,7 @@ export function SearchBar({ className, initialQuery = '' }: { className?: string
         <Input
           ref={inputRef}
           type="text"
-          placeholder="Search T-codes or describe what you want to do... (Press '/')"
+          placeholder="Search T-codes (e.g., ME21N, VA01)"
           value={query}
           onChange={(e) => {
             setQuery(e.target.value);
@@ -200,9 +200,6 @@ export function SearchBar({ className, initialQuery = '' }: { className?: string
         </div>
       )}
 
-      <p className="mt-2 text-center text-sm text-muted-foreground">
-        Try: &ldquo;Create purchase order&rdquo; or &ldquo;ME21N&rdquo; or &ldquo;post vendor invoice&rdquo;
-      </p>
     </form>
   );
 }
