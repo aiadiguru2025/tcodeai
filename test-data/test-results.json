@@ -1,0 +1,82 @@
+[
+  {
+    "query": "Data Dictionary",
+    "expectedTcode": "SE11",
+    "module": "BASIS",
+    "results": [
+      "SE14",
+      "SE12",
+      "DXXV",
+      "COM_MDF",
+      "DMWB"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 4865
+  },
+  {
+    "query": "Data Browser",
+    "expectedTcode": "SE16",
+    "module": "BASIS",
+    "results": [
+      "SE16",
+      "RSSG_BROWSER",
+      "RSDAS_BROWSE",
+      "/SDF/SCMOND",
+      "SCMOND"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 4933
+  },
+  {
+    "query": "Data Browser (New)",
+    "expectedTcode": "SE16N",
+    "module": "BASIS",
+    "results": [
+      "SE16",
+      "RSSG_BROWSER",
+      "RSDAS_BROWSE",
+      "/BA1/F4_MD0009",
+      "/SDF/SCMOND"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 5878
+  },
+  {
+    "query": "Object Navigator",
+    "expectedTcode": "SE80",
+    "module": "BASIS",
+    "results": [
+      "SE80",
+      "FOOBJECTBROWSER",
+      "OIWD",
+      "MCAJ",
+      "ECNC"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 5161
+  },
+  {
+    "query": "ABAP Editor",
+    "expectedTcode": "SE38",
+    "module": "BASIS",
+    "results": [
+      "SE38",
+      "DBG_ABAP_EDITOR",
+      "SE39",
+      "ABAPDOCU",
+      "AMEN"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 6745
+  }
+]

@@ -1,8 +1,36 @@
 import OpenAI from 'openai';
 import prisma from '@/lib/db';
+import { getCached, setCached } from '@/lib/cache';
 import type { SearchResult } from '@/types';
 
 const EMBEDDING_MODEL = 'text-embedding-3-small';
+const EMBEDDING_CACHE_PREFIX = 'embed';
+const EMBEDDING_CACHE_TTL = 60 * 60 * 24 * 7; // 7 days for embeddings
+
+/**
+ * Get embedding for a query, using cache when available
+ */
+async function getQueryEmbedding(query: string): Promise<number[] | null> {
+  // Check embedding cache first
+  const cached = await getCached<number[]>(EMBEDDING_CACHE_PREFIX, query);
+  if (cached) {
+    console.log('Embedding cache hit:', query.substring(0, 30));
+    return cached;
+  }
+
+  const openai = new OpenAI();
+  const response = await openai.embeddings.create({
+    model: EMBEDDING_MODEL,
+    input: query,
+  });
+
+  const embedding = response.data[0].embedding;
+
+  // Cache the embedding for future use (don't await)
+  setCached(EMBEDDING_CACHE_PREFIX, query, embedding, EMBEDDING_CACHE_TTL);
+
+  return embedding;
+}
 
 export async function executeSemanticSearch(
   query: string,
@@ -16,15 +44,11 @@ export async function executeSemanticSearch(
   }
 
   try {
-    const openai = new OpenAI();
-
-    // Generate embedding for the query
-    const response = await openai.embeddings.create({
-      model: EMBEDDING_MODEL,
-      input: query,
-    });
-
-    const queryEmbedding = response.data[0].embedding;
+    // Get embedding (uses cache when available)
+    const queryEmbedding = await getQueryEmbedding(query);
+    if (!queryEmbedding) {
+      return [];
+    }
     const embeddingStr = `[${queryEmbedding.join(',')}]`;
 
     // Build dynamic WHERE conditions

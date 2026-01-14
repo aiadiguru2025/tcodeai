@@ -6,7 +6,7 @@ import type { AISearchResult } from '@/types';
 const EXPLANATION_MODEL = 'gpt-4o-mini';
 const CACHE_PREFIX = 'ai-search';
 const CACHE_TTL = 60 * 60 * 24; // 24 hours
-const GPT_TIMEOUT_MS = 15000; // 15 seconds max for GPT call
+const GPT_TIMEOUT_MS = 8000; // 8 seconds max for GPT call (reduced from 15s)
 
 /**
  * Create a timeout promise
@@ -71,16 +71,16 @@ export async function executeAISearch(
       messages: [
         {
           role: 'system',
-          content: `SAP expert. For each T-code, give a 1-sentence explanation of why it matches the query. Respond in JSON: {"results":[{"tcode":"XX01","explanation":"...","confidence":0.9}]}`,
+          content: `SAP expert. Brief explanation why each T-code matches. JSON: {"results":[{"tcode":"XX01","explanation":"...","confidence":0.9}]}`,
         },
         {
           role: 'user',
-          content: `Query: "${query}"\n\nT-codes:\n${candidateList}`,
+          content: `"${query}"\n${candidateList}`,
         },
       ],
       response_format: { type: 'json_object' },
-      temperature: 0.2,
-      max_tokens: 500,
+      temperature: 0.1,
+      max_tokens: 400,
     })
     .then((response) => response.choices[0]?.message?.content)
     .catch((err) => {
