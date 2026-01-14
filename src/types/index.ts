@@ -72,3 +72,17 @@ export interface Feedback {
   comment: string | null;
   createdAt: Date;
 }
+
+export interface AISearchResult {
+  tcode: string;
+  description: string | null;
+  module: string | null;
+  explanation: string;
+  confidence: number;
+}
+
+export interface AISearchResponse {
+  results: AISearchResult[];
+  query: string;
+  processingTimeMs: number;
+}
