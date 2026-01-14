@@ -19,12 +19,6 @@ export function Header() {
           </Link>
           <nav className="flex items-center gap-6 text-sm">
             <Link
-              href="/modules"
-              className="text-muted-foreground transition-colors hover:text-foreground"
-            >
-              Modules
-            </Link>
-            <Link
               href="/bookmarks"
               className="text-muted-foreground transition-colors hover:text-foreground"
             >
