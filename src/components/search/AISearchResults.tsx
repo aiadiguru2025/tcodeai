@@ -19,9 +19,12 @@ export function AISearchResults({ results, isLoading, query }: AISearchResultsPr
     return (
       <Card className="border-primary/20">
         <CardContent className="p-4">
-          <div className="mb-3 flex items-center gap-2 text-sm font-medium">
-            <Sparkles className="h-4 w-4 animate-pulse text-primary" />
-            <span>AI is thinking...</span>
+          <div className="mb-3 flex flex-col gap-1">
+            <div className="flex items-center gap-2 text-sm font-medium">
+              <Sparkles className="h-4 w-4 animate-pulse text-primary" />
+              <span>AI is analyzing your request...</span>
+            </div>
+            <p className="text-xs text-muted-foreground">This may take a few seconds</p>
           </div>
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (

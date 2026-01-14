@@ -46,13 +46,16 @@ export function AISearchBox({ className }: AISearchBoxProps) {
       });
 
       if (!res.ok) {
-        throw new Error('Search failed');
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || `Search failed with status ${res.status}`);
       }
 
       const data = await res.json();
       setResults(data.results || []);
-    } catch {
-      setError('AI search is temporarily unavailable. Please try the regular search.');
+    } catch (err) {
+      console.error('AI search error:', err);
+      const message = err instanceof Error ? err.message : 'Unknown error';
+      setError(`AI search failed: ${message}. Please try again or use the regular search.`);
       setResults([]);
     } finally {
       setIsLoading(false);
