@@ -1,0 +1,154 @@
+﻿TCode,Description,Module
+SE11,Data Dictionary,BASIS
+SE16,Data Browser,BASIS
+SE16N,Data Browser (New),BASIS
+SE80,Object Navigator,BASIS
+SE38,ABAP Editor,BASIS
+SE93,Transaction Maintenance,BASIS
+ST22,ABAP Dump Analysis,BASIS
+SM21,System Log,BASIS
+SM37,Job Monitoring,BASIS
+SM50,Process Overview (App Server),BASIS
+SM51,Application Servers,BASIS
+SM12,Lock Entries,BASIS
+SM66,Global Process Overview,BASIS
+AL08,Logged-on Users,BASIS
+SU01,User Maintenance,BASIS
+SU10,Mass User Maintenance,BASIS
+PFCG,Role Maintenance,BASIS
+SCC4,Client Administration,BASIS
+RZ10,Profile Maintenance,BASIS
+RZ11,Profile Parameter Display,BASIS
+DB02,Database Overview,BASIS
+SPAM,Support Package Manager,BASIS
+SNOTE,SAP Notes Assistant,BASIS
+ST03N,Workload Analysis,BASIS
+ST04,Database Performance,BASIS
+SE24,Class Builder,ABAP
+SE18,BAdI Definition,ABAP
+SE19,BAdI Implementation,ABAP
+SE37,Function Module,ABAP
+SE91,Message Class,ABAP
+SMARTFORMS,SmartForms,ABAP
+SFP,Adobe Forms,ABAP
+SHD0,Screen Variants,ABAP
+SCI,Code Inspector,ABAP
+SLIN,Extended Syntax Check,ABAP
+MM01,Create Material,MM
+MM02,Change Material,MM
+MM03,Display Material,MM
+ME21N,Create Purchase Order,MM
+ME22N,Change Purchase Order,MM
+ME23N,Display Purchase Order,MM
+ME51N,Create Purchase Requisition,MM
+ME52N,Change Purchase Requisition,MM
+ME53N,Display Purchase Requisition,MM
+MIGO,Goods Movement,MM
+MB1A,Goods Issue,MM
+MB1B,Transfer Posting,MM
+MB1C,Other Goods Receipt,MM
+MIRO,Invoice Verification,MM
+MRBR,Release Blocked Invoices,MM
+ME2N,Purchase Orders by Number,MM
+ME5A,Purchase Requisitions,MM
+MK01,Create Vendor,MM
+MK02,Change Vendor,MM
+MK03,Display Vendor,MM
+XK01,Create Vendor (Central),MM
+XK02,Change Vendor (Central),MM
+XK03,Display Vendor (Central),MM
+VA01,Create Sales Order,SD
+VA02,Change Sales Order,SD
+VA03,Display Sales Order,SD
+VL01N,Create Outbound Delivery,SD
+VL02N,Change Outbound Delivery,SD
+VL03N,Display Outbound Delivery,SD
+VF01,Create Billing Document,SD
+VF02,Change Billing Document,SD
+VF03,Display Billing Document,SD
+VK11,Create Pricing Condition,SD
+VK12,Change Pricing Condition,SD
+VK13,Display Pricing Condition,SD
+VOV8,Sales Document Type Configuration,SD
+VOPAN,Partner Determination,SD
+V/03,Display Condition Table,SD
+V/06,Pricing Condition Type,SD
+V/08,Pricing Procedure,SD
+VA05,Sales Order List,SD
+VF05,Billing List,SD
+VL06O,Outbound Delivery Monitor,SD
+FB50,G/L Posting,FI
+FB60,Vendor Invoice,FI
+FB70,Customer Invoice,FI
+F-02,G/L Posting,FI
+F-28,Incoming Payments,FI
+F-53,Outgoing Payments,FI
+F110,Automatic Payments,FI
+FBL1N,Vendor Line Items,FI
+FBL3N,G/L Line Items,FI
+FBL5N,Customer Line Items,FI
+FS00,G/L Master Maintenance,FI
+OB52,Open Posting Periods,FI
+OBYC,Automatic Account Determination,FI
+OBA7,Document Types,FI
+FAGLL03,G/L Line Items (New GL),FI
+S_ALR_87012326,Trial Balance,FI
+F.01,Financial Statements,FI
+F.07,G/L Balance Carryforward,FI
+KS01,Create Cost Center,CO
+KS02,Change Cost Center,CO
+KS03,Display Cost Center,CO
+KSB1,Cost Center Line Items,CO
+KSBP,Cost Center Planning,CO
+KO01,Create Internal Order,CO
+KO02,Change Internal Order,CO
+KO03,Display Internal Order,CO
+KOB1,Order Line Items,CO
+KP26,Activity Price Planning,CO
+OKKP,Maintain Controlling Area,CO
+KE51,Create Profit Center,CO
+KE52,Change Profit Center,CO
+KE53,Display Profit Center,CO
+KE24,CO-PA Line Items,CO
+MD01,MRP Run,PP
+MD02,Single Item MRP,PP
+MD04,Stock/Requirements List,PP
+CO01,Create Production Order,PP
+CO02,Change Production Order,PP
+CO03,Display Production Order,PP
+CR01,Create Work Center,PP
+CR02,Change Work Center,PP
+CR03,Display Work Center,PP
+CA01,Create Routing,PP
+CA02,Change Routing,PP
+CA03,Display Routing,PP
+CS01,Create BOM,PP
+CS02,Change BOM,PP
+CS03,Display BOM,PP
+QE01,Create Quality Notification,QM
+QE02,Change Quality Notification,QM
+QE03,Display Quality Notification,QM
+QA32,Inspection Lots,QM
+QA11,Usage Decision,QM
+QS21,Create Inspection Plan,QM
+IW21,Create Maintenance Notification,PM
+IW22,Change Maintenance Notification,PM
+IW23,Display Maintenance Notification,PM
+IW31,Create Maintenance Order,PM
+IW32,Change Maintenance Order,PM
+IW33,Display Maintenance Order,PM
+IL01,Create Equipment,PM
+IL02,Change Equipment,PM
+IL03,Display Equipment,PM
+LT01,Create Transfer Order,WM
+LT02,Change Transfer Order,WM
+LT03,Display Transfer Order,WM
+LX02,Warehouse Stock,WM
+LS24,Bin Stock,WM
+PA30,Maintain HR Master Data,HCM
+PA20,Display HR Master Data,HCM
+PA40,Personnel Actions,HCM
+OM01,Create Organizational Object,HCM
+PPOME,Organization and Staffing,HCM
+PT60,Time Evaluation,HCM
+PCP0,Payroll Results,HCM
