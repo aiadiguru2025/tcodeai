@@ -43,6 +43,8 @@ export async function executeAISearch(
   const cached = await getCached<AISearchResult[]>(CACHE_PREFIX, cacheKey);
   if (cached) {
     console.log('AI search cache hit:', query);
+    // Sort cached results by confidence (older cache entries may not be sorted)
+    cached.sort((a, b) => b.confidence - a.confidence);
     return { results: cached, cached: true };
   }
 
@@ -118,6 +120,9 @@ export async function executeAISearch(
       results = createDefaultResults(candidates);
     }
   }
+
+  // Sort results by confidence score (highest first) for accurate "Best Match"
+  results.sort((a, b) => b.confidence - a.confidence);
 
   // Store in cache (even default results, to avoid repeated timeouts)
   await setCached(CACHE_PREFIX, cacheKey, results, CACHE_TTL);
