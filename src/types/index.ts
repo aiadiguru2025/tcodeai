@@ -85,4 +85,5 @@ export interface AISearchResponse {
   results: AISearchResult[];
   query: string;
   processingTimeMs: number;
+  cached: boolean;
 }

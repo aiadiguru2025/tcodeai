@@ -1,24 +1,36 @@
 import OpenAI from 'openai';
 import { executeSemanticSearch } from './semantic-search';
+import { getCached, setCached } from '@/lib/cache';
 import type { AISearchResult } from '@/types';
 
 const EXPLANATION_MODEL = 'gpt-4o-mini';
+const CACHE_PREFIX = 'ai-search';
+const CACHE_TTL = 60 * 60 * 24; // 24 hours
 
 export async function executeAISearch(
   query: string,
   limit: number = 5
-): Promise<AISearchResult[]> {
+): Promise<{ results: AISearchResult[]; cached: boolean }> {
   if (!process.env.OPENAI_API_KEY) {
     throw new Error('OpenAI API key not configured');
   }
 
+  // Check cache first
+  const cacheKey = `${query}:${limit}`;
+  const cached = await getCached<AISearchResult[]>(CACHE_PREFIX, cacheKey);
+  if (cached) {
+    console.log('AI search cache hit:', query);
+    return { results: cached, cached: true };
+  }
+
+  console.log('AI search cache miss:', query);
   const openai = new OpenAI();
 
   // Get semantic search results as candidates
   const candidates = await executeSemanticSearch(query, undefined, false, limit);
 
   if (candidates.length === 0) {
-    return [];
+    return { results: [], cached: false };
   }
 
   // Format candidates for the prompt
@@ -60,44 +72,51 @@ Provide explanations for each candidate.`,
   });
 
   const content = response.choices[0]?.message?.content;
+  let results: AISearchResult[];
+
   if (!content) {
     // Fallback: return candidates without explanations
-    return candidates.map((c) => ({
+    results = candidates.map((c) => ({
       tcode: c.tcode,
       description: c.description,
       module: c.module,
       explanation: 'This T-code matches your search criteria.',
       confidence: c.relevanceScore,
     }));
-  }
-
-  try {
-    const parsed = JSON.parse(content) as {
-      results: Array<{ tcode: string; explanation: string; confidence: number }>;
-    };
-
-    // Merge explanations with candidate data
-    return candidates.map((candidate) => {
-      const explanation = parsed.results.find(
-        (r) => r.tcode.toUpperCase() === candidate.tcode.toUpperCase()
-      );
-
-      return {
-        tcode: candidate.tcode,
-        description: candidate.description,
-        module: candidate.module,
-        explanation: explanation?.explanation || 'This T-code matches your search criteria.',
-        confidence: explanation?.confidence ?? candidate.relevanceScore,
+  } else {
+    try {
+      const parsed = JSON.parse(content) as {
+        results: Array<{ tcode: string; explanation: string; confidence: number }>;
       };
-    });
-  } catch {
-    // JSON parse failed, return candidates with default explanations
-    return candidates.map((c) => ({
-      tcode: c.tcode,
-      description: c.description,
-      module: c.module,
-      explanation: 'This T-code matches your search criteria.',
-      confidence: c.relevanceScore,
-    }));
+
+      // Merge explanations with candidate data
+      results = candidates.map((candidate) => {
+        const explanation = parsed.results.find(
+          (r) => r.tcode.toUpperCase() === candidate.tcode.toUpperCase()
+        );
+
+        return {
+          tcode: candidate.tcode,
+          description: candidate.description,
+          module: candidate.module,
+          explanation: explanation?.explanation || 'This T-code matches your search criteria.',
+          confidence: explanation?.confidence ?? candidate.relevanceScore,
+        };
+      });
+    } catch {
+      // JSON parse failed, return candidates with default explanations
+      results = candidates.map((c) => ({
+        tcode: c.tcode,
+        description: c.description,
+        module: c.module,
+        explanation: 'This T-code matches your search criteria.',
+        confidence: c.relevanceScore,
+      }));
+    }
   }
+
+  // Store in cache
+  await setCached(CACHE_PREFIX, cacheKey, results, CACHE_TTL);
+
+  return { results, cached: false };
 }
