@@ -6,6 +6,29 @@ import type { AISearchResult } from '@/types';
 const EXPLANATION_MODEL = 'gpt-4o-mini';
 const CACHE_PREFIX = 'ai-search';
 const CACHE_TTL = 60 * 60 * 24; // 24 hours
+const GPT_TIMEOUT_MS = 15000; // 15 seconds max for GPT call
+
+/**
+ * Create a timeout promise
+ */
+function timeout<T>(ms: number, fallback: T): Promise<T> {
+  return new Promise((resolve) => setTimeout(() => resolve(fallback), ms));
+}
+
+/**
+ * Generate default explanations from semantic search results
+ */
+function createDefaultResults(
+  candidates: Awaited<ReturnType<typeof executeSemanticSearch>>
+): AISearchResult[] {
+  return candidates.map((c) => ({
+    tcode: c.tcode,
+    description: c.description,
+    module: c.module,
+    explanation: `Matches your search based on description similarity.`,
+    confidence: c.relevanceScore,
+  }));
+}
 
 export async function executeAISearch(
   query: string,
@@ -24,7 +47,6 @@ export async function executeAISearch(
   }
 
   console.log('AI search cache miss:', query);
-  const openai = new OpenAI();
 
   // Get semantic search results as candidates
   const candidates = await executeSemanticSearch(query, undefined, false, limit);
@@ -33,63 +55,52 @@ export async function executeAISearch(
     return { results: [], cached: false };
   }
 
-  // Format candidates for the prompt
+  // Format candidates for the prompt (shorter format)
   const candidateList = candidates
-    .map(
-      (c, i) =>
-        `${i + 1}. ${c.tcode} - ${c.description || 'No description'} (Module: ${c.module || 'Unknown'})`
-    )
+    .map((c) => `${c.tcode}: ${c.description || 'N/A'}`)
     .join('\n');
 
-  // Generate explanations using GPT
-  const response = await openai.chat.completions.create({
-    model: EXPLANATION_MODEL,
-    messages: [
-      {
-        role: 'system',
-        content: `You are an SAP expert helping users find the right transaction code. Given a user's query and a list of candidate T-codes, explain why each T-code might match their needs. Be concise (1-2 sentences per explanation). Also rate your confidence (0.0-1.0) that each T-code matches the user's intent.
+  // Try to get GPT explanations with timeout
+  const openai = new OpenAI();
 
-Respond in JSON format:
-{
-  "results": [
-    {"tcode": "XX01", "explanation": "Brief explanation", "confidence": 0.95}
-  ]
-}`,
-      },
-      {
-        role: 'user',
-        content: `User query: "${query}"
+  const gptPromise = openai.chat.completions
+    .create({
+      model: EXPLANATION_MODEL,
+      messages: [
+        {
+          role: 'system',
+          content: `SAP expert. For each T-code, give a 1-sentence explanation of why it matches the query. Respond in JSON: {"results":[{"tcode":"XX01","explanation":"...","confidence":0.9}]}`,
+        },
+        {
+          role: 'user',
+          content: `Query: "${query}"\n\nT-codes:\n${candidateList}`,
+        },
+      ],
+      response_format: { type: 'json_object' },
+      temperature: 0.2,
+      max_tokens: 500,
+    })
+    .then((response) => response.choices[0]?.message?.content)
+    .catch((err) => {
+      console.error('GPT error:', err);
+      return null;
+    });
 
-Candidate T-codes:
-${candidateList}
+  // Race between GPT call and timeout
+  const content = await Promise.race([gptPromise, timeout(GPT_TIMEOUT_MS, null)]);
 
-Provide explanations for each candidate.`,
-      },
-    ],
-    response_format: { type: 'json_object' },
-    temperature: 0.3,
-    max_tokens: 1000,
-  });
-
-  const content = response.choices[0]?.message?.content;
   let results: AISearchResult[];
 
   if (!content) {
-    // Fallback: return candidates without explanations
-    results = candidates.map((c) => ({
-      tcode: c.tcode,
-      description: c.description,
-      module: c.module,
-      explanation: 'This T-code matches your search criteria.',
-      confidence: c.relevanceScore,
-    }));
+    // Timeout or error - use default explanations
+    console.log('GPT timed out or failed, using semantic results');
+    results = createDefaultResults(candidates);
   } else {
     try {
       const parsed = JSON.parse(content) as {
         results: Array<{ tcode: string; explanation: string; confidence: number }>;
       };
 
-      // Merge explanations with candidate data
       results = candidates.map((candidate) => {
         const explanation = parsed.results.find(
           (r) => r.tcode.toUpperCase() === candidate.tcode.toUpperCase()
@@ -99,23 +110,16 @@ Provide explanations for each candidate.`,
           tcode: candidate.tcode,
           description: candidate.description,
           module: candidate.module,
-          explanation: explanation?.explanation || 'This T-code matches your search criteria.',
+          explanation: explanation?.explanation || 'Matches your search criteria.',
           confidence: explanation?.confidence ?? candidate.relevanceScore,
         };
       });
     } catch {
-      // JSON parse failed, return candidates with default explanations
-      results = candidates.map((c) => ({
-        tcode: c.tcode,
-        description: c.description,
-        module: c.module,
-        explanation: 'This T-code matches your search criteria.',
-        confidence: c.relevanceScore,
-      }));
+      results = createDefaultResults(candidates);
     }
   }
 
-  // Store in cache
+  // Store in cache (even default results, to avoid repeated timeouts)
   await setCached(CACHE_PREFIX, cacheKey, results, CACHE_TTL);
 
   return { results, cached: false };
