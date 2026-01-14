@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BookmarkButton } from '@/components/bookmarks/BookmarkButton';
 import { CopyButton } from '@/components/tcode/CopyButton';
+import { TCodeFeedback } from '@/components/tcode/TCodeFeedback';
 import prisma from '@/lib/db';
 import { ArrowLeft, ExternalLink } from 'lucide-react';
 
@@ -160,6 +161,7 @@ export default async function TCodePage({ params }: Props) {
                     </div>
                   )}
                 </dl>
+                <TCodeFeedback tcodeId={tcode.id} tcode={tcode.tcode} />
               </CardContent>
             </Card>
 

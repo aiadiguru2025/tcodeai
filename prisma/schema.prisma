@@ -19,7 +19,6 @@ model TransactionCode {
   subModule           String?                @map("sub_module") @db.VarChar(40)
   isDeprecated        Boolean                @default(false) @map("is_deprecated")
   s4hanaStatus        String?                @map("s4hana_status") @db.VarChar(20)
-  fioriAppId          String?                @map("fiori_app_id") @db.VarChar(50)
   usageCategory       String?                @map("usage_category") @db.VarChar(30)
   embedding           Unsupported("vector")?
   createdAt           DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
@@ -48,28 +47,6 @@ model TCodeRelationship {
   @@map("tcode_relationships")
 }
 
-model FioriApp {
-  id            Int                 @id @default(autoincrement())
-  appId         String              @unique @map("app_id") @db.VarChar(50)
-  appName       String?             @map("app_name") @db.VarChar(200)
-  description   String?
-  appType       String?             @map("app_type") @db.VarChar(30)
-  s4hanaVersion String?             @map("s4hana_version") @db.VarChar(20)
-  mappings      TCodeFioriMapping[]
-
-  @@map("fiori_apps")
-}
-
-model TCodeFioriMapping {
-  id          Int      @id @default(autoincrement())
-  tcodeId     Int      @map("tcode_id")
-  fioriAppId  Int      @map("fiori_app_id")
-  mappingType String?  @map("mapping_type") @db.VarChar(20)
-  fioriApp    FioriApp @relation(fields: [fioriAppId], references: [id], onDelete: Cascade)
-
-  @@unique([tcodeId, fioriAppId])
-  @@map("tcode_fiori_mapping")
-}
 
 model SAPModule {
   code         String   @id @db.VarChar(20)

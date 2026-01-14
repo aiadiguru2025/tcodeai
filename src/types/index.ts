@@ -8,7 +8,6 @@ export interface TCode {
   subModule: string | null;
   isDeprecated: boolean;
   s4hanaStatus: string | null;
-  fioriAppId: string | null;
   usageCategory: string | null;
   createdAt: Date;
   updatedAt: Date;
