@@ -9,13 +9,19 @@ function getRedis(): Redis | null {
   const url = process.env.UPSTASH_REDIS_REST_URL;
   const token = process.env.UPSTASH_REDIS_REST_TOKEN;
 
-  if (!url || !token) {
+  // Check for missing or placeholder values
+  if (!url || !token || url === 'https://...' || token === '...' || url.length < 20) {
     console.warn('Upstash Redis not configured - caching disabled');
     return null;
   }
 
-  redis = new Redis({ url, token });
-  return redis;
+  try {
+    redis = new Redis({ url, token });
+    return redis;
+  } catch {
+    console.warn('Failed to initialize Redis client - caching disabled');
+    return null;
+  }
 }
 
 // Cache TTL in seconds (24 hours)

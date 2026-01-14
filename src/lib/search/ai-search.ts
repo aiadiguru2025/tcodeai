@@ -1,5 +1,6 @@
 import OpenAI from 'openai';
 import { executeSemanticSearch } from './semantic-search';
+import { expandQueryWithSAPTerms } from './query-expander';
 import { getCached, setCached } from '@/lib/cache';
 import type { AISearchResult } from '@/types';
 
@@ -50,8 +51,29 @@ export async function executeAISearch(
 
   console.log('AI search cache miss:', query);
 
-  // Get semantic search results as candidates
-  const candidates = await executeSemanticSearch(query, undefined, false, limit);
+  // Run query expansion and original semantic search in parallel
+  const [expandedQuery, directCandidates] = await Promise.all([
+    expandQueryWithSAPTerms(query),
+    executeSemanticSearch(query, undefined, false, limit),
+  ]);
+
+  // Get additional candidates using expanded query (if different from original)
+  let expandedCandidates: Awaited<ReturnType<typeof executeSemanticSearch>> = [];
+  if (expandedQuery !== query) {
+    expandedCandidates = await executeSemanticSearch(expandedQuery, undefined, false, limit);
+  }
+
+  // Merge and deduplicate candidates, prioritizing expanded query results
+  const candidateMap = new Map<string, (typeof directCandidates)[0]>();
+  for (const c of expandedCandidates) {
+    candidateMap.set(c.tcode, c);
+  }
+  for (const c of directCandidates) {
+    if (!candidateMap.has(c.tcode)) {
+      candidateMap.set(c.tcode, c);
+    }
+  }
+  const candidates = Array.from(candidateMap.values()).slice(0, limit * 2);
 
   if (candidates.length === 0) {
     return { results: [], cached: false };
