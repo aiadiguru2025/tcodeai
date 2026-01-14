@@ -58,7 +58,12 @@ async function searchAI(query: string): Promise<{ tcodes: string[]; timeMs: numb
 }
 
 function loadTestCases(filePath: string): TestCase[] {
-  const content = fs.readFileSync(filePath, 'utf-8');
+  // Read and strip BOM if present
+  let content = fs.readFileSync(filePath, 'utf-8');
+  if (content.charCodeAt(0) === 0xFEFF) {
+    content = content.slice(1);
+  }
+
   const records = parse(content, {
     columns: true,
     skip_empty_lines: true,
@@ -66,9 +71,9 @@ function loadTestCases(filePath: string): TestCase[] {
   });
 
   return records.map((record: Record<string, string>) => ({
-    tcode: (record.tcode || record.TCODE || '').toUpperCase().trim(),
-    description: record.description || record.DESCRIPTION || record.desc || '',
-    module: (record.module || record.MODULE || 'UNKNOWN').toUpperCase().trim(),
+    tcode: (record.tcode || record.TCODE || record.TCode || '').toUpperCase().trim(),
+    description: record.description || record.DESCRIPTION || record.Description || record.desc || '',
+    module: (record.module || record.MODULE || record.Module || 'UNKNOWN').toUpperCase().trim(),
   }));
 }
 
