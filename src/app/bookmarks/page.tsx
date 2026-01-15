@@ -5,17 +5,27 @@ import Link from 'next/link';
 import { Header } from '@/components/layout/Header';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Bookmark, Trash2, Download, Upload } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Bookmark, Trash2, Download, Upload, AppWindow, Terminal } from 'lucide-react';
 
-interface BookmarkData {
+interface TCodeBookmark {
   id: string;
   tcode: string;
   notes: string | null;
   createdAt: string;
 }
 
+interface FioriBookmark {
+  id: string;
+  appId: string;
+  appName: string | null;
+  notes: string | null;
+  createdAt: string;
+}
+
 export default function BookmarksPage() {
-  const [bookmarks, setBookmarks] = useState<BookmarkData[]>([]);
+  const [tcodeBookmarks, setTcodeBookmarks] = useState<TCodeBookmark[]>([]);
+  const [fioriBookmarks, setFioriBookmarks] = useState<FioriBookmark[]>([]);
 
   useEffect(() => {
     loadBookmarks();
@@ -23,21 +33,35 @@ export default function BookmarksPage() {
 
   const loadBookmarks = () => {
     try {
-      const stored = localStorage.getItem('tcodeai_bookmarks');
-      setBookmarks(stored ? JSON.parse(stored) : []);
+      const tcodeStored = localStorage.getItem('tcodeai_bookmarks');
+      setTcodeBookmarks(tcodeStored ? JSON.parse(tcodeStored) : []);
+
+      const fioriStored = localStorage.getItem('tcodeai_fiori_bookmarks');
+      setFioriBookmarks(fioriStored ? JSON.parse(fioriStored) : []);
     } catch {
-      setBookmarks([]);
+      setTcodeBookmarks([]);
+      setFioriBookmarks([]);
     }
   };
 
-  const removeBookmark = (id: string) => {
-    const updated = bookmarks.filter((b) => b.id !== id);
+  const removeTcodeBookmark = (id: string) => {
+    const updated = tcodeBookmarks.filter((b) => b.id !== id);
     localStorage.setItem('tcodeai_bookmarks', JSON.stringify(updated));
-    setBookmarks(updated);
+    setTcodeBookmarks(updated);
+  };
+
+  const removeFioriBookmark = (id: string) => {
+    const updated = fioriBookmarks.filter((b) => b.id !== id);
+    localStorage.setItem('tcodeai_fiori_bookmarks', JSON.stringify(updated));
+    setFioriBookmarks(updated);
   };
 
   const exportBookmarks = () => {
-    const dataStr = JSON.stringify(bookmarks, null, 2);
+    const data = {
+      tcodes: tcodeBookmarks,
+      fioriApps: fioriBookmarks,
+    };
+    const dataStr = JSON.stringify(data, null, 2);
     const blob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -57,21 +81,40 @@ export default function BookmarksPage() {
 
       try {
         const text = await file.text();
-        const imported = JSON.parse(text) as BookmarkData[];
+        const imported = JSON.parse(text);
 
-        // Merge with existing, avoiding duplicates
-        const existing = new Set(bookmarks.map((b) => b.tcode));
-        const newBookmarks = imported.filter((b) => !existing.has(b.tcode));
-        const merged = [...bookmarks, ...newBookmarks];
-
-        localStorage.setItem('tcodeai_bookmarks', JSON.stringify(merged));
-        setBookmarks(merged);
+        // Handle new format with both types
+        if (imported.tcodes || imported.fioriApps) {
+          if (imported.tcodes) {
+            const existing = new Set(tcodeBookmarks.map((b) => b.tcode));
+            const newBookmarks = imported.tcodes.filter((b: TCodeBookmark) => !existing.has(b.tcode));
+            const merged = [...tcodeBookmarks, ...newBookmarks];
+            localStorage.setItem('tcodeai_bookmarks', JSON.stringify(merged));
+            setTcodeBookmarks(merged);
+          }
+          if (imported.fioriApps) {
+            const existing = new Set(fioriBookmarks.map((b) => b.appId));
+            const newBookmarks = imported.fioriApps.filter((b: FioriBookmark) => !existing.has(b.appId));
+            const merged = [...fioriBookmarks, ...newBookmarks];
+            localStorage.setItem('tcodeai_fiori_bookmarks', JSON.stringify(merged));
+            setFioriBookmarks(merged);
+          }
+        } else if (Array.isArray(imported)) {
+          // Handle old format (T-codes only)
+          const existing = new Set(tcodeBookmarks.map((b) => b.tcode));
+          const newBookmarks = imported.filter((b: TCodeBookmark) => !existing.has(b.tcode));
+          const merged = [...tcodeBookmarks, ...newBookmarks];
+          localStorage.setItem('tcodeai_bookmarks', JSON.stringify(merged));
+          setTcodeBookmarks(merged);
+        }
       } catch {
         alert('Failed to import bookmarks. Please check the file format.');
       }
     };
     input.click();
   };
+
+  const totalBookmarks = tcodeBookmarks.length + fioriBookmarks.length;
 
   return (
     <div className="min-h-screen bg-background">
@@ -82,7 +125,7 @@ export default function BookmarksPage() {
             <div>
               <h1 className="text-2xl font-bold">Bookmarks</h1>
               <p className="text-muted-foreground">
-                Your saved transaction codes ({bookmarks.length})
+                Your saved items ({totalBookmarks})
               </p>
             </div>
             <div className="flex gap-2">
@@ -97,47 +140,125 @@ export default function BookmarksPage() {
             </div>
           </div>
 
-          {bookmarks.length === 0 ? (
+          {totalBookmarks === 0 ? (
             <Card>
               <CardContent className="py-12 text-center">
                 <Bookmark className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
                 <h2 className="mb-2 text-lg font-medium">No bookmarks yet</h2>
                 <p className="text-muted-foreground">
-                  Start searching for T-codes and bookmark your favorites for quick access.
+                  Start exploring T-codes and Fiori apps, then bookmark your favorites for quick access.
                 </p>
-                <Button className="mt-4" asChild>
-                  <Link href="/">Search T-codes</Link>
-                </Button>
+                <div className="mt-4 flex justify-center gap-2">
+                  <Button asChild>
+                    <Link href="/">Search T-codes</Link>
+                  </Button>
+                  <Button variant="outline" asChild>
+                    <Link href="/fiori">Browse Fiori Apps</Link>
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           ) : (
-            <div className="space-y-3">
-              {bookmarks.map((bookmark) => (
-                <Card key={bookmark.id}>
-                  <CardContent className="flex items-center justify-between p-4">
-                    <Link
-                      href={`/tcode/${bookmark.tcode}`}
-                      className="flex-1 hover:underline"
-                    >
-                      <code className="text-lg font-bold text-primary">
-                        {bookmark.tcode}
-                      </code>
-                      <p className="text-sm text-muted-foreground">
-                        Added {new Date(bookmark.createdAt).toLocaleDateString()}
-                      </p>
-                    </Link>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => removeBookmark(bookmark.id)}
-                      title="Remove bookmark"
-                    >
-                      <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+            <Tabs defaultValue="tcodes" className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="tcodes" className="flex items-center gap-2">
+                  <Terminal className="h-4 w-4" />
+                  T-Codes ({tcodeBookmarks.length})
+                </TabsTrigger>
+                <TabsTrigger value="fiori" className="flex items-center gap-2">
+                  <AppWindow className="h-4 w-4" />
+                  Fiori Apps ({fioriBookmarks.length})
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="tcodes" className="mt-4">
+                {tcodeBookmarks.length === 0 ? (
+                  <Card>
+                    <CardContent className="py-8 text-center">
+                      <p className="text-muted-foreground">No T-code bookmarks yet.</p>
+                      <Button className="mt-4" variant="outline" asChild>
+                        <Link href="/">Search T-codes</Link>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <div className="space-y-3">
+                    {tcodeBookmarks.map((bookmark) => (
+                      <Card key={bookmark.id}>
+                        <CardContent className="flex items-center justify-between p-4">
+                          <Link
+                            href={`/tcode/${bookmark.tcode}`}
+                            className="flex-1 hover:underline"
+                          >
+                            <code className="text-lg font-bold text-primary">
+                              {bookmark.tcode}
+                            </code>
+                            <p className="text-sm text-muted-foreground">
+                              Added {new Date(bookmark.createdAt).toLocaleDateString()}
+                            </p>
+                          </Link>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => removeTcodeBookmark(bookmark.id)}
+                            title="Remove bookmark"
+                          >
+                            <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
+
+              <TabsContent value="fiori" className="mt-4">
+                {fioriBookmarks.length === 0 ? (
+                  <Card>
+                    <CardContent className="py-8 text-center">
+                      <p className="text-muted-foreground">No Fiori app bookmarks yet.</p>
+                      <Button className="mt-4" variant="outline" asChild>
+                        <Link href="/fiori">Browse Fiori Apps</Link>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <div className="space-y-3">
+                    {fioriBookmarks.map((bookmark) => (
+                      <Card key={bookmark.id}>
+                        <CardContent className="flex items-center justify-between p-4">
+                          <Link
+                            href={`/fiori/${encodeURIComponent(bookmark.appId)}`}
+                            className="flex-1 hover:underline"
+                          >
+                            <div className="flex items-center gap-2">
+                              <AppWindow className="h-4 w-4 text-muted-foreground" />
+                              <code className="text-lg font-bold text-primary">
+                                {bookmark.appId}
+                              </code>
+                            </div>
+                            {bookmark.appName && (
+                              <p className="text-sm">{bookmark.appName}</p>
+                            )}
+                            <p className="text-sm text-muted-foreground">
+                              Added {new Date(bookmark.createdAt).toLocaleDateString()}
+                            </p>
+                          </Link>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => removeFioriBookmark(bookmark.id)}
+                            title="Remove bookmark"
+                          >
+                            <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
+            </Tabs>
           )}
         </div>
       </main>
