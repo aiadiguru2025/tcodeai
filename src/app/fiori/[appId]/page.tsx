@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { Header } from '@/components/layout/Header';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { CopyButton } from '@/components/tcode/CopyButton';
+import { FioriBookmarkButton } from '@/components/fiori/FioriBookmarkButton';
 import prisma from '@/lib/db';
 import { ArrowLeft, AppWindow, ExternalLink } from 'lucide-react';
 
@@ -87,18 +89,24 @@ export default async function FioriAppPage({ params }: Props) {
             {/* Main Info Card */}
             <Card>
               <CardHeader>
-                <div className="space-y-3">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <AppWindow className="h-6 w-6 text-primary" />
-                    <code className="text-2xl font-bold text-primary">{app.appId}</code>
-                    <Badge variant="outline" className={techStyle}>
-                      {app.uiTechnology}
-                    </Badge>
+                <div className="flex items-start justify-between">
+                  <div className="space-y-3">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <AppWindow className="h-6 w-6 text-primary" />
+                      <code className="text-2xl font-bold text-primary">{app.appId}</code>
+                      <Badge variant="outline" className={techStyle}>
+                        {app.uiTechnology}
+                      </Badge>
+                    </div>
+                    <CardTitle className="text-xl font-normal">{app.appName}</CardTitle>
+                    {app.appLauncherTitle && app.appLauncherTitle !== app.appName && (
+                      <p className="text-muted-foreground">{app.appLauncherTitle}</p>
+                    )}
                   </div>
-                  <CardTitle className="text-xl font-normal">{app.appName}</CardTitle>
-                  {app.appLauncherTitle && app.appLauncherTitle !== app.appName && (
-                    <p className="text-muted-foreground">{app.appLauncherTitle}</p>
-                  )}
+                  <div className="flex gap-2">
+                    <CopyButton text={app.appId} />
+                    <FioriBookmarkButton appId={app.appId} appName={app.appName} />
+                  </div>
                 </div>
               </CardHeader>
               <CardContent>
