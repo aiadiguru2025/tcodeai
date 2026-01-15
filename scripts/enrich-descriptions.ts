@@ -110,10 +110,30 @@ async function main(): Promise<void> {
     },
     select: { id: true, tcode: true, description: true, module: true },
     orderBy: { tcode: 'asc' },
-    take: limit - priorityTcodes.length,
+    take: Math.min(limit - priorityTcodes.length, 5000),
   });
 
-  const allTcodes = [...priorityTcodes, ...moduleTcodes].slice(0, limit);
+  console.log(`Found ${moduleTcodes.length} T-codes from priority modules`);
+
+  // For large limits, also get T-codes from other modules
+  let otherTcodes: TCodeRecord[] = [];
+  const remaining = limit - priorityTcodes.length - moduleTcodes.length;
+  if (remaining > 0) {
+    otherTcodes = await prisma.transactionCode.findMany({
+      where: {
+        descriptionEnriched: null,
+        description: { not: null },
+        module: { notIn: PRIORITY_MODULES },
+        tcode: { notIn: TOP_BASIS_TCODES },
+      },
+      select: { id: true, tcode: true, description: true, module: true },
+      orderBy: { tcode: 'asc' },
+      take: remaining,
+    });
+    console.log(`Found ${otherTcodes.length} T-codes from other modules`);
+  }
+
+  const allTcodes = [...priorityTcodes, ...moduleTcodes, ...otherTcodes].slice(0, limit);
 
   console.log(`\n📊 Processing ${allTcodes.length} T-codes in batches of ${BATCH_SIZE}...\n`);
 

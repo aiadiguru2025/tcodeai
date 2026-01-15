@@ -63,7 +63,7 @@ export function FioriAppCard({ app, showLink = true }: FioriAppCardProps) {
   );
 
   if (showLink) {
-    return <Link href={`/fiori/${app.appId}`}>{content}</Link>;
+    return <Link href={`/fiori/${encodeURIComponent(app.appId)}`}>{content}</Link>;
   }
 
   return content;

@@ -34,7 +34,8 @@ async function getFioriApp(appId: string) {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const app = await getFioriApp(params.appId);
+  const decodedAppId = decodeURIComponent(params.appId);
+  const app = await getFioriApp(decodedAppId);
 
   if (!app) {
     return {
@@ -56,7 +57,8 @@ const UI_TECH_STYLES: Record<string, string> = {
 };
 
 export default async function FioriAppPage({ params }: Props) {
-  const app = await getFioriApp(params.appId);
+  const decodedAppId = decodeURIComponent(params.appId);
+  const app = await getFioriApp(decodedAppId);
 
   if (!app) {
     notFound();

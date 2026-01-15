@@ -4,16 +4,18 @@
     "expectedTcode": "SE11",
     "module": "BASIS",
     "results": [
-      "SE14",
+      "SE11",
       "SE12",
+      "SE14",
+      "ABSE61",
+      "UGMW0022",
       "DXXV",
-      "COM_MDF",
-      "DMWB"
+      "COM_MDF"
     ],
-    "inTop1": false,
-    "inTop3": false,
-    "inTop5": false,
-    "processingTimeMs": 4865
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 10367
   },
   {
     "query": "Data Browser",
@@ -21,15 +23,18 @@
     "module": "BASIS",
     "results": [
       "SE16",
+      "SE12",
+      "SE16H",
+      "SE16N",
       "RSSG_BROWSER",
-      "RSDAS_BROWSE",
       "/SDF/SCMOND",
+      "RSDAS_BROWSE",
       "SCMOND"
     ],
     "inTop1": true,
     "inTop3": true,
     "inTop5": true,
-    "processingTimeMs": 4933
+    "processingTimeMs": 10097
   },
   {
     "query": "Data Browser (New)",
@@ -37,15 +42,18 @@
     "module": "BASIS",
     "results": [
       "SE16",
-      "RSSG_BROWSER",
+      "SE12",
+      "SE16H",
+      "SE16N",
+      "/SDF/SCMOND",
       "RSDAS_BROWSE",
-      "/BA1/F4_MD0009",
-      "/SDF/SCMOND"
+      "RSSG_BROWSER",
+      "/BA1/F4_MD0009"
     ],
     "inTop1": false,
     "inTop3": false,
-    "inTop5": false,
-    "processingTimeMs": 5878
+    "inTop5": true,
+    "processingTimeMs": 10340
   },
   {
     "query": "Object Navigator",
@@ -53,7 +61,11 @@
     "module": "BASIS",
     "results": [
       "SE80",
+      "SE85",
+      "SE15",
       "FOOBJECTBROWSER",
+      "SE30_OLD",
+      "SE38",
       "OIWD",
       "MCAJ",
       "ECNC"
@@ -61,7 +73,7 @@
     "inTop1": true,
     "inTop3": true,
     "inTop5": true,
-    "processingTimeMs": 5161
+    "processingTimeMs": 9656
   },
   {
     "query": "ABAP Editor",
@@ -69,14 +81,414 @@
     "module": "BASIS",
     "results": [
       "SE38",
+      "SA38",
+      "SDW0",
       "DBG_ABAP_EDITOR",
-      "SE39",
+      "SE32_WB99",
+      "SE32",
       "ABAPDOCU",
+      "SE39",
       "AMEN"
     ],
     "inTop1": true,
     "inTop3": true,
     "inTop5": true,
-    "processingTimeMs": 6745
+    "processingTimeMs": 9329
+  },
+  {
+    "query": "Transaction Maintenance",
+    "expectedTcode": "SE93",
+    "module": "BASIS",
+    "results": [
+      "SE93",
+      "TI72",
+      "MASF",
+      "OA81",
+      "PSOB0015",
+      "HRTNM00_REPMOD",
+      "FMFA_0015",
+      "SM01",
+      "BWMSSPROCS",
+      "ICLE15"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 9516
+  },
+  {
+    "query": "ABAP Dump Analysis",
+    "expectedTcode": "ST22",
+    "module": "BASIS",
+    "results": [
+      "ST22",
+      "ST22_E2E",
+      "ST22L",
+      "ATRA",
+      "ABAP_TRACE",
+      "ATRA_E2E"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 9278
+  },
+  {
+    "query": "System Log",
+    "expectedTcode": "SM21",
+    "module": "BASIS",
+    "results": [
+      "SM21",
+      "SM20",
+      "SM20N",
+      "SLG1",
+      "SE92",
+      "SM21_E2E",
+      "/ISDFPS/SLG1",
+      "/SDF/SLG1",
+      "DSLOG"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 8321
+  },
+  {
+    "query": "Job Monitoring",
+    "expectedTcode": "SM37",
+    "module": "BASIS",
+    "results": [
+      "SM37",
+      "SWW_JOB_MON",
+      "SM36",
+      "/SAPSMOSS/U03",
+      "RZ01",
+      "SXMS_MONI_JOB",
+      "VEG_JOBMONITOR",
+      "PC00_M05_LMOM",
+      "I_GRAPH_MONITOR"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 7625
+  },
+  {
+    "query": "Process Overview (App Server)",
+    "expectedTcode": "SM50",
+    "module": "BASIS",
+    "results": [
+      "SE30",
+      "DB50",
+      "SMOD",
+      "SE15",
+      "SE61",
+      "SM50",
+      "ICLPCTOAPP",
+      "SB01",
+      "ICLAPPTOPC",
+      "OS_APPLICATION"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": true,
+    "processingTimeMs": 8504
+  },
+  {
+    "query": "Application Servers",
+    "expectedTcode": "SM51",
+    "module": "BASIS",
+    "results": [
+      "SM51",
+      "RZ04",
+      "AS_ADMIN",
+      "/SDF/SCMON",
+      "DB50",
+      "SXMB_APPL",
+      "N2UX",
+      "USS_FAS",
+      "WSADMIN"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 8985
+  },
+  {
+    "query": "Lock Entries",
+    "expectedTcode": "SM12",
+    "module": "BASIS",
+    "results": [
+      "RS12",
+      "SM01",
+      "PV14",
+      "RSPLSE",
+      "F971",
+      "FKLOCK2",
+      "TBLE",
+      "TBLC",
+      "OODD"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 7217
+  },
+  {
+    "query": "Global Process Overview",
+    "expectedTcode": "SM66",
+    "module": "BASIS",
+    "results": [
+      "BERP",
+      "CPPC",
+      "CPPCN",
+      "CPBL",
+      "SM66_OLD",
+      "CPV6",
+      "SBWP",
+      "CP97",
+      "RSDHAAP",
+      "CP03"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 9272
+  },
+  {
+    "query": "Logged-on Users",
+    "expectedTcode": "AL08",
+    "module": "BASIS",
+    "results": [
+      "AL08",
+      "/VIRSA/ZVRAT_S08",
+      "SCUL",
+      "SUUMD",
+      "AUTH_DISPLAY_OBJECTS",
+      "AL08_OLD",
+      "RSLDAPSYNC_USER",
+      "/SAPPO/USER_REMOTE"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 7979
+  },
+  {
+    "query": "User Maintenance",
+    "expectedTcode": "SU01",
+    "module": "BASIS",
+    "results": [
+      "SU01",
+      "SU01_OLD",
+      "SU10",
+      "SUPC",
+      "SUUM",
+      "SUUMD",
+      "SU10_OLD",
+      "ICLEUSR"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 7064
+  },
+  {
+    "query": "Mass User Maintenance",
+    "expectedTcode": "SU10",
+    "module": "BASIS",
+    "results": [
+      "SU10_OLD",
+      "SU10",
+      "UMB_MM",
+      "SU01_OLD",
+      "MASSD",
+      "SU01",
+      "SU3",
+      "MSJ1"
+    ],
+    "inTop1": false,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 9472
+  },
+  {
+    "query": "Role Maintenance",
+    "expectedTcode": "PFCG",
+    "module": "BASIS",
+    "results": [
+      "SU02",
+      "SRT_ROLES",
+      "RSU01",
+      "/PTGWFI/ROLE",
+      "RSQ10",
+      "UG_BW_RSQ10",
+      "SQ10",
+      "S416N_ROLE",
+      "ROLE_VERS",
+      "UG_BW_PFCG"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 8477
+  },
+  {
+    "query": "Client Administration",
+    "expectedTcode": "SCC4",
+    "module": "BASIS",
+    "results": [
+      "SCC4",
+      "AS_ADMIN",
+      "UG_BW_RSQ10",
+      "SQ10",
+      "RSQ10",
+      "SAUNIT_CLIENT_SETUP",
+      "O052",
+      "WSADMIN",
+      "SCC7",
+      "MCLIMAN"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 9904
+  },
+  {
+    "query": "Profile Maintenance",
+    "expectedTcode": "RZ10",
+    "module": "BASIS",
+    "results": [
+      "OF36",
+      "SU01",
+      "RSU01",
+      "SU02",
+      "PZ32",
+      "BS02",
+      "SU01_OLD",
+      "OK02",
+      "UGMW0013",
+      "SL95"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 9405
+  },
+  {
+    "query": "Profile Parameter Display",
+    "expectedTcode": "RZ11",
+    "module": "BASIS",
+    "results": [
+      "RZ10",
+      "RZ11",
+      "SPFPAR",
+      "RZ03",
+      "PZ31",
+      "PP_MY_QUALIFICATIONS",
+      "PPPD",
+      "EWEBIAC_SHOW_PROFIL",
+      "TPPR"
+    ],
+    "inTop1": false,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 9682
+  },
+  {
+    "query": "Database Overview",
+    "expectedTcode": "DB02",
+    "module": "BASIS",
+    "results": [
+      "SE11",
+      "SE12",
+      "DB15",
+      "DB24",
+      "DB02",
+      "SE14",
+      "UA_DATABASIS",
+      "DBCO",
+      "DBA_VIEW_ABAP_SOURCE",
+      "DB50N"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": true,
+    "processingTimeMs": 9728
+  },
+  {
+    "query": "Support Package Manager",
+    "expectedTcode": "SPAM",
+    "module": "BASIS",
+    "results": [
+      "SPAM",
+      "SMOD",
+      "HRUUPKM1",
+      "SEPS",
+      "/SAPSMOSS/M02",
+      "/SAPSMOSS/M01",
+      "J3GPAKET15",
+      "J3GPAKET1",
+      "SPACKAGE"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 10049
+  },
+  {
+    "query": "SAP Notes Assistant",
+    "expectedTcode": "SNOTE",
+    "module": "BASIS",
+    "results": [
+      "SNOTE",
+      "SNOTE_DISPLAY",
+      "ANST",
+      "SNOTE_OLD",
+      "/ASU/SHOW_NOTE"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 8043
+  },
+  {
+    "query": "Workload Analysis",
+    "expectedTcode": "ST03N",
+    "module": "BASIS",
+    "results": [
+      "SWI5",
+      "ST03N",
+      "ST03G",
+      "SWI5N",
+      "DB2W",
+      "ST03",
+      "EEWM_CU_ANALYSIS"
+    ],
+    "inTop1": false,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 9060
+  },
+  {
+    "query": "Database Performance",
+    "expectedTcode": "ST04",
+    "module": "BASIS",
+    "results": [
+      "ST04OLD",
+      "DB6PERF",
+      "DB21",
+      "STATS",
+      "ST03N",
+      "ORA_PERF",
+      "ST04",
+      "RSCUSTV25",
+      "CNV_00001_PERFDB",
+      "SWLT"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": true,
+    "processingTimeMs": 9954
   }
 ]

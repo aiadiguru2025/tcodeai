@@ -208,7 +208,7 @@ export default async function TCodePage({ params }: Props) {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <FioriAppList apps={fioriApps} showLink={false} />
+                  <FioriAppList apps={fioriApps} />
                 </CardContent>
               </Card>
             )}

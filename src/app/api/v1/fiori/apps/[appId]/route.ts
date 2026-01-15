@@ -6,8 +6,9 @@ export async function GET(
   { params }: { params: { appId: string } }
 ) {
   try {
+    const decodedAppId = decodeURIComponent(params.appId);
     const app = await prisma.fioriApp.findUnique({
-      where: { appId: params.appId },
+      where: { appId: decodedAppId },
       include: {
         tcodeMappings: {
           include: {
