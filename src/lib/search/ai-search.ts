@@ -1,6 +1,7 @@
 import OpenAI from 'openai';
 import { executeSemanticSearch } from './semantic-search';
 import { expandQueryWithSAPTerms } from './query-expander';
+import { validateSearchResults } from './llm-judge';
 import { getCached, setCached } from '@/lib/cache';
 import type { AISearchResult } from '@/types';
 
@@ -177,8 +178,14 @@ Output JSON: {"results":[{"tcode":"XX01","explanation":"brief reason","confidenc
   // Sort results by confidence score (highest first) for accurate "Best Match"
   results.sort((a, b) => b.confidence - a.confidence);
 
-  // Store in cache (even default results, to avoid repeated timeouts)
-  await setCached(CACHE_PREFIX, cacheKey, results, CACHE_TTL);
+  // Validate results with LLM Judge before caching
+  const { results: validatedResults } = await validateSearchResults(query, results);
 
-  return { results, cached: false };
+  // Re-sort after potential confidence adjustments from judge
+  validatedResults.sort((a, b) => b.confidence - a.confidence);
+
+  // Store validated results in cache
+  await setCached(CACHE_PREFIX, cacheKey, validatedResults, CACHE_TTL);
+
+  return { results: validatedResults, cached: false };
 }

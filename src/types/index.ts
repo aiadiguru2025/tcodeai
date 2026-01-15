@@ -88,6 +88,26 @@ export interface AISearchResponse {
   cached: boolean;
 }
 
+// LLM Judge Types
+export interface JudgeVerdict {
+  tcode: string;
+  isExplanationAccurate: boolean;
+  isConfidenceReasonable: boolean;
+  correctedExplanation: string | null;
+  correctedConfidence: number | null;
+  reasoning: string;
+}
+
+export interface JudgeMetrics {
+  verdicts: JudgeVerdict[];
+  judgeModel: string;
+  processingTimeMs: number;
+  corrections: {
+    explanationsFixed: number;
+    confidencesAdjusted: number;
+  };
+}
+
 // Fiori Reference Library Types
 export interface FioriApp {
   id: number;
