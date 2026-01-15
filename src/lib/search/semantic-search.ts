@@ -5,7 +5,9 @@ import type { SearchResult } from '@/types';
 
 const EMBEDDING_MODEL = 'text-embedding-3-small';
 const EMBEDDING_CACHE_PREFIX = 'embed';
+const SEMANTIC_CACHE_PREFIX = 'semantic';
 const EMBEDDING_CACHE_TTL = 60 * 60 * 24 * 7; // 7 days for embeddings
+const SEMANTIC_CACHE_TTL = 60 * 60 * 4; // 4 hours for full search results
 
 /**
  * Get embedding for a query, using cache when available
@@ -41,6 +43,16 @@ export async function executeSemanticSearch(
   // Check if OpenAI is available
   if (!process.env.OPENAI_API_KEY) {
     return [];
+  }
+
+  // Generate cache key based on all parameters
+  const cacheKey = `${query}:${modules?.join(',') || 'all'}:${includeDeprecated || false}:${limit}`;
+
+  // Check cache for full search results
+  const cachedResults = await getCached<SearchResult[]>(SEMANTIC_CACHE_PREFIX, cacheKey);
+  if (cachedResults) {
+    console.log('Semantic search cache hit:', query.substring(0, 30));
+    return cachedResults;
   }
 
   try {
@@ -89,7 +101,7 @@ export async function executeSemanticSearch(
       LIMIT ${limit}`
     );
 
-    return results.map((r) => ({
+    const searchResults = results.map((r) => ({
       tcode: r.tcode,
       program: r.program,
       description: r.description,
@@ -98,6 +110,11 @@ export async function executeSemanticSearch(
       matchType: 'semantic' as const,
       isDeprecated: r.is_deprecated,
     }));
+
+    // Cache the results (don't await)
+    setCached(SEMANTIC_CACHE_PREFIX, cacheKey, searchResults, SEMANTIC_CACHE_TTL);
+
+    return searchResults;
   } catch (error) {
     console.error('Semantic search error:', error);
     return [];

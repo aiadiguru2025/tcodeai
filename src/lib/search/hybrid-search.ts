@@ -1,6 +1,10 @@
 import prisma from '@/lib/db';
 import type { SearchResult } from '@/types';
 import { executeSemanticSearch } from './semantic-search';
+import { getCached, setCached } from '@/lib/cache';
+
+const HYBRID_CACHE_PREFIX = 'hybrid';
+const HYBRID_CACHE_TTL = 60 * 60 * 2; // 2 hours for hybrid search results
 
 interface SearchOptions {
   query: string;
@@ -13,6 +17,16 @@ interface SearchOptions {
 export async function hybridSearch(options: SearchOptions): Promise<SearchResult[]> {
   const { query, modules, limit = 20, includeDeprecated = false, enableSemantic = true } = options;
   const normalizedQuery = query.trim().toLowerCase();
+
+  // Generate cache key
+  const cacheKey = `${normalizedQuery}:${modules?.join(',') || 'all'}:${limit}:${includeDeprecated}:${enableSemantic}`;
+
+  // Check cache first
+  const cached = await getCached<SearchResult[]>(HYBRID_CACHE_PREFIX, cacheKey);
+  if (cached) {
+    console.log('Hybrid search cache hit:', query.substring(0, 30));
+    return cached;
+  }
 
   // Determine if this looks like a natural language query vs a T-code search
   const isNaturalLanguage = query.includes(' ') && query.length > 5;
@@ -75,9 +89,14 @@ export async function hybridSearch(options: SearchOptions): Promise<SearchResult
   }
 
   // Sort by relevance and return top results
-  return Array.from(resultMap.values())
+  const results = Array.from(resultMap.values())
     .sort((a, b) => b.relevanceScore - a.relevanceScore)
     .slice(0, limit);
+
+  // Cache the results
+  setCached(HYBRID_CACHE_PREFIX, cacheKey, results, HYBRID_CACHE_TTL);
+
+  return results;
 }
 
 async function executeExactSearch(
