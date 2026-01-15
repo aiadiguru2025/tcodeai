@@ -5,7 +5,7 @@ import { getCached, setCached } from '@/lib/cache';
 import type { AISearchResult } from '@/types';
 
 const EXPLANATION_MODEL = 'gpt-4o-mini';
-const CACHE_PREFIX = 'ai-search';
+const CACHE_PREFIX = 'ai-search-v2'; // v2: improved term matching ranking
 const CACHE_TTL = 60 * 60 * 24; // 24 hours
 const GPT_TIMEOUT_MS = 8000; // 8 seconds max for GPT call (reduced from 15s)
 
@@ -93,11 +93,19 @@ export async function executeAISearch(
       messages: [
         {
           role: 'system',
-          content: `SAP expert. Brief explanation why each T-code matches. JSON: {"results":[{"tcode":"XX01","explanation":"...","confidence":0.9}]}`,
+          content: `You are an SAP expert ranking T-code search results. Score each T-code's relevance to the user's query.
+
+CRITICAL RANKING RULES:
+1. EXACT TERM MATCH IS PRIORITY: If the query contains specific terms (country names like USA/Germany, module names, specific words), T-codes with those EXACT terms in their description MUST rank higher.
+2. For country-specific queries (e.g., "USA payroll"), only T-codes explicitly mentioning that country should get >0.9 confidence.
+3. Generic matches without the specific term should be scored 0.6-0.8 MAX.
+4. SAP country codes in T-codes: M10=USA, M99=Germany, M01=Italy, M41=Hong Kong, M08=UK, M07=South Africa.
+
+Output JSON: {"results":[{"tcode":"XX01","explanation":"brief reason","confidence":0.0-1.0}]}`,
         },
         {
           role: 'user',
-          content: `"${query}"\n${candidateList}`,
+          content: `Query: "${query}"\n\nCandidates:\n${candidateList}`,
         },
       ],
       response_format: { type: 'json_object' },
@@ -142,6 +150,29 @@ export async function executeAISearch(
       results = createDefaultResults(candidates);
     }
   }
+
+  // Apply term-matching boost before sorting
+  const queryTerms = query.toLowerCase().split(/\s+/).filter(t => t.length > 2);
+  results = results.map(r => {
+    const descLower = (r.description || '').toLowerCase();
+    const tcodeLower = r.tcode.toLowerCase();
+
+    // Check for exact term matches in description or tcode
+    let termBoost = 0;
+    for (const term of queryTerms) {
+      if (descLower.includes(term) || tcodeLower.includes(term)) {
+        termBoost += 0.05; // Small boost for each matching term
+      }
+    }
+
+    // Cap the boost at 0.15 to avoid over-inflating
+    termBoost = Math.min(termBoost, 0.15);
+
+    return {
+      ...r,
+      confidence: Math.min(1, r.confidence + termBoost),
+    };
+  });
 
   // Sort results by confidence score (highest first) for accurate "Best Match"
   results.sort((a, b) => b.confidence - a.confidence);
