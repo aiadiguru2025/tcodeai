@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
-import { Sun, Moon, Bookmark } from 'lucide-react';
+import { Sun, Moon, Bookmark, AppWindow } from 'lucide-react';
 
 export function Header() {
   const { theme, setTheme } = useTheme();
@@ -19,6 +19,18 @@ export function Header() {
           </Link>
           <nav className="flex items-center gap-6 text-sm">
             <Link
+              href="/modules"
+              className="text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Modules
+            </Link>
+            <Link
+              href="/fiori"
+              className="text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Fiori Apps
+            </Link>
+            <Link
               href="/bookmarks"
               className="text-muted-foreground transition-colors hover:text-foreground"
             >
@@ -27,6 +39,16 @@ export function Header() {
           </nav>
         </div>
         <div className="flex flex-1 items-center justify-end space-x-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Fiori Apps"
+            asChild
+          >
+            <Link href="/fiori">
+              <AppWindow className="h-5 w-5" />
+            </Link>
+          </Button>
           <Button
             variant="ghost"
             size="icon"

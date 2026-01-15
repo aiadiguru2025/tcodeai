@@ -87,3 +87,52 @@ export interface AISearchResponse {
   processingTimeMs: number;
   cached: boolean;
 }
+
+// Fiori Reference Library Types
+export interface FioriApp {
+  id: number;
+  appId: string;
+  appName: string;
+  appLauncherTitle: string | null;
+  uiTechnology: string;
+  appComponentDesc: string | null;
+  lineOfBusiness: string[];
+  semanticObjectAction: string[];
+  businessCatalogTitle: string | null;
+  createdAt: Date;
+}
+
+export interface FioriTCodeMapping {
+  id: number;
+  fioriAppId: number;
+  tcodeId: number | null;
+  tcodeRaw: string;
+}
+
+export interface FioriAppWithMappings extends FioriApp {
+  tcodeMappings: FioriTCodeMapping[];
+}
+
+export interface FioriAppsResponse {
+  apps: FioriApp[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+export interface FioriSearchResult extends FioriApp {
+  relevanceScore: number;
+  matchType: 'exact' | 'fuzzy' | 'semantic';
+}
+
+export type UITechnology =
+  | 'SAP GUI'
+  | 'SAP Fiori elements'
+  | 'SAP Fiori (SAPUI5)'
+  | 'Web Dynpro'
+  | 'SAP Fiori: Generic Job Scheduling Framework'
+  | 'Web Client UI'
+  | string;
