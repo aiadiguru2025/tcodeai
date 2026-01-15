@@ -9,7 +9,9 @@ import { BookmarkButton } from '@/components/bookmarks/BookmarkButton';
 import { CopyButton } from '@/components/tcode/CopyButton';
 import { TCodeFeedback } from '@/components/tcode/TCodeFeedback';
 import prisma from '@/lib/db';
-import { ArrowLeft, ExternalLink } from 'lucide-react';
+import { ArrowLeft, ExternalLink, AppWindow } from 'lucide-react';
+import { FioriAppList } from '@/components/fiori/FioriAppCard';
+import type { FioriApp } from '@/types';
 
 interface Props {
   params: { code: string };
@@ -21,6 +23,34 @@ async function getTCode(code: string) {
   });
 
   return tcode;
+}
+
+async function getFioriApps(tcode: string): Promise<FioriApp[]> {
+  const mappings = await prisma.fioriTCodeMapping.findMany({
+    where: {
+      OR: [
+        { tcode: { tcode: tcode.toUpperCase() } },
+        { tcodeRaw: { equals: tcode.toUpperCase(), mode: 'insensitive' } },
+      ],
+    },
+    include: {
+      fioriApp: true,
+    },
+    take: 10,
+  });
+
+  return mappings.map((m) => ({
+    id: m.fioriApp.id,
+    appId: m.fioriApp.appId,
+    appName: m.fioriApp.appName,
+    appLauncherTitle: m.fioriApp.appLauncherTitle,
+    uiTechnology: m.fioriApp.uiTechnology,
+    appComponentDesc: m.fioriApp.appComponentDesc,
+    lineOfBusiness: m.fioriApp.lineOfBusiness,
+    semanticObjectAction: m.fioriApp.semanticObjectAction,
+    businessCatalogTitle: m.fioriApp.businessCatalogTitle,
+    createdAt: m.fioriApp.createdAt,
+  }));
 }
 
 async function getRelatedTCodes(tcode: string, module: string | null) {
@@ -86,7 +116,10 @@ export default async function TCodePage({ params }: Props) {
     notFound();
   }
 
-  const relatedTCodes = await getRelatedTCodes(tcode.tcode, tcode.module);
+  const [relatedTCodes, fioriApps] = await Promise.all([
+    getRelatedTCodes(tcode.tcode, tcode.module),
+    getFioriApps(tcode.tcode),
+  ]);
 
   const moduleVariant = tcode.module?.toLowerCase() as
     | 'mm'
@@ -164,6 +197,21 @@ export default async function TCodePage({ params }: Props) {
                 <TCodeFeedback tcodeId={tcode.id} tcode={tcode.tcode} />
               </CardContent>
             </Card>
+
+            {/* SAP Fiori Apps */}
+            {fioriApps.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <AppWindow className="h-5 w-5" />
+                    SAP Fiori Apps ({fioriApps.length})
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <FioriAppList apps={fioriApps} showLink={false} />
+                </CardContent>
+              </Card>
+            )}
 
             {/* Related T-Codes */}
             {relatedTCodes.length > 0 && (

@@ -27,6 +27,7 @@ model TransactionCode {
   searchLogs          SearchLog[]
   sourceRelationships TCodeRelationship[]    @relation("SourceTCode")
   targetRelationships TCodeRelationship[]    @relation("TargetTCode")
+  fioriMappings       FioriTCodeMapping[]
 
   @@index([tcode])
   @@index([module])
@@ -82,4 +83,41 @@ model Feedback {
 
   @@index([tcodeId])
   @@map("feedback")
+}
+
+// ============================================
+// FIORI REFERENCE LIBRARY MODELS
+// ============================================
+
+model FioriApp {
+  id                   Int                 @id @default(autoincrement())
+  appId                String              @unique @map("app_id") @db.VarChar(100)
+  appName              String              @map("app_name") @db.VarChar(500)
+  appLauncherTitle     String?             @map("app_launcher_title")
+  uiTechnology         String              @map("ui_technology") @db.VarChar(80)
+  appComponentDesc     String?             @map("app_component_desc")
+  lineOfBusiness       String[]            @map("line_of_business")
+  semanticObjectAction String[]            @map("semantic_object_action")
+  businessCatalogTitle String?             @map("business_catalog_title")
+  embedding            Unsupported("vector")?
+  createdAt            DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
+  tcodeMappings        FioriTCodeMapping[]
+
+  @@index([appName])
+  @@index([uiTechnology])
+  @@map("fiori_apps")
+}
+
+model FioriTCodeMapping {
+  id         Int              @id @default(autoincrement())
+  fioriAppId Int              @map("fiori_app_id")
+  tcodeId    Int?             @map("tcode_id")
+  tcodeRaw   String           @map("tcode_raw") @db.VarChar(50)
+  fioriApp   FioriApp         @relation(fields: [fioriAppId], references: [id], onDelete: Cascade)
+  tcode      TransactionCode? @relation(fields: [tcodeId], references: [id], onDelete: SetNull)
+
+  @@unique([fioriAppId, tcodeRaw])
+  @@index([tcodeId])
+  @@index([tcodeRaw])
+  @@map("fiori_tcode_mappings")
 }
