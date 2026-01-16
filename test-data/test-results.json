@@ -7,15 +7,15 @@
       "SE11",
       "SE12",
       "SE14",
-      "ABSE61",
-      "UGMW0022",
+      "SD11",
       "DXXV",
+      "ABSE61",
       "COM_MDF"
     ],
     "inTop1": true,
     "inTop3": true,
     "inTop5": true,
-    "processingTimeMs": 10367
+    "processingTimeMs": 126
   },
   {
     "query": "Data Browser",
@@ -23,18 +23,18 @@
     "module": "BASIS",
     "results": [
       "SE16",
-      "SE12",
       "SE16H",
       "SE16N",
-      "RSSG_BROWSER",
       "/SDF/SCMOND",
+      "RSSG_BROWSER",
       "RSDAS_BROWSE",
-      "SCMOND"
+      "SCMOND",
+      "SE12"
     ],
     "inTop1": true,
     "inTop3": true,
     "inTop5": true,
-    "processingTimeMs": 10097
+    "processingTimeMs": 77
   },
   {
     "query": "Data Browser (New)",
@@ -42,18 +42,18 @@
     "module": "BASIS",
     "results": [
       "SE16",
-      "SE12",
       "SE16H",
       "SE16N",
       "/SDF/SCMOND",
-      "RSDAS_BROWSE",
       "RSSG_BROWSER",
+      "RSDAS_BROWSE",
+      "SE12",
       "/BA1/F4_MD0009"
     ],
     "inTop1": false,
-    "inTop3": false,
+    "inTop3": true,
     "inTop5": true,
-    "processingTimeMs": 10340
+    "processingTimeMs": 52
   },
   {
     "query": "Object Navigator",
@@ -65,15 +65,15 @@
       "SE15",
       "FOOBJECTBROWSER",
       "SE30_OLD",
-      "SE38",
       "OIWD",
       "MCAJ",
-      "ECNC"
+      "ECNC",
+      "WE32"
     ],
     "inTop1": true,
     "inTop3": true,
     "inTop5": true,
-    "processingTimeMs": 9656
+    "processingTimeMs": 150
   },
   {
     "query": "ABAP Editor",
@@ -81,40 +81,38 @@
     "module": "BASIS",
     "results": [
       "SE38",
-      "SA38",
-      "SDW0",
       "DBG_ABAP_EDITOR",
-      "SE32_WB99",
+      "SE39",
+      "SA38",
       "SE32",
       "ABAPDOCU",
-      "SE39",
       "AMEN"
     ],
     "inTop1": true,
     "inTop3": true,
     "inTop5": true,
-    "processingTimeMs": 9329
+    "processingTimeMs": 97
   },
   {
     "query": "Transaction Maintenance",
     "expectedTcode": "SE93",
     "module": "BASIS",
     "results": [
-      "SE93",
-      "TI72",
-      "MASF",
-      "OA81",
-      "PSOB0015",
-      "HRTNM00_REPMOD",
-      "FMFA_0015",
-      "SM01",
+      "SM38",
+      "SA39",
+      "SE97",
       "BWMSSPROCS",
+      "SM01",
+      "SE91",
+      "MASF",
+      "FMFA_0015",
+      "SP12",
       "ICLE15"
     ],
-    "inTop1": true,
-    "inTop3": true,
-    "inTop5": true,
-    "processingTimeMs": 9516
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 49
   },
   {
     "query": "ABAP Dump Analysis",
@@ -122,16 +120,15 @@
     "module": "BASIS",
     "results": [
       "ST22",
-      "ST22_E2E",
       "ST22L",
-      "ATRA",
+      "ST22_E2E",
       "ABAP_TRACE",
-      "ATRA_E2E"
+      "ATRA"
     ],
     "inTop1": true,
     "inTop3": true,
     "inTop5": true,
-    "processingTimeMs": 9278
+    "processingTimeMs": 58
   },
   {
     "query": "System Log",
@@ -139,19 +136,17 @@
     "module": "BASIS",
     "results": [
       "SM21",
-      "SM20",
-      "SM20N",
       "SLG1",
       "SE92",
-      "SM21_E2E",
       "/ISDFPS/SLG1",
       "/SDF/SLG1",
+      "SMI_APPLICATION_LOG",
       "DSLOG"
     ],
     "inTop1": true,
     "inTop3": true,
     "inTop5": true,
-    "processingTimeMs": 8321
+    "processingTimeMs": 50
   },
   {
     "query": "Job Monitoring",
@@ -160,10 +155,10 @@
     "results": [
       "SM37",
       "SWW_JOB_MON",
-      "SM36",
       "/SAPSMOSS/U03",
+      "SM39",
+      "SMX",
       "RZ01",
-      "SXMS_MONI_JOB",
       "VEG_JOBMONITOR",
       "PC00_M05_LMOM",
       "I_GRAPH_MONITOR"
@@ -171,89 +166,85 @@
     "inTop1": true,
     "inTop3": true,
     "inTop5": true,
-    "processingTimeMs": 7625
+    "processingTimeMs": 54
   },
   {
     "query": "Process Overview (App Server)",
     "expectedTcode": "SM50",
     "module": "BASIS",
     "results": [
-      "SE30",
-      "DB50",
-      "SMOD",
-      "SE15",
-      "SE61",
       "SM50",
       "ICLPCTOAPP",
-      "SB01",
       "ICLAPPTOPC",
+      "SAMT",
+      "SE90",
+      "SAMC",
+      "SMW0",
+      "SE15",
+      "SB01",
       "OS_APPLICATION"
     ],
-    "inTop1": false,
-    "inTop3": false,
+    "inTop1": true,
+    "inTop3": true,
     "inTop5": true,
-    "processingTimeMs": 8504
+    "processingTimeMs": 48
   },
   {
     "query": "Application Servers",
     "expectedTcode": "SM51",
     "module": "BASIS",
     "results": [
-      "SM51",
-      "RZ04",
-      "AS_ADMIN",
-      "/SDF/SCMON",
-      "DB50",
-      "SXMB_APPL",
       "N2UX",
+      "SM51",
+      "SXMB_APPL",
+      "WSADMIN",
       "USS_FAS",
-      "WSADMIN"
+      "SE30",
+      "DB50",
+      "/SDF/SCMON",
+      "DB26"
     ],
-    "inTop1": true,
+    "inTop1": false,
     "inTop3": true,
     "inTop5": true,
-    "processingTimeMs": 8985
+    "processingTimeMs": 12514
   },
   {
     "query": "Lock Entries",
     "expectedTcode": "SM12",
     "module": "BASIS",
     "results": [
-      "RS12",
-      "SM01",
-      "PV14",
-      "RSPLSE",
-      "F971",
-      "FKLOCK2",
       "TBLE",
       "TBLC",
+      "FKLOCK2",
+      "F971",
       "OODD"
     ],
     "inTop1": false,
     "inTop3": false,
     "inTop5": false,
-    "processingTimeMs": 7217
+    "processingTimeMs": 11650
   },
   {
     "query": "Global Process Overview",
     "expectedTcode": "SM66",
     "module": "BASIS",
     "results": [
-      "BERP",
+      "SM66_OLD",
       "CPPC",
       "CPPCN",
       "CPBL",
-      "SM66_OLD",
       "CPV6",
-      "SBWP",
-      "CP97",
+      "CP03",
+      "CP01",
+      "BERP",
       "RSDHAAP",
-      "CP03"
+      "SVGM"
     ],
     "inTop1": false,
     "inTop3": false,
     "inTop5": false,
-    "processingTimeMs": 9272
+    "processingTimeMs": 13342
   },
   {
     "query": "Logged-on Users",
@@ -261,37 +252,40 @@
     "module": "BASIS",
     "results": [
       "AL08",
-      "/VIRSA/ZVRAT_S08",
-      "SCUL",
-      "SUUMD",
-      "AUTH_DISPLAY_OBJECTS",
       "AL08_OLD",
+      "SU01D",
+      "SM05",
+      "SUUM",
+      "SU01_OLD",
+      "SUUMD",
       "RSLDAPSYNC_USER",
-      "/SAPPO/USER_REMOTE"
+      "/SAPPO/USER_REMOTE",
+      "AUTH_DISPLAY_OBJECTS"
     ],
     "inTop1": true,
     "inTop3": true,
     "inTop5": true,
-    "processingTimeMs": 7979
+    "processingTimeMs": 12253
   },
   {
     "query": "User Maintenance",
     "expectedTcode": "SU01",
     "module": "BASIS",
     "results": [
-      "SU01",
       "SU01_OLD",
+      "SU01",
       "SU10",
-      "SUPC",
-      "SUUM",
-      "SUUMD",
       "SU10_OLD",
-      "ICLEUSR"
+      "SU3",
+      "RSU01",
+      "ICLEUSR",
+      "SUPC",
+      "UGMW0013"
     ],
-    "inTop1": true,
+    "inTop1": false,
     "inTop3": true,
     "inTop5": true,
-    "processingTimeMs": 7064
+    "processingTimeMs": 13017
   },
   {
     "query": "Mass User Maintenance",
@@ -300,38 +294,38 @@
     "results": [
       "SU10_OLD",
       "SU10",
-      "UMB_MM",
-      "SU01_OLD",
-      "MASSD",
       "SU01",
-      "SU3",
-      "MSJ1"
+      "SU01_OLD",
+      "UMB_MM",
+      "MASSD",
+      "MSJ1",
+      "SU3"
     ],
     "inTop1": false,
     "inTop3": true,
     "inTop5": true,
-    "processingTimeMs": 9472
+    "processingTimeMs": 12517
   },
   {
     "query": "Role Maintenance",
     "expectedTcode": "PFCG",
     "module": "BASIS",
     "results": [
-      "SU02",
       "SRT_ROLES",
-      "RSU01",
+      "S416N_ROLE",
+      "UG_BW_PFCG",
+      "AUTH_ASSISTANT",
+      "SU02",
+      "SU21",
       "/PTGWFI/ROLE",
       "RSQ10",
-      "UG_BW_RSQ10",
-      "SQ10",
-      "S416N_ROLE",
-      "ROLE_VERS",
-      "UG_BW_PFCG"
+      "RSU01",
+      "ROLE_VERS"
     ],
     "inTop1": false,
     "inTop3": false,
     "inTop5": false,
-    "processingTimeMs": 8477
+    "processingTimeMs": 12837
   },
   {
     "query": "Client Administration",
@@ -339,82 +333,81 @@
     "module": "BASIS",
     "results": [
       "SCC4",
-      "AS_ADMIN",
-      "UG_BW_RSQ10",
-      "SQ10",
-      "RSQ10",
-      "SAUNIT_CLIENT_SETUP",
       "O052",
-      "WSADMIN",
       "SCC7",
-      "MCLIMAN"
+      "SUPC",
+      "SU02",
+      "SU86",
+      "SU03",
+      "WSADMIN",
+      "MCLIMAN",
+      "ST03T"
     ],
     "inTop1": true,
     "inTop3": true,
     "inTop5": true,
-    "processingTimeMs": 9904
+    "processingTimeMs": 12670
   },
   {
     "query": "Profile Maintenance",
     "expectedTcode": "RZ10",
     "module": "BASIS",
     "results": [
+      "PZ32",
+      "SU02",
       "OF36",
       "SU01",
-      "RSU01",
-      "SU02",
-      "PZ32",
-      "BS02",
       "SU01_OLD",
-      "OK02",
-      "UGMW0013",
-      "SL95"
+      "RZ11",
+      "SL95",
+      "BS02",
+      "OK02"
     ],
     "inTop1": false,
     "inTop3": false,
     "inTop5": false,
-    "processingTimeMs": 9405
+    "processingTimeMs": 13723
   },
   {
     "query": "Profile Parameter Display",
     "expectedTcode": "RZ11",
     "module": "BASIS",
     "results": [
-      "RZ10",
       "RZ11",
       "SPFPAR",
-      "RZ03",
-      "PZ31",
-      "PP_MY_QUALIFICATIONS",
+      "RZ10",
       "PPPD",
       "EWEBIAC_SHOW_PROFIL",
-      "TPPR"
+      "TPPR",
+      "RZ03",
+      "DB26",
+      "PP_MY_QUALIFICATIONS"
     ],
-    "inTop1": false,
+    "inTop1": true,
     "inTop3": true,
     "inTop5": true,
-    "processingTimeMs": 9682
+    "processingTimeMs": 13609
   },
   {
     "query": "Database Overview",
     "expectedTcode": "DB02",
     "module": "BASIS",
     "results": [
-      "SE11",
       "SE12",
+      "SE11",
+      "SD11",
+      "SE14",
       "DB15",
       "DB24",
-      "DB02",
-      "SE14",
       "UA_DATABASIS",
+      "DB02",
       "DBCO",
-      "DBA_VIEW_ABAP_SOURCE",
       "DB50N"
     ],
     "inTop1": false,
     "inTop3": false,
     "inTop5": true,
-    "processingTimeMs": 9728
+    "processingTimeMs": 12497
   },
   {
     "query": "Support Package Manager",
@@ -422,19 +415,19 @@
     "module": "BASIS",
     "results": [
       "SPAM",
-      "SMOD",
       "HRUUPKM1",
-      "SEPS",
-      "/SAPSMOSS/M02",
-      "/SAPSMOSS/M01",
+      "SPACKAGE",
       "J3GPAKET15",
       "J3GPAKET1",
-      "SPACKAGE"
+      "SMOD",
+      "SEPS",
+      "/SAPSMOSS/U01",
+      "SE91"
     ],
     "inTop1": true,
     "inTop3": true,
     "inTop5": true,
-    "processingTimeMs": 10049
+    "processingTimeMs": 13817
   },
   {
     "query": "SAP Notes Assistant",
@@ -442,15 +435,18 @@
     "module": "BASIS",
     "results": [
       "SNOTE",
-      "SNOTE_DISPLAY",
-      "ANST",
       "SNOTE_OLD",
-      "/ASU/SHOW_NOTE"
+      "SNOTE_DISPLAY",
+      "/ASU/SHOW_NOTE",
+      "ANST",
+      "FINB_CONF_AFTER_NOTE",
+      "SE61",
+      "SMOD"
     ],
     "inTop1": true,
     "inTop3": true,
     "inTop5": true,
-    "processingTimeMs": 8043
+    "processingTimeMs": 11411
   },
   {
     "query": "Workload Analysis",
@@ -458,37 +454,2538 @@
     "module": "BASIS",
     "results": [
       "SWI5",
+      "SWI5N",
       "ST03N",
       "ST03G",
-      "SWI5N",
-      "DB2W",
       "ST03",
+      "LTS_ANALYSIS",
       "EEWM_CU_ANALYSIS"
     ],
     "inTop1": false,
     "inTop3": true,
     "inTop5": true,
-    "processingTimeMs": 9060
+    "processingTimeMs": 9979
   },
   {
     "query": "Database Performance",
     "expectedTcode": "ST04",
     "module": "BASIS",
     "results": [
+      "ST04",
       "ST04OLD",
-      "DB6PERF",
-      "DB21",
-      "STATS",
       "ST03N",
       "ORA_PERF",
-      "ST04",
+      "DB50",
       "RSCUSTV25",
       "CNV_00001_PERFDB",
       "SWLT"
     ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 10927
+  },
+  {
+    "query": "Class Builder",
+    "expectedTcode": "SE24",
+    "module": "ABAP",
+    "results": [
+      "SE24",
+      "CL01",
+      "CL02",
+      "CLABAP",
+      "WB75",
+      "CL6D",
+      "ABSE61"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 11592
+  },
+  {
+    "query": "BAdI Definition",
+    "expectedTcode": "SE18",
+    "module": "ABAP",
+    "results": [
+      "SE18",
+      "SE19",
+      "ABSE61",
+      "SE38",
+      "/SAPCND/UE_DEV",
+      "ABAD0",
+      "GADBCDT",
+      "AD0M",
+      "SADT_PROTECTED_MODE",
+      "BDA1"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 12284
+  },
+  {
+    "query": "BAdI Implementation",
+    "expectedTcode": "SE19",
+    "module": "ABAP",
+    "results": [
+      "SE19",
+      "SE18",
+      "SMOD",
+      "SE38",
+      "ABSE61",
+      "ABAD0",
+      "AD0M",
+      "GADBCDT",
+      "GADBMM",
+      "SADT_PROTECTED_MODE"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 13287
+  },
+  {
+    "query": "Function Module",
+    "expectedTcode": "SE37",
+    "module": "ABAP",
+    "results": [
+      "SE37",
+      "FM_FUNCTION",
+      "FMME19",
+      "SE35",
+      "/SLOAP/MODULE_GEN",
+      "PE04",
+      "SE71",
+      "SE75",
+      "REORMP0022"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 13379
+  },
+  {
+    "query": "Message Class",
+    "expectedTcode": "SE91",
+    "module": "ABAP",
+    "results": [
+      "SE91",
+      "/SAPBOQ/MESSAGE",
+      "NC11",
+      "NC12",
+      "SE32_WB99",
+      "FPDP_MESSAGE",
+      "BD92",
+      "CCF1",
+      "S00",
+      "MN04"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 12947
+  },
+  {
+    "query": "SmartForms",
+    "expectedTcode": "SMARTFORMS",
+    "module": "ABAP",
+    "results": [
+      "SMARTFORMS",
+      "SFP",
+      "SE71",
+      "SWUX",
+      "PDF8",
+      "EFCS",
+      "FME5",
+      "OQ02",
+      "FXIZ"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 10337
+  },
+  {
+    "query": "Adobe Forms",
+    "expectedTcode": "SFP",
+    "module": "ABAP",
+    "results": [
+      "SFP",
+      "SMARTFORMS",
+      "SWUX",
+      "SE71",
+      "PDF9",
+      "FME5",
+      "PDF8",
+      "SE76",
+      "PDF0"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 12787
+  },
+  {
+    "query": "Screen Variants",
+    "expectedTcode": "SHD0",
+    "module": "ABAP",
+    "results": [
+      "SHD0",
+      "SHD_CHECK",
+      "MAS6",
+      "VTS6",
+      "SALV_GUI_CUST",
+      "JGZ0",
+      "CX01",
+      "CX01N",
+      "UCCC0",
+      "MCMT"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 11847
+  },
+  {
+    "query": "Code Inspector",
+    "expectedTcode": "SCI",
+    "module": "ABAP",
+    "results": [
+      "SCI",
+      "SCII",
+      "SCID",
+      "SLIN",
+      "CODE_SCANNER",
+      "SAIS_CODE_SCAN",
+      "/SDF/CD_CCA",
+      "CCAPPS",
+      "ATRA"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 12660
+  },
+  {
+    "query": "Extended Syntax Check",
+    "expectedTcode": "SLIN",
+    "module": "ABAP",
+    "results": [
+      "SLIN",
+      "UCCHECK",
+      "OACK",
+      "SCI",
+      "REDSRS01",
+      "SYNT",
+      "ATRA",
+      "ACE_CHECKON",
+      "ST22",
+      "J7LKC"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 13883
+  },
+  {
+    "query": "Create Material",
+    "expectedTcode": "MM01",
+    "module": "MM",
+    "results": [
+      "MM01",
+      "MM41",
+      "MMM1",
+      "MMN1",
+      "MAL1",
+      "JM01",
+      "MB02",
+      "OMY1",
+      "ONME",
+      "BD11"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 12237
+  },
+  {
+    "query": "Change Material",
+    "expectedTcode": "MM02",
+    "module": "MM",
+    "results": [
+      "MB02",
+      "CS02",
+      "MM02",
+      "CS05",
+      "CS08",
+      "MMAM",
+      "CS07",
+      "JM02",
+      "MAL2",
+      "JM01"
+    ],
+    "inTop1": false,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 12389
+  },
+  {
+    "query": "Display Material",
+    "expectedTcode": "MM03",
+    "module": "MM",
+    "results": [
+      "MM03",
+      "IH09",
+      "MB03",
+      "MM04",
+      "INV_DISPLAY_MAT",
+      "JM03",
+      "MGW1",
+      "MM01",
+      "MMM1"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 12919
+  },
+  {
+    "query": "Create Purchase Order",
+    "expectedTcode": "ME21N",
+    "module": "MM",
+    "results": [
+      "ME21",
+      "ME21N",
+      "OMJW",
+      "WPOHF4C",
+      "ME2W",
+      "ME2M",
+      "ME51",
+      "OT35",
+      "FPDP_CREATE"
+    ],
+    "inTop1": false,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 10815
+  },
+  {
+    "query": "Change Purchase Order",
+    "expectedTcode": "ME22N",
+    "module": "MM",
+    "results": [
+      "ME22",
+      "ME22N",
+      "WPOHF4XS",
+      "WPOHF4X",
+      "OMQ1",
+      "ME2M",
+      "ME2L",
+      "ME2J",
+      "WPOHF4C",
+      "OT35"
+    ],
+    "inTop1": false,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 13833
+  },
+  {
+    "query": "Display Purchase Order",
+    "expectedTcode": "ME23N",
+    "module": "MM",
+    "results": [
+      "ME23",
+      "ME23N",
+      "WPOHF4DS",
+      "WPOHF4D",
+      "MEPO",
+      "ME21",
+      "ME2M",
+      "MD13",
+      "MD16"
+    ],
+    "inTop1": false,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 11985
+  },
+  {
+    "query": "Create Purchase Requisition",
+    "expectedTcode": "ME51N",
+    "module": "MM",
+    "results": [
+      "ME51",
+      "ME51N",
+      "ME52",
+      "ME54N",
+      "ME54",
+      "ME53"
+    ],
+    "inTop1": false,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 10990
+  },
+  {
+    "query": "Change Purchase Requisition",
+    "expectedTcode": "ME52N",
+    "module": "MM",
+    "results": [
+      "ME52",
+      "ME52N",
+      "ME51",
+      "ME54N",
+      "ME54",
+      "ME53",
+      "FMRC22"
+    ],
+    "inTop1": false,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 12208
+  },
+  {
+    "query": "Display Purchase Requisition",
+    "expectedTcode": "ME53N",
+    "module": "MM",
+    "results": [
+      "ME53",
+      "ME53N",
+      "/KYK/ME53N",
+      "ME51",
+      "ME54N",
+      "ME54",
+      "/PTGWFI/M_DIS_REQ",
+      "/PTGWFI/F_DIS_REQ",
+      "/SAPCEM/BEDARF03"
+    ],
+    "inTop1": false,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 15056
+  },
+  {
+    "query": "Goods Movement",
+    "expectedTcode": "MIGO",
+    "module": "MM",
+    "results": [
+      "MIGO",
+      "MIGO_GI",
+      "MIGO_GR",
+      "MIGO_GO",
+      "MB11",
+      "/KYK/MIGO_MB11"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 10959
+  },
+  {
+    "query": "Goods Issue",
+    "expectedTcode": "MB1A",
+    "module": "MM",
+    "results": [
+      "/KYK/MIGO_GI",
+      "LM61",
+      "LM63",
+      "MIGO_GI",
+      "/KYK/MIGO_MB1A",
+      "MIGO",
+      "VIWBX",
+      "/KYK/MIGO_MB11",
+      "MIGO_GO",
+      "MIGO_GR"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 13582
+  },
+  {
+    "query": "Transfer Posting",
+    "expectedTcode": "MB1B",
+    "module": "MM",
+    "results": [
+      "MB1B",
+      "FMMPTRAN",
+      "MIGO_TR",
+      "FLQT1",
+      "FLQT2",
+      "LQ01",
+      "LT1E",
+      "OMQ1"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 11823
+  },
+  {
+    "query": "Other Goods Receipt",
+    "expectedTcode": "MB1C",
+    "module": "MM",
+    "results": [
+      "MB1C",
+      "/KYK/MIGO_GR_OTHER",
+      "MIGO",
+      "MIGO_GR",
+      "MIGO_GI",
+      "MIGO_GO",
+      "O3O_GRSD",
+      "GJ92",
+      "GJ93"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 12847
+  },
+  {
+    "query": "Invoice Verification",
+    "expectedTcode": "MIRO",
+    "module": "MM",
+    "results": [
+      "MR00",
+      "MRM0",
+      "MIRO",
+      "MIRA",
+      "MIR6",
+      "OLIZBW",
+      "OLIZ",
+      "MRBP",
+      "OLMR"
+    ],
+    "inTop1": false,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 12437
+  },
+  {
+    "query": "Release Blocked Invoices",
+    "expectedTcode": "MRBR",
+    "module": "MM",
+    "results": [
+      "MRBR",
+      "/PTGWFI/M_LIX_REL",
+      "MR02",
+      "FKK_PAYMENTRELEASE",
+      "/ORS/RELEASE_LOCK",
+      "MIRO",
+      "J1IREJECTION"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 11311
+  },
+  {
+    "query": "Purchase Orders by Number",
+    "expectedTcode": "ME2N",
+    "module": "MM",
+    "results": [
+      "ME2N",
+      "OT35",
+      "ME2M",
+      "ME2L",
+      "ME2C",
+      "ME2J",
+      "WPOHF4D",
+      "WF10"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 12437
+  },
+  {
+    "query": "Purchase Requisitions",
+    "expectedTcode": "ME5A",
+    "module": "MM",
+    "results": [
+      "ME51",
+      "ME51N",
+      "ME52NB",
+      "ME5J",
+      "ME52",
+      "ML96",
+      "FMRC22"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 11311
+  },
+  {
+    "query": "Create Vendor",
+    "expectedTcode": "MK01",
+    "module": "MM",
+    "results": [
+      "MK01",
+      "FK01",
+      "XK01",
+      "FLVN1",
+      "FMFGCCRVENDORCREATE",
+      "JGZ3",
+      "WL00",
+      "EACCMAIN",
+      "BD14"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 12538
+  },
+  {
+    "query": "Change Vendor",
+    "expectedTcode": "MK02",
+    "module": "MM",
+    "results": [
+      "MK02",
+      "MK04",
+      "FLVN2",
+      "JGZ4",
+      "ME22",
+      "CISVU",
+      "MK01",
+      "FLVN1",
+      "JGZ3",
+      "MEW0"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 13666
+  },
+  {
+    "query": "Display Vendor",
+    "expectedTcode": "MK03",
+    "module": "MM",
+    "results": [
+      "MK03",
+      "FLVN3",
+      "WL00",
+      "VI74",
+      "VI74N",
+      "ML44",
+      "ML38",
+      "ME1L",
+      "ME2L",
+      "MEW0"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 12197
+  },
+  {
+    "query": "Create Vendor (Central)",
+    "expectedTcode": "XK01",
+    "module": "MM",
+    "results": [
+      "XK01",
+      "MK01",
+      "BUG1",
+      "BP",
+      "FLVN1",
+      "ME11",
+      "XK05",
+      "JGZ3",
+      "FMFGCCRVENDORCREATE"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 12370
+  },
+  {
+    "query": "Change Vendor (Central)",
+    "expectedTcode": "XK02",
+    "module": "MM",
+    "results": [
+      "XK04",
+      "/PTGWFI/M_CHG_VEN",
+      "/PTGWFI/F_CHG_VEN",
+      "XK02",
+      "MK02",
+      "MK04",
+      "ME12",
+      "ME14",
+      "MK01",
+      "XK05"
+    ],
     "inTop1": false,
     "inTop3": false,
     "inTop5": true,
-    "processingTimeMs": 9954
+    "processingTimeMs": 13054
+  },
+  {
+    "query": "Display Vendor (Central)",
+    "expectedTcode": "XK03",
+    "module": "MM",
+    "results": [
+      "XK03",
+      "FLVN3",
+      "WL00",
+      "FLVN1",
+      "ME1L",
+      "XK04",
+      "FMFGCCRVENDORUPDATE",
+      "XK05",
+      "VI74",
+      "J1B_LFB9"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 13254
+  },
+  {
+    "query": "Create Sales Order",
+    "expectedTcode": "VA01",
+    "module": "SD",
+    "results": [
+      "VA01",
+      "V-01",
+      "VA05",
+      "VA05N",
+      "V-03",
+      "VD01",
+      "WCSOD"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 59
+  },
+  {
+    "query": "Change Sales Order",
+    "expectedTcode": "VA02",
+    "module": "SD",
+    "results": [
+      "VA02",
+      "VB22",
+      "WCSOD",
+      "VA05",
+      "VA05N",
+      "VF42",
+      "V-01",
+      "VC02",
+      "O3U_PC032"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 11299
+  },
+  {
+    "query": "Display Sales Order",
+    "expectedTcode": "VA03",
+    "module": "SD",
+    "results": [
+      "VA03",
+      "VA05",
+      "VA05N",
+      "VA06",
+      "VD03",
+      "WCSOD",
+      "V-01"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 66
+  },
+  {
+    "query": "Create Outbound Delivery",
+    "expectedTcode": "VL01N",
+    "module": "SD",
+    "results": [
+      "WF60",
+      "VL06D",
+      "VL02",
+      "VL02N",
+      "WF61",
+      "VL03N",
+      "VL03",
+      "VL31N",
+      "ODLC"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 11905
+  },
+  {
+    "query": "Change Outbound Delivery",
+    "expectedTcode": "VL02N",
+    "module": "SD",
+    "results": [
+      "VL02",
+      "VL02N",
+      "VL03N",
+      "VI77X",
+      "VI77",
+      "VL06D",
+      "VL06L",
+      "WF60"
+    ],
+    "inTop1": false,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 11824
+  },
+  {
+    "query": "Display Outbound Delivery",
+    "expectedTcode": "VL03N",
+    "module": "SD",
+    "results": [
+      "VL03N",
+      "VL03",
+      "VL03N_ITEM",
+      "VL06D",
+      "VLPODA",
+      "VL06L",
+      "ODLC",
+      "WF60"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 12643
+  },
+  {
+    "query": "Create Billing Document",
+    "expectedTcode": "VF01",
+    "module": "SD",
+    "results": [
+      "VF01",
+      "JF01",
+      "JF04",
+      "VF05N",
+      "VF05",
+      "JHF1",
+      "VF31",
+      "EA22"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 10695
+  },
+  {
+    "query": "Change Billing Document",
+    "expectedTcode": "VF02",
+    "module": "SD",
+    "results": [
+      "VF02",
+      "JF02",
+      "VBOF",
+      "VI14",
+      "VF05N",
+      "VF42",
+      "EA22",
+      "EA20"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 10900
+  },
+  {
+    "query": "Display Billing Document",
+    "expectedTcode": "VF03",
+    "module": "SD",
+    "results": [
+      "VF03",
+      "EA22",
+      "JF03",
+      "VF05N",
+      "VF05",
+      "EARDISP03",
+      "FKKINVBILL_DISP",
+      "VF31"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 10799
+  },
+  {
+    "query": "Create Pricing Condition",
+    "expectedTcode": "VK11",
+    "module": "SD",
+    "results": [
+      "V/03",
+      "OWTYP01",
+      "CACSCOND0022",
+      "VOK0",
+      "PRC_CONDTYPE",
+      "ON31",
+      "WRF_PPW03"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 11469
+  },
+  {
+    "query": "Change Pricing Condition",
+    "expectedTcode": "VK12",
+    "module": "SD",
+    "results": [
+      "VKP6",
+      "CACSCOND0023",
+      "V/04",
+      "V/03",
+      "ON31",
+      "PRC_CONDTYPE",
+      "VOK0",
+      "CACSCOND0002",
+      "AKVK"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 12996
+  },
+  {
+    "query": "Display Pricing Condition",
+    "expectedTcode": "VK13",
+    "module": "SD",
+    "results": [
+      "V/05",
+      "VKP7",
+      "OWTYP03",
+      "J/H7",
+      "PRC_CONDTYPE",
+      "/DSD/PR_PRO_DP",
+      "VOK0",
+      "V/03",
+      "ON31",
+      "SDVK"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 14588
+  },
+  {
+    "query": "Sales Document Type Configuration",
+    "expectedTcode": "VOV8",
+    "module": "SD",
+    "results": [
+      "OQBB",
+      "VAKC",
+      "VKM3",
+      "VF42",
+      "VA71",
+      "CNS54",
+      "VA05",
+      "CNV_40305_BLART"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 12845
+  },
+  {
+    "query": "Partner Determination",
+    "expectedTcode": "VOPAN",
+    "module": "SD",
+    "results": [
+      "BP",
+      "FPDMS3",
+      "FS00101",
+      "FS00102",
+      "FS00103",
+      "FZP5",
+      "BPB4",
+      "FO4P",
+      "FZP3",
+      "FPP2"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 13613
+  },
+  {
+    "query": "Display Condition Table",
+    "expectedTcode": "V/03",
+    "module": "SD",
+    "results": [
+      "V/05",
+      "OWTYP03",
+      "VK05",
+      "CACSCOND0014",
+      "OCMAC03",
+      "CACSCOND0024",
+      "ORLRS3",
+      "JHG3",
+      "M705",
+      "CACSCOND0003"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 12185
+  },
+  {
+    "query": "Pricing Condition Type",
+    "expectedTcode": "V/06",
+    "module": "SD",
+    "results": [
+      "PRC_CONDTYPE",
+      "V/03",
+      "OWTYP01",
+      "CACSCOND0015",
+      "CACSCOND0022",
+      "ON31",
+      "VOK0"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 11251
+  },
+  {
+    "query": "Pricing Procedure",
+    "expectedTcode": "V/08",
+    "module": "SD",
+    "results": [
+      "PRC_PRICPROC",
+      "ONBC",
+      "V_I8",
+      "V/03",
+      "DP81",
+      "CACSCOND0022",
+      "VCHECKT683",
+      "VT683S_VAR_AV02",
+      "VT683S_VAR_AV01",
+      "CACSCOND0021"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 12803
+  },
+  {
+    "query": "Sales Order List",
+    "expectedTcode": "VA05",
+    "module": "SD",
+    "results": [
+      "VA05",
+      "VA05N",
+      "VA03",
+      "VA06",
+      "VB25",
+      "OIUG",
+      "/BEV1/SR2",
+      "WPOHF2C"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 11104
+  },
+  {
+    "query": "Billing List",
+    "expectedTcode": "VF05",
+    "module": "SD",
+    "results": [
+      "VF05",
+      "VF05N",
+      "VF04",
+      "WLFB",
+      "J1IDUELIST",
+      "JFLI",
+      "WLFC"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 11412
+  },
+  {
+    "query": "Outbound Delivery Monitor",
+    "expectedTcode": "VL06O",
+    "module": "SD",
+    "results": [
+      "VL06O",
+      "VL06D",
+      "VL03",
+      "VL03N",
+      "VL06I",
+      "ODLC"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 10696
+  },
+  {
+    "query": "G/L Posting",
+    "expectedTcode": "FB50",
+    "module": "FI",
+    "results": [
+      "FB50",
+      "F-02",
+      "AD08",
+      "FB1S",
+      "OASV",
+      "FPG1",
+      "/EACA/GL_MANPOS_VM",
+      "F.5E"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 12027
+  },
+  {
+    "query": "Vendor Invoice",
+    "expectedTcode": "FB60",
+    "module": "FI",
+    "results": [
+      "MIRO",
+      "MR00",
+      "MR01",
+      "MIRA",
+      "FMCAINVH",
+      "OLMR",
+      "OLIZBW",
+      "/OPT/VIM_IMG418",
+      "MRHR"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 12543
+  },
+  {
+    "query": "Customer Invoice",
+    "expectedTcode": "FB70",
+    "module": "FI",
+    "results": [
+      "F-22",
+      "FB70",
+      "VF01",
+      "F-64",
+      "JF01",
+      "ICLINVNOT01",
+      "MRHR",
+      "MR01",
+      "MR00"
+    ],
+    "inTop1": false,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 12743
+  },
+  {
+    "query": "G/L Posting",
+    "expectedTcode": "F-02",
+    "module": "FI",
+    "results": [
+      "FB50",
+      "F-02",
+      "AD08",
+      "FB1S",
+      "OASV",
+      "FPG1",
+      "/EACA/GL_MANPOS_VM",
+      "F.5E"
+    ],
+    "inTop1": false,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 95
+  },
+  {
+    "query": "Incoming Payments",
+    "expectedTcode": "F-28",
+    "module": "FI",
+    "results": [
+      "F-28",
+      "F-06",
+      "F-52",
+      "FBZ1",
+      "FNRD",
+      "FO8Q",
+      "FOMZ",
+      "F-53"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 12491
+  },
+  {
+    "query": "Outgoing Payments",
+    "expectedTcode": "F-53",
+    "module": "FI",
+    "results": [
+      "F-07",
+      "F-31",
+      "F-53",
+      "FBZ2",
+      "PC00_M12_BOWM_EP",
+      "FB60"
+    ],
+    "inTop1": false,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 12745
+  },
+  {
+    "query": "Automatic Payments",
+    "expectedTcode": "F110",
+    "module": "FI",
+    "results": [
+      "F110",
+      "F110S",
+      "F11CU",
+      "PC00_M04_RPCSPXE1",
+      "FPMA_PP",
+      "F-52",
+      "FWSO",
+      "FNPAD"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 11310
+  },
+  {
+    "query": "Vendor Line Items",
+    "expectedTcode": "FBL1N",
+    "module": "FI",
+    "results": [
+      "FBL2N",
+      "FBL1",
+      "FBL1N",
+      "FBL4N",
+      "FBL3N",
+      "MR51",
+      "FAIR01",
+      "FAIR02",
+      "FOEP0001",
+      "FLQLI"
+    ],
+    "inTop1": false,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 13807
+  },
+  {
+    "query": "G/L Line Items",
+    "expectedTcode": "FBL3N",
+    "module": "FI",
+    "results": [
+      "FBL3",
+      "FBL3N",
+      "FAGLL03",
+      "FBL4N",
+      "FAGLL03H",
+      "GJLI",
+      "F.51"
+    ],
+    "inTop1": false,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 10660
+  },
+  {
+    "query": "Customer Line Items",
+    "expectedTcode": "FBL5N",
+    "module": "FI",
+    "results": [
+      "FBL5",
+      "FBL5N",
+      "FBL6N",
+      "FBL3",
+      "FBL4N",
+      "MR51",
+      "AB08",
+      "ACACPSDOCITEMS",
+      "FAIR01"
+    ],
+    "inTop1": false,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 12537
+  },
+  {
+    "query": "G/L Master Maintenance",
+    "expectedTcode": "FS00",
+    "module": "FI",
+    "results": [
+      "FS00",
+      "FSP0",
+      "FSS0",
+      "/EACA/GL_MD",
+      "FSP4",
+      "OB_GLACC11",
+      "OB_GLACC13",
+      "OB_GLACC12"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 12337
+  },
+  {
+    "query": "Open Posting Periods",
+    "expectedTcode": "OB52",
+    "module": "FI",
+    "results": [
+      "OB52B",
+      "FBICP1",
+      "FBICP2",
+      "FAGL_SLL_400_MCLOSE",
+      "FP27",
+      "FOIQ",
+      "PSA86",
+      "FPE1LG",
+      "FOB1"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 11618
+  },
+  {
+    "query": "Automatic Account Determination",
+    "expectedTcode": "OBYC",
+    "module": "FI",
+    "results": [
+      "J3RKKRS",
+      "FBBP",
+      "FBBA",
+      "FBIC002",
+      "ACACAD_META",
+      "VY8A",
+      "OMWW",
+      "RRICB_AD",
+      "OB_GLACC21",
+      "CACS_DET_ACSFI"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 12231
+  },
+  {
+    "query": "Document Types",
+    "expectedTcode": "OBA7",
+    "module": "FI",
+    "results": [
+      "OWTYSC02",
+      "CXE1",
+      "CXDT_TF500",
+      "/OPT/VIM_1CX14",
+      "/OPT/VIM_1CX1",
+      "MB02",
+      "MEI1",
+      "GCT8",
+      "GADBCDT"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 12950
+  },
+  {
+    "query": "G/L Line Items (New GL)",
+    "expectedTcode": "FAGLL03",
+    "module": "FI",
+    "results": [
+      "FAGLL03",
+      "FBL3",
+      "FBL3N",
+      "FBL4N",
+      "FAGLL03H",
+      "GJLI",
+      "NOR_GL"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 11822
+  },
+  {
+    "query": "Trial Balance",
+    "expectedTcode": "S_ALR_87012326",
+    "module": "FI",
+    "results": [
+      "RFACTS1_BL",
+      "RFACTS2_BL",
+      "FS10",
+      "F.5F",
+      "OBM5",
+      "9KE4",
+      "FAIB05",
+      "FAIR05",
+      "F-03",
+      "F99D"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 12436
+  },
+  {
+    "query": "Financial Statements",
+    "expectedTcode": "F.01",
+    "module": "FI",
+    "results": [
+      "F.01",
+      "FC10N",
+      "J3RFFSALL",
+      "FC10",
+      "FSE3",
+      "F101",
+      "FSIG",
+      "RFIDATAFS",
+      "FS10",
+      "J3RFACCST"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 12646
+  },
+  {
+    "query": "G/L Balance Carryforward",
+    "expectedTcode": "F.07",
+    "module": "FI",
+    "results": [
+      "FAGLGVTR",
+      "F.07",
+      "FAGL_UPL_CF",
+      "GLGVTR",
+      "ACACCARRYFORWARD",
+      "SOACARRYFORWARD",
+      "FS10",
+      "OBK8"
+    ],
+    "inTop1": false,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 11483
+  },
+  {
+    "query": "Create Cost Center",
+    "expectedTcode": "KS01",
+    "module": "CO",
+    "results": [
+      "KS01",
+      "KSH1",
+      "KPZ2",
+      "KPZ3",
+      "OOCC",
+      "KEU7N",
+      "BD17",
+      "KS12",
+      "BD16"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 11956
+  },
+  {
+    "query": "Change Cost Center",
+    "expectedTcode": "KS02",
+    "module": "CO",
+    "results": [
+      "KS02",
+      "KS12",
+      "KSH2",
+      "KS03",
+      "KS13",
+      "BD16",
+      "BD17"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 10082
+  },
+  {
+    "query": "Display Cost Center",
+    "expectedTcode": "KS03",
+    "module": "CO",
+    "results": [
+      "KS03",
+      "KS13",
+      "KS05",
+      "KSH3",
+      "PC00_MNA_CC_ADM",
+      "0KW7",
+      "KA23",
+      "COCUSDIS",
+      "CES3"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 12540
+  },
+  {
+    "query": "Cost Center Line Items",
+    "expectedTcode": "KSB1",
+    "module": "CO",
+    "results": [
+      "KSB1",
+      "KSBX",
+      "KSBP",
+      "KSBPN",
+      "KSB2",
+      "KS03",
+      "KS05",
+      "KSH3",
+      "OOCC"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 12224
+  },
+  {
+    "query": "Cost Center Planning",
+    "expectedTcode": "KSBP",
+    "module": "CO",
+    "results": [
+      "KP97",
+      "KSB9",
+      "KSBL",
+      "UPB_CCP",
+      "KSP4",
+      "KPA7",
+      "KEPM"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 10600
+  },
+  {
+    "query": "Create Internal Order",
+    "expectedTcode": "KO01",
+    "module": "CO",
+    "results": [
+      "KO01",
+      "JKB1X",
+      "KO03",
+      "KO1ECP",
+      "KKC4",
+      "KKC1",
+      "KKH1",
+      "KOT3_OPA",
+      "KOT2_OPA"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 10926
+  },
+  {
+    "query": "Change Internal Order",
+    "expectedTcode": "KO02",
+    "module": "CO",
+    "results": [
+      "JKB2X",
+      "JKB2",
+      "KO02",
+      "KO22",
+      "KO1ECP",
+      "KKC5",
+      "KKH2",
+      "KO01",
+      "JKB1X"
+    ],
+    "inTop1": false,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 12514
+  },
+  {
+    "query": "Display Internal Order",
+    "expectedTcode": "KO03",
+    "module": "CO",
+    "results": [
+      "KO03",
+      "JKB4",
+      "JKB3",
+      "JKB3X",
+      "KO01",
+      "KO1ECP",
+      "KSR1_ORC",
+      "CK89"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 10285
+  },
+  {
+    "query": "Order Line Items",
+    "expectedTcode": "KOB1",
+    "module": "CO",
+    "results": [
+      "FLQLI",
+      "KOBP",
+      "KOB1",
+      "KOB6",
+      "VA03",
+      "VA05",
+      "VA05N",
+      "VAKC",
+      "VKM3",
+      "AB08"
+    ],
+    "inTop1": false,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 13154
+  },
+  {
+    "query": "Activity Price Planning",
+    "expectedTcode": "KP26",
+    "module": "CO",
+    "results": [
+      "CPPI",
+      "KKC4",
+      "CKMPRP",
+      "KO1ECP",
+      "OOKP",
+      "KKE6",
+      "KPA7",
+      "KPA6",
+      "HCMWAOKOPL1"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 12503
+  },
+  {
+    "query": "Maintain Controlling Area",
+    "expectedTcode": "OKKP",
+    "module": "CO",
+    "results": [
+      "OKKA",
+      "OKKP",
+      "OX06",
+      "OKKS",
+      "OX19",
+      "KEA0O",
+      "KEA0",
+      "KE5C"
+    ],
+    "inTop1": false,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 10628
+  },
+  {
+    "query": "Create Profit Center",
+    "expectedTcode": "KE51",
+    "module": "CO",
+    "results": [
+      "KCH1",
+      "KE5X",
+      "KEMDM",
+      "KE59",
+      "9KE0",
+      "KEOAP2",
+      "KEOA2",
+      "PROF",
+      "CXN011"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 11478
+  },
+  {
+    "query": "Change Profit Center",
+    "expectedTcode": "KE52",
+    "module": "CO",
+    "results": [
+      "KCH2",
+      "KEOAP2",
+      "PROF",
+      "KE77",
+      "CNV_20360_PRCTR_STR",
+      "CNV_20360_PRCTR",
+      "KE59",
+      "KS02",
+      "KCH1"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 12471
+  },
+  {
+    "query": "Display Profit Center",
+    "expectedTcode": "KE53",
+    "module": "CO",
+    "results": [
+      "9KE9",
+      "KEOAP3",
+      "KE5X",
+      "KE5Z",
+      "6KEA",
+      "KCH3",
+      "KE59",
+      "KPRC_COMM",
+      "PROF",
+      "CRAA"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 12131
+  },
+  {
+    "query": "CO-PA Line Items",
+    "expectedTcode": "KE24",
+    "module": "CO",
+    "results": [
+      "KE23",
+      "KE23N",
+      "KE21",
+      "KECB",
+      "KE5Z",
+      "KE5Y",
+      "KE5ZH",
+      "KE31",
+      "KE30"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 11718
+  },
+  {
+    "query": "MRP Run",
+    "expectedTcode": "MD01",
+    "module": "PP",
+    "results": [
+      "MD01",
+      "MDBT",
+      "MD02",
+      "CMRP",
+      "MDRP",
+      "MDW1",
+      "DRPA"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 10906
+  },
+  {
+    "query": "Single Item MRP",
+    "expectedTcode": "MD02",
+    "module": "PP",
+    "results": [
+      "MD02",
+      "MD03",
+      "MD01",
+      "CMRP",
+      "MS05",
+      "MS04",
+      "OPP1",
+      "MS06"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 10926
+  },
+  {
+    "query": "Stock/Requirements List",
+    "expectedTcode": "MD04",
+    "module": "PP",
+    "results": [
+      "MD04",
+      "MS04",
+      "AMRP",
+      "MS05",
+      "MD01",
+      "WRBDL",
+      "WRBDL2"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 10473
+  },
+  {
+    "query": "Create Production Order",
+    "expectedTcode": "CO01",
+    "module": "PP",
+    "results": [
+      "CO01",
+      "KKF1",
+      "CO15",
+      "COR1",
+      "CS61",
+      "COOIS",
+      "CSAB",
+      "CSK2"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 11127
+  },
+  {
+    "query": "Change Production Order",
+    "expectedTcode": "CO02",
+    "module": "PP",
+    "results": [
+      "KKF2",
+      "CO02",
+      "COR2",
+      "CO08",
+      "KKF1",
+      "CO01",
+      "CS62",
+      "KO02"
+    ],
+    "inTop1": false,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 11852
+  },
+  {
+    "query": "Display Production Order",
+    "expectedTcode": "CO03",
+    "module": "PP",
+    "results": [
+      "CO03",
+      "COOIS",
+      "COR3",
+      "KKF3",
+      "CKFA",
+      "CO04",
+      "KKF1",
+      "COW1",
+      "JKP3",
+      "/SAPPO/PPO3"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 12159
+  },
+  {
+    "query": "Create Work Center",
+    "expectedTcode": "CR01",
+    "module": "PP",
+    "results": [
+      "CRAH",
+      "PC00_M09_ISTW",
+      "CRAV",
+      "PWKC",
+      "CR07",
+      "CMP3",
+      "PQ01"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 12384
+  },
+  {
+    "query": "Change Work Center",
+    "expectedTcode": "CR02",
+    "module": "PP",
+    "results": [
+      "CRAV",
+      "PC00_M09_CHWP",
+      "CR07",
+      "CR06",
+      "CRAH",
+      "CM02",
+      "CMP3",
+      "PQ01",
+      "CA85"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 11902
+  },
+  {
+    "query": "Display Work Center",
+    "expectedTcode": "CR03",
+    "module": "PP",
+    "results": [
+      "CRAA",
+      "PO01D",
+      "CR07",
+      "CR60",
+      "CM02",
+      "CMP3",
+      "PC00_M09_SHWP",
+      "CRAH",
+      "WCL8"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 12934
+  },
+  {
+    "query": "Create Routing",
+    "expectedTcode": "CA01",
+    "module": "PP",
+    "results": [
+      "CA01",
+      "CA00",
+      "TP40",
+      "LROUT",
+      "/SAPMP/SEROU",
+      "CSCPPLPA",
+      "SBCA",
+      "LDE1",
+      "MDRP",
+      "MDM5"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 12742
+  },
+  {
+    "query": "Change Routing",
+    "expectedTcode": "CA02",
+    "module": "PP",
+    "results": [
+      "CA02",
+      "CA01",
+      "CA22",
+      "TP40",
+      "COR2",
+      "CP02",
+      "SBRREORG",
+      "/SAPMP/SEROU",
+      "/SAPMP/PP_COHV"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 12026
+  },
+  {
+    "query": "Display Routing",
+    "expectedTcode": "CA03",
+    "module": "PP",
+    "results": [
+      "CA03",
+      "CA00",
+      "CA23",
+      "LDE1",
+      "CA01",
+      "TP40",
+      "/SAPMP/SEROU",
+      "COR1",
+      "CO04"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 12133
+  },
+  {
+    "query": "Create BOM",
+    "expectedTcode": "CS01",
+    "module": "PP",
+    "results": [
+      "CS01",
+      "IB01",
+      "IB11",
+      "CS71",
+      "CURTO_CREATE_BOM",
+      "CS07",
+      "J3GSL01",
+      "OS45",
+      "CU51"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 11615
+  },
+  {
+    "query": "Change BOM",
+    "expectedTcode": "CS02",
+    "module": "PP",
+    "results": [
+      "CS83",
+      "CS72",
+      "CS02",
+      "MDSP",
+      "CS80",
+      "CV15",
+      "IB80",
+      "IB05",
+      "IB02",
+      "OS43"
+    ],
+    "inTop1": false,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 12542
+  },
+  {
+    "query": "Display BOM",
+    "expectedTcode": "CS03",
+    "module": "PP",
+    "results": [
+      "CS03",
+      "CU52",
+      "/SAPCEM/SHOW_BOM",
+      "CS06",
+      "IB03",
+      "CV16",
+      "IB06",
+      "CS02",
+      "CS07",
+      "CS01"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 11720
+  },
+  {
+    "query": "Create Quality Notification",
+    "expectedTcode": "QE01",
+    "module": "QM",
+    "results": [
+      "QM01",
+      "QMW1",
+      "QM02",
+      "QM00",
+      "QM10",
+      "QA00"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 10899
+  },
+  {
+    "query": "Change Quality Notification",
+    "expectedTcode": "QE02",
+    "module": "QM",
+    "results": [
+      "QM02",
+      "QM10",
+      "QM01",
+      "QM00",
+      "QMW1",
+      "/SAPSMOSS/QM10"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 9977
+  },
+  {
+    "query": "Display Quality Notification",
+    "expectedTcode": "QE03",
+    "module": "QM",
+    "results": [
+      "QM03",
+      "QM00",
+      "QM02",
+      "QM01",
+      "QDL3",
+      "QI03",
+      "QA00",
+      "PC00_M01_CBDLD0_DISP",
+      "PC00_M01_EHVM_DISPLY"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 12858
+  },
+  {
+    "query": "Inspection Lots",
+    "expectedTcode": "QA32",
+    "module": "QM",
+    "results": [
+      "QA01",
+      "QA01A",
+      "QA32",
+      "QA02",
+      "QA33",
+      "QVM1",
+      "QVM2",
+      "HB33"
+    ],
+    "inTop1": false,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 10821
+  },
+  {
+    "query": "Usage Decision",
+    "expectedTcode": "QA11",
+    "module": "QM",
+    "results": [
+      "QA13",
+      "QA19",
+      "QA40",
+      "QA10L",
+      "QA40L",
+      "QA60L",
+      "VE55"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 11680
+  },
+  {
+    "query": "Create Inspection Plan",
+    "expectedTcode": "QS21",
+    "module": "QM",
+    "results": [
+      "QP01",
+      "QP21S",
+      "QP02",
+      "QP03",
+      "QPC1",
+      "QA01",
+      "QA01A",
+      "QST04",
+      "QS31",
+      "QA02"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 12063
+  },
+  {
+    "query": "Create Maintenance Notification",
+    "expectedTcode": "IW21",
+    "module": "PM",
+    "results": [
+      "IW21",
+      "IW26",
+      "IP01",
+      "IP04",
+      "IPCS",
+      "P01A_RBM02",
+      "P01A_RBM01",
+      "PC00_M01_ZFAKZ02"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 12358
+  },
+  {
+    "query": "Change Maintenance Notification",
+    "expectedTcode": "IW22",
+    "module": "PM",
+    "results": [
+      "P01A_VM06",
+      "EBPP_CUST_CHNG",
+      "IP17",
+      "IP15",
+      "IP02",
+      "IP05",
+      "IW26",
+      "IW72"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 11874
+  },
+  {
+    "query": "Display Maintenance Notification",
+    "expectedTcode": "IW23",
+    "module": "PM",
+    "results": [
+      "IW23",
+      "IW53",
+      "IP03",
+      "IW59",
+      "PC00_M01_CBDLD0_DISP",
+      "PC00_M01_EHVM_DISPLY",
+      "PC00_M01_RPUA1LD0_I",
+      "IW26"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 13610
+  },
+  {
+    "query": "Create Maintenance Order",
+    "expectedTcode": "IW31",
+    "module": "PM",
+    "results": [
+      "IW31",
+      "IW26",
+      "IP01",
+      "IW81",
+      "IP04",
+      "KSR1_ORI",
+      "OMJW",
+      "OQID"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 11636
+  },
+  {
+    "query": "Change Maintenance Order",
+    "expectedTcode": "IW32",
+    "module": "PM",
+    "results": [
+      "IW38",
+      "IW37N",
+      "IW72",
+      "IP15",
+      "IP05",
+      "IP17",
+      "IW81",
+      "KO02",
+      "IW26",
+      "KSR1_ORI"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 12139
+  },
+  {
+    "query": "Display Maintenance Order",
+    "expectedTcode": "IW33",
+    "module": "PM",
+    "results": [
+      "IW33",
+      "IW39",
+      "IW73",
+      "IW49N",
+      "IP03",
+      "IP18",
+      "IP06",
+      "OQID",
+      "OKOL"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 12358
+  },
+  {
+    "query": "Create Equipment",
+    "expectedTcode": "IL01",
+    "module": "PM",
+    "results": [
+      "IE08",
+      "IE01",
+      "ILM_EQM1",
+      "IB01",
+      "IA01",
+      "IN07",
+      "IP01",
+      "AS01"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 11009
+  },
+  {
+    "query": "Change Equipment",
+    "expectedTcode": "IL02",
+    "module": "PM",
+    "results": [
+      "IA02",
+      "IE06",
+      "IEQCM1",
+      "IB08",
+      "IN08",
+      "IN18",
+      "ILM_EQM2",
+      "IP21"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 11853
+  },
+  {
+    "query": "Display Equipment",
+    "expectedTcode": "IL03",
+    "module": "PM",
+    "results": [
+      "IH08",
+      "IH10",
+      "IE03",
+      "/ISDFPS/DISP_EQU_SIT",
+      "OIWE",
+      "AS03",
+      "AT03",
+      "AS01",
+      "AT01",
+      "AS02"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 13842
+  },
+  {
+    "query": "Create Transfer Order",
+    "expectedTcode": "LT01",
+    "module": "WM",
+    "results": [
+      "LT01",
+      "LT10",
+      "LT1E",
+      "LT1D",
+      "LT26",
+      "OMKX",
+      "OMKZ",
+      "OMQ1"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 11413
+  },
+  {
+    "query": "Change Transfer Order",
+    "expectedTcode": "LT02",
+    "module": "WM",
+    "results": [
+      "LT1A",
+      "LT01",
+      "LT12",
+      "LT1E",
+      "LT1D",
+      "KO02",
+      "WCSOC",
+      "OMQ1"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 11916
+  },
+  {
+    "query": "Display Transfer Order",
+    "expectedTcode": "LT03",
+    "module": "WM",
+    "results": [
+      "LT21",
+      "LT25",
+      "LT25A",
+      "JK34",
+      "JK33",
+      "LT01",
+      "LT26",
+      "LT1E",
+      "LT27"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 11474
+  },
+  {
+    "query": "Warehouse Stock",
+    "expectedTcode": "LX02",
+    "module": "WM",
+    "results": [
+      "MB52",
+      "LS26",
+      "MMBE",
+      "LI05",
+      "MB54",
+      "WSSS",
+      "J4GM",
+      "O3O_SR20"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 12693
+  },
+  {
+    "query": "Bin Stock",
+    "expectedTcode": "LS24",
+    "module": "WM",
+    "results": [
+      "LI05",
+      "LS26",
+      "OMLG",
+      "MB52",
+      "/CWM/STOCK",
+      "LX26",
+      "LX25",
+      "JBBB",
+      "WSSS",
+      "J3RFLVMOBVEDH"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 11720
+  },
+  {
+    "query": "Maintain HR Master Data",
+    "expectedTcode": "PA30",
+    "module": "HCM",
+    "results": [
+      "PA30",
+      "PRMD",
+      "PAC5",
+      "TPMD",
+      "PB30",
+      "HRRSM00FBA"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 9942
+  },
+  {
+    "query": "Display HR Master Data",
+    "expectedTcode": "PA20",
+    "module": "HCM",
+    "results": [
+      "PRMS",
+      "TPMS",
+      "PA30",
+      "PAC5",
+      "PB30",
+      "OOPD",
+      "HRRSM00FBA",
+      "PA00",
+      "PRMD",
+      "TPMD"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 13397
+  },
+  {
+    "query": "Personnel Actions",
+    "expectedTcode": "PA40",
+    "module": "HCM",
+    "results": [
+      "PA40",
+      "PRMM",
+      "TPMM",
+      "PA30",
+      "PAT1",
+      "PB40",
+      "OG01",
+      "PERSONAS"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 11360
+  },
+  {
+    "query": "Create Organizational Object",
+    "expectedTcode": "OM01",
+    "module": "HCM",
+    "results": [
+      "NB20",
+      "OMGEN",
+      "PMOC",
+      "/SAPPCE/ORG01",
+      "PO10D",
+      "0817_INS",
+      "OOPE",
+      "ONCG"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 11670
+  },
+  {
+    "query": "Organization and Staffing",
+    "expectedTcode": "PPOME",
+    "module": "HCM",
+    "results": [
+      "UG_HR_PPOSE",
+      "UG_HR_PPOME",
+      "UG_HR_PPOCE",
+      "PPOSE",
+      "PPOCE",
+      "PPOME",
+      "PO10",
+      "PECM_PREP_ORGUNITS"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": true,
+    "processingTimeMs": 12991
+  },
+  {
+    "query": "Time Evaluation",
+    "expectedTcode": "PT60",
+    "module": "HCM",
+    "results": [
+      "PT60",
+      "PT60_NON_CE",
+      "PT_ERL00",
+      "PT70",
+      "PT00",
+      "PT_BAL00",
+      "MC11",
+      "PC00_M22_TBAL"
+    ],
+    "inTop1": true,
+    "inTop3": true,
+    "inTop5": true,
+    "processingTimeMs": 11167
+  },
+  {
+    "query": "Payroll Results",
+    "expectedTcode": "PCP0",
+    "module": "HCM",
+    "results": [
+      "PC00_M27_HHKCLST1",
+      "PC_PAYRESULT",
+      "PC00_M12_CLSTR",
+      "PC00_M22_CLSTR",
+      "PC00_M27_CLSTR",
+      "PC00_M03_CLSTRA",
+      "PP2D",
+      "PC00_M07_DPR",
+      "PC00_M04_CALC"
+    ],
+    "inTop1": false,
+    "inTop3": false,
+    "inTop5": false,
+    "processingTimeMs": 12950
   }
 ]
