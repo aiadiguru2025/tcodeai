@@ -119,6 +119,7 @@ export interface FioriApp {
   lineOfBusiness: string[];
   semanticObjectAction: string[];
   businessCatalogTitle: string | null;
+  productVersion: string | null;
   createdAt: Date;
 }
 

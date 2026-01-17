@@ -111,6 +111,14 @@ export default async function FioriAppPage({ params }: Props) {
               </CardHeader>
               <CardContent>
                 <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  {app.productVersion && (
+                    <div className="sm:col-span-2">
+                      <dt className="text-sm font-medium text-muted-foreground">
+                        Product Version
+                      </dt>
+                      <dd className="mt-1 text-sm">{app.productVersion}</dd>
+                    </div>
+                  )}
                   {app.appComponentDesc && (
                     <div>
                       <dt className="text-sm font-medium text-muted-foreground">Component</dt>

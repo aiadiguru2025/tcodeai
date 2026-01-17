@@ -31,18 +31,6 @@ async function getRecentFioriApps() {
   return prisma.fioriApp.findMany({
     take: 20,
     orderBy: { createdAt: 'desc' },
-    select: {
-      id: true,
-      appId: true,
-      appName: true,
-      appLauncherTitle: true,
-      uiTechnology: true,
-      appComponentDesc: true,
-      lineOfBusiness: true,
-      semanticObjectAction: true,
-      businessCatalogTitle: true,
-      createdAt: true,
-    },
   });
 }
 

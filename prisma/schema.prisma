@@ -99,6 +99,7 @@ model FioriApp {
   lineOfBusiness       String[]            @map("line_of_business")
   semanticObjectAction String[]            @map("semantic_object_action")
   businessCatalogTitle String?             @map("business_catalog_title")
+  productVersion       String?             @map("product_version")
   embedding            Unsupported("vector")?
   createdAt            DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
   tcodeMappings        FioriTCodeMapping[]

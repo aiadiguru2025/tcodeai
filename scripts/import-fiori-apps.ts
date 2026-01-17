@@ -15,6 +15,7 @@ interface FioriCSVRow {
   'Line Of Business': string;
   'Semantic Object - Action': string;
   'Business Catalog Title': string;
+  'Product version (Frontend) - Official Name'?: string;
 }
 
 /**
@@ -127,6 +128,7 @@ async function main() {
 
       try {
         // Create or update the Fiori app
+        const productVersion = row['Product version (Frontend) - Official Name']?.trim() || null;
         const fioriApp = await prisma.fioriApp.upsert({
           where: { appId },
           update: {
@@ -137,6 +139,7 @@ async function main() {
             lineOfBusiness: parseMultiValue(row['Line Of Business']),
             semanticObjectAction: parseMultiValue(row['Semantic Object - Action']),
             businessCatalogTitle: row['Business Catalog Title']?.trim() || null,
+            productVersion,
           },
           create: {
             appId,
@@ -147,6 +150,7 @@ async function main() {
             lineOfBusiness: parseMultiValue(row['Line Of Business']),
             semanticObjectAction: parseMultiValue(row['Semantic Object - Action']),
             businessCatalogTitle: row['Business Catalog Title']?.trim() || null,
+            productVersion,
           },
         });
 

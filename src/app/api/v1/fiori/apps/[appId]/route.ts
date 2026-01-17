@@ -39,6 +39,7 @@ export async function GET(
       lineOfBusiness: app.lineOfBusiness,
       semanticObjectAction: app.semanticObjectAction,
       businessCatalogTitle: app.businessCatalogTitle,
+      productVersion: app.productVersion,
       createdAt: app.createdAt,
       linkedTCodes: app.tcodeMappings.map((m) => ({
         tcodeRaw: m.tcodeRaw,

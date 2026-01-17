@@ -15,6 +15,7 @@ interface FioriAppRow {
   line_of_business: string[];
   semantic_object_action: string[];
   business_catalog_title: string | null;
+  product_version: string | null;
   created_at: Date;
   similarity?: number;
 }
@@ -50,6 +51,7 @@ export async function searchFioriAppsFuzzy(
     lineOfBusiness: app.lineOfBusiness,
     semanticObjectAction: app.semanticObjectAction,
     businessCatalogTitle: app.businessCatalogTitle,
+    productVersion: app.productVersion,
     createdAt: app.createdAt,
     relevanceScore: 0.8,
     matchType: 'fuzzy' as const,
@@ -77,7 +79,7 @@ export async function searchFioriAppsSemantic(
     SELECT
       id, app_id, app_name, app_launcher_title, ui_technology,
       app_component_desc, line_of_business, semantic_object_action,
-      business_catalog_title, created_at,
+      business_catalog_title, product_version, created_at,
       1 - (embedding <=> ${embeddingStr}::vector) as similarity
     FROM fiori_apps
     WHERE embedding IS NOT NULL
@@ -95,6 +97,7 @@ export async function searchFioriAppsSemantic(
     lineOfBusiness: app.line_of_business,
     semanticObjectAction: app.semantic_object_action,
     businessCatalogTitle: app.business_catalog_title,
+    productVersion: app.product_version,
     createdAt: app.created_at,
     relevanceScore: app.similarity || 0,
     matchType: 'semantic' as const,

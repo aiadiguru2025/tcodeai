@@ -49,6 +49,7 @@ async function getFioriApps(tcode: string): Promise<FioriApp[]> {
     lineOfBusiness: m.fioriApp.lineOfBusiness,
     semanticObjectAction: m.fioriApp.semanticObjectAction,
     businessCatalogTitle: m.fioriApp.businessCatalogTitle,
+    productVersion: m.fioriApp.productVersion,
     createdAt: m.fioriApp.createdAt,
   }));
 }

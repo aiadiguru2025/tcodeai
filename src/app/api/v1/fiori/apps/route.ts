@@ -65,6 +65,7 @@ export async function GET(request: NextRequest) {
         lineOfBusiness: true,
         semanticObjectAction: true,
         businessCatalogTitle: true,
+        productVersion: true,
         createdAt: true,
       },
     });
