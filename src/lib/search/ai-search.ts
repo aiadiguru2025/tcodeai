@@ -2,6 +2,7 @@ import OpenAI from 'openai';
 import { executeSemanticSearch } from './semantic-search';
 import { expandQueryWithSAPTerms } from './query-expander';
 import { validateSearchResults } from './llm-judge';
+import { generateAIFallbackSuggestions } from './ai-fallback';
 import { getCached, setCached } from '@/lib/cache';
 import type { AISearchResult } from '@/types';
 
@@ -77,6 +78,13 @@ export async function executeAISearch(
   const candidates = Array.from(candidateMap.values()).slice(0, limit * 2);
 
   if (candidates.length === 0) {
+    // No database results found - try AI fallback
+    console.log('No database candidates found, trying AI fallback for:', query);
+    const fallbackResults = await generateAIFallbackSuggestions(query, limit);
+    if (fallbackResults.length > 0) {
+      console.log(`AI fallback returned ${fallbackResults.length} suggestions`);
+      return { results: fallbackResults, cached: false };
+    }
     return { results: [], cached: false };
   }
 

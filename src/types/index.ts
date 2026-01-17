@@ -79,6 +79,8 @@ export interface AISearchResult {
   module: string | null;
   explanation: string;
   confidence: number;
+  aiGenerated?: boolean; // true if T-code is AI-suggested, not from database
+  source?: 'database' | 'ai-generated'; // origin of the result
 }
 
 export interface AISearchResponse {
