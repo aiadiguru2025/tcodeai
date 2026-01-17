@@ -1,9 +1,14 @@
 import prisma from '@/lib/db';
 import OpenAI from 'openai';
 import type { FioriSearchResult } from '@/types';
+import { getCached, setCached } from '@/lib/cache';
 
 const openai = new OpenAI();
 const EMBEDDING_MODEL = 'text-embedding-3-small';
+
+// Cache configuration
+const FIORI_CACHE_PREFIX = 'fiori-search';
+const FIORI_CACHE_TTL = 60 * 60 * 2; // 2 hours
 
 interface FioriAppRow {
   id: number;
@@ -106,6 +111,7 @@ export async function searchFioriAppsSemantic(
 
 /**
  * Hybrid search combining fuzzy and semantic search
+ * Optimized with caching and parallel execution
  */
 export async function searchFioriAppsHybrid(
   query: string,
@@ -116,39 +122,62 @@ export async function searchFioriAppsHybrid(
   } = {}
 ): Promise<FioriSearchResult[]> {
   const { limit = 20, tech, enableSemantic = true } = options;
-  const results: Map<string, FioriSearchResult> = new Map();
 
-  // Run fuzzy search
-  const fuzzyResults = await searchFioriAppsFuzzy(query, limit);
+  // Generate cache key
+  const cacheKey = `${query.toLowerCase().trim()}:${tech || 'all'}:${limit}:${enableSemantic}`;
+
+  // Check cache first
+  const cached = await getCached<FioriSearchResult[]>(FIORI_CACHE_PREFIX, cacheKey);
+  if (cached) {
+    return cached;
+  }
+
+  const results: Map<string, FioriSearchResult> = new Map();
+  const isNaturalLanguage = enableSemantic && query.includes(' ') && query.length > 5;
+
+  // Run searches in parallel for better performance
+  const searchPromises: Promise<FioriSearchResult[]>[] = [
+    searchFioriAppsFuzzy(query, limit),
+  ];
+
+  if (isNaturalLanguage) {
+    searchPromises.push(
+      searchFioriAppsSemantic(query, limit).catch((error) => {
+        console.error('Semantic search error:', error);
+        return []; // Return empty array on error
+      })
+    );
+  }
+
+  const [fuzzyResults, semanticResults = []] = await Promise.all(searchPromises);
+
+  // Process fuzzy results
   for (const result of fuzzyResults) {
     if (!tech || result.uiTechnology === tech) {
       results.set(result.appId, result);
     }
   }
 
-  // Run semantic search if enabled and query looks like natural language
-  if (enableSemantic && query.includes(' ') && query.length > 5) {
-    try {
-      const semanticResults = await searchFioriAppsSemantic(query, limit);
-      for (const result of semanticResults) {
-        if (!tech || result.uiTechnology === tech) {
-          const existing = results.get(result.appId);
-          if (existing) {
-            // Boost score for apps found in both searches
-            existing.relevanceScore = Math.min(1, existing.relevanceScore * 1.3);
-          } else {
-            results.set(result.appId, result);
-          }
-        }
+  // Process semantic results
+  for (const result of semanticResults) {
+    if (!tech || result.uiTechnology === tech) {
+      const existing = results.get(result.appId);
+      if (existing) {
+        // Boost score for apps found in both searches
+        existing.relevanceScore = Math.min(1, existing.relevanceScore * 1.3);
+      } else {
+        results.set(result.appId, result);
       }
-    } catch (error) {
-      console.error('Semantic search error:', error);
-      // Continue with fuzzy results only
     }
   }
 
   // Sort by relevance and return
-  return Array.from(results.values())
+  const finalResults = Array.from(results.values())
     .sort((a, b) => b.relevanceScore - a.relevanceScore)
     .slice(0, limit);
+
+  // Cache the results
+  await setCached(FIORI_CACHE_PREFIX, cacheKey, finalResults, FIORI_CACHE_TTL);
+
+  return finalResults;
 }
