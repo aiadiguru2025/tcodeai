@@ -190,3 +190,39 @@ export function getCacheStats(): { memoryEntries: number; redisAvailable: boolea
     redisAvailable: getRedis() !== null,
   };
 }
+
+/**
+ * Flush all cache (both Redis and in-memory)
+ * Returns the number of keys flushed from each store
+ */
+export async function flushAllCache(): Promise<{
+  memoryFlushed: number;
+  redisFlushed: boolean;
+  error?: string;
+}> {
+  const memorySize = memoryCache.size();
+
+  // Clear in-memory cache
+  memoryCache.clear();
+
+  // Clear Redis if available
+  const client = getRedis();
+  let redisFlushed = false;
+  let error: string | undefined;
+
+  if (client) {
+    try {
+      await client.flushall();
+      redisFlushed = true;
+    } catch (err) {
+      error = err instanceof Error ? err.message : 'Redis flush failed';
+      console.error('Redis flushall error:', err);
+    }
+  }
+
+  return {
+    memoryFlushed: memorySize,
+    redisFlushed,
+    error,
+  };
+}
