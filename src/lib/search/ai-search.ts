@@ -46,14 +46,18 @@ export async function executeAISearch(
     throw new Error('OpenAI API key not configured');
   }
 
-  // Check cache first
+  // Check cache first (with error handling)
   const cacheKey = `${query}:${limit}`;
-  const cached = await getCached<AISearchResult[]>(CACHE_PREFIX, cacheKey);
-  if (cached) {
-    console.log('AI search cache hit:', query);
-    // Sort cached results by confidence (older cache entries may not be sorted)
-    cached.sort((a, b) => b.confidence - a.confidence);
-    return { results: cached, cached: true };
+  try {
+    const cached = await getCached<AISearchResult[]>(CACHE_PREFIX, cacheKey);
+    if (cached) {
+      console.log('AI search cache hit:', query);
+      // Sort cached results by confidence (older cache entries may not be sorted)
+      cached.sort((a, b) => b.confidence - a.confidence);
+      return { results: cached, cached: true };
+    }
+  } catch (cacheError) {
+    console.warn('Cache read error, continuing without cache:', cacheError);
   }
 
   console.log('AI search cache miss:', query);
@@ -98,11 +102,16 @@ export async function executeAISearch(
     .map((c) => `${c.tcode}: ${c.description || 'N/A'}`)
     .join('\n');
 
-  // Detect country in query for GPT context
-  const countryMatches = await detectCountryInQuery(query);
-  const countryContext = countryMatches.length > 0
-    ? `\n\nDETECTED COUNTRY: ${countryMatches[0].country} (MOLGA ${countryMatches[0].molga}, pattern: ${countryMatches[0].pattern}). T-codes containing "${countryMatches[0].pattern}" are for this country and MUST rank highest.`
-    : '';
+  // Detect country in query for GPT context (with error handling)
+  let countryContext = '';
+  try {
+    const countryMatches = await detectCountryInQuery(query);
+    if (countryMatches.length > 0) {
+      countryContext = `\n\nDETECTED COUNTRY: ${countryMatches[0].country} (MOLGA ${countryMatches[0].molga}, pattern: ${countryMatches[0].pattern}). T-codes containing "${countryMatches[0].pattern}" are for this country and MUST rank highest.`;
+    }
+  } catch (countryError) {
+    console.warn('Country detection error, continuing without country context:', countryError);
+  }
 
   // Try to get GPT explanations with timeout
   const openai = new OpenAI();
@@ -217,21 +226,29 @@ Output JSON: {"results":[{"tcode":"XX01","explanation":"brief reason","confidenc
     console.log(`Web fallback enhanced results for: ${query}`);
   }
 
-  // Apply MOLGA-based boost for country-specific queries
-  // This ensures T-codes with matching country codes (e.g., M10 for USA) rank higher
-  const { results: molgaBoostedResults } = await applyMolgaBoost(enhancedResults, query);
+  // Apply MOLGA-based boost for country-specific queries (with error handling)
+  let molgaBoostedResults = enhancedResults;
+  try {
+    const molgaResult = await applyMolgaBoost(enhancedResults, query);
+    molgaBoostedResults = molgaResult.results;
+    molgaBoostedResults.sort((a, b) => b.confidence - a.confidence);
+  } catch (molgaError) {
+    console.warn('MOLGA boost error, continuing without boost:', molgaError);
+  }
 
-  // Re-sort after MOLGA boost
-  molgaBoostedResults.sort((a, b) => b.confidence - a.confidence);
+  // Apply feedback-based ranking boost from user votes (with error handling)
+  let finalResults = molgaBoostedResults;
+  try {
+    finalResults = await applyFeedbackBoostToAI(molgaBoostedResults);
+    finalResults.sort((a, b) => b.confidence - a.confidence);
+  } catch (feedbackError) {
+    console.warn('Feedback boost error, continuing without boost:', feedbackError);
+  }
 
-  // Apply feedback-based ranking boost from user votes
-  const finalResults = await applyFeedbackBoostToAI(molgaBoostedResults);
-
-  // Re-sort after feedback boost
-  finalResults.sort((a, b) => b.confidence - a.confidence);
-
-  // Store final results in cache
-  await setCached(CACHE_PREFIX, cacheKey, finalResults, CACHE_TTL);
+  // Store final results in cache (non-blocking, with error handling)
+  setCached(CACHE_PREFIX, cacheKey, finalResults, CACHE_TTL).catch((cacheError) => {
+    console.warn('Cache write error:', cacheError);
+  });
 
   return { results: finalResults, cached: false };
 }
