@@ -3,13 +3,13 @@ import { executeSemanticSearch } from './semantic-search';
 import { expandQueryWithSAPTerms } from './query-expander';
 import { validateSearchResults } from './llm-judge';
 import { generateAIFallbackSuggestions } from './ai-fallback';
-import { enhanceWithWebSearch } from './web-search';
+import { enhancedLowConfidenceFallback } from './enhanced-fallback';
 import { applyFeedbackBoostToAI } from './feedback-ranking';
 import { applyMolgaBoost, detectCountryInQuery } from './molga-lookup';
 import { getCached, setCached } from '@/lib/cache';
 import type { AISearchResult } from '@/types';
 
-const WEB_FALLBACK_THRESHOLD = 0.6; // Trigger web search when top confidence is below this
+const ENHANCED_FALLBACK_THRESHOLD = 0.8; // Trigger enhanced fallback when top confidence is below 80%
 
 const EXPLANATION_MODEL = 'gpt-4o-mini';
 const CACHE_PREFIX = 'ai-search-v2'; // v2: improved term matching ranking
@@ -213,17 +213,18 @@ Output JSON: {"results":[{"tcode":"XX01","explanation":"brief reason","confidenc
   // Re-sort after potential confidence adjustments from judge
   validatedResults.sort((a, b) => b.confidence - a.confidence);
 
-  // Enhance with web search if confidence is below threshold
-  const { results: enhancedResults, webFallbackUsed } = await enhanceWithWebSearch(
-    query,
-    validatedResults,
-    WEB_FALLBACK_THRESHOLD
-  );
+  // Enhance with Google Search, Brave Search, and Deep GPT if confidence is below threshold
+  const { results: enhancedResults, enhancementUsed, enhancementDetails } =
+    await enhancedLowConfidenceFallback(
+      query,
+      validatedResults,
+      ENHANCED_FALLBACK_THRESHOLD
+    );
 
-  // Re-sort after web enhancement
-  if (webFallbackUsed) {
+  // Re-sort after enhancement
+  if (enhancementUsed !== 'none') {
     enhancedResults.sort((a, b) => b.confidence - a.confidence);
-    console.log(`Web fallback enhanced results for: ${query}`);
+    console.log(`Enhanced fallback (${enhancementUsed}) used for: ${query}`, enhancementDetails);
   }
 
   // Apply MOLGA-based boost for country-specific queries (with error handling)

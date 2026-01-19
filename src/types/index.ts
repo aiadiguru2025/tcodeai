@@ -160,3 +160,19 @@ export type UITechnology =
   | 'SAP Fiori: Generic Job Scheduling Framework'
   | 'Web Client UI'
   | string;
+
+// Enhanced Fallback Types
+export interface EnhancementMetrics {
+  googleSearchUsed: boolean;
+  braveSearchUsed: boolean;
+  deepGPTUsed: boolean;
+  tcodesFromGoogle: number;
+  tcodesFromBrave: number;
+  tcodesFromGPT: number;
+  validatedTCodes: number;
+  processingTimeMs: number;
+}
+
+export interface EnhancedSearchResult extends AISearchResult {
+  enhancementSource?: 'google' | 'brave' | 'deep-gpt' | 'original';
+}

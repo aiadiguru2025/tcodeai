@@ -70,11 +70,26 @@ function loadTestCases(filePath: string): TestCase[] {
     trim: true,
   });
 
-  return records.map((record: Record<string, string>) => ({
-    tcode: (record.tcode || record.TCODE || record.TCode || '').toUpperCase().trim(),
-    description: record.description || record.DESCRIPTION || record.Description || record.desc || '',
-    module: (record.module || record.MODULE || record.Module || 'UNKNOWN').toUpperCase().trim(),
-  }));
+  return records.map((record: Record<string, string>) => {
+    // Handle various column name formats
+    let tcode = record.tcode || record.TCODE || record.TCode || record['T-Code'] || record['t-code'] || '';
+    const description = record.description || record.DESCRIPTION || record.Description || record.desc || '';
+    const module = record.module || record.MODULE || record.Module || 'UNKNOWN';
+
+    // Handle multiple T-codes separated by "/" (e.g., "SE16 / SE16N") - take the first one
+    if (tcode.includes('/')) {
+      tcode = tcode.split('/')[0];
+    }
+
+    // Remove quotes and special characters
+    tcode = tcode.replace(/['"()]/g, '').trim().toUpperCase();
+
+    return {
+      tcode,
+      description: description.replace(/['"]/g, '').trim(),
+      module: module.toUpperCase().trim(),
+    };
+  }).filter((tc: { tcode: string; description: string; module: string }) => tc.tcode && tc.description); // Filter out empty entries
 }
 
 async function runTests(testCases: TestCase[], limit?: number): Promise<TestResult[]> {

@@ -23,7 +23,7 @@ const FILTER_WORDS = new Set([
  * T-codes are typically uppercase alphanumeric strings with optional underscores
  * Length is usually 2-20 characters
  */
-function extractTCodes(text: string): string[] {
+export function extractTCodes(text: string): string[] {
   // Pattern for SAP T-codes: uppercase letters/numbers, may contain underscore or slash
   const tcodePattern = /\b([A-Z][A-Z0-9_\/]{1,19})\b/g;
   const matches = text.match(tcodePattern) || [];
@@ -45,7 +45,7 @@ function extractTCodes(text: string): string[] {
  * Fetch web search results using Brave Search API
  * Falls back to empty array if API key is not configured
  */
-async function fetchBraveSearch(query: string): Promise<string> {
+export async function fetchBraveSearch(query: string): Promise<string> {
   const apiKey = process.env.BRAVE_SEARCH_API_KEY;
   if (!apiKey) {
     console.log('Brave Search API key not configured');
@@ -97,7 +97,7 @@ async function fetchBraveSearch(query: string): Promise<string> {
 /**
  * Validate T-codes against the database and get full details
  */
-async function validateAndFetchTCodes(tcodes: string[]): Promise<AISearchResult[]> {
+export async function validateAndFetchTCodes(tcodes: string[]): Promise<AISearchResult[]> {
   if (tcodes.length === 0) return [];
 
   const validTcodes = await prisma.transactionCode.findMany({
