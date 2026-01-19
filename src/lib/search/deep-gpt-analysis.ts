@@ -2,7 +2,7 @@ import OpenAI from 'openai';
 import type { AISearchResult } from '@/types';
 
 const DEEP_GPT_MODEL = 'gpt-4o-mini';
-const DEEP_GPT_TIMEOUT_MS = 10000; // 10 seconds for deep analysis
+const DEEP_GPT_TIMEOUT_MS = 7000; // 7 seconds for deep analysis (reduced from 10s)
 
 export interface DeepAnalysisResult {
   suggestedTCodes: Array<{

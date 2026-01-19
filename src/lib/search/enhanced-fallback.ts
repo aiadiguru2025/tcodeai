@@ -5,7 +5,7 @@ import prisma from '@/lib/db';
 
 // Configuration
 const DEFAULT_CONFIDENCE_THRESHOLD = 0.8; // Trigger when top confidence < 80%
-const OVERALL_TIMEOUT_MS = 15000; // 15 seconds max for entire enhancement
+const OVERALL_TIMEOUT_MS = 10000; // 10 seconds max for entire enhancement (reduced from 15s)
 const WEB_RESULT_CONFIDENCE = 0.78; // Confidence for web-validated results
 
 export interface EnhancementMetrics {

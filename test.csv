@@ -1,0 +1,96 @@
+﻿No.,T-Code,Description
+1,SE38,ABAP Program Execution
+2,SE80,ABAP Development Workbench
+3,SE11,Data Dictionary
+4,SE16 / SE16N,Data Browser (Tables)
+5,SM37,Background Job Monitoring
+6,SM50,Work Process Overview (App Server)
+7,SM66,Global Work Process Overview
+8,ST22,ABAP Dump Analysis
+9,SM21,System Log
+10,SU01,User Maintenance
+11,PFCG,Role Maintenance
+12,SM12,Lock Entries
+13,SM13,Update Requests
+14,SCC4,Client Administration
+15,SPRO,IMG Customizing
+16,AL11,SAP Directory
+17,ST05,SQL Trace
+18,ST01,System Trace
+19,SM59,RFC Destinations
+20,SM30,Table/View Maintenance
+21,PA20,Display HR Master Data
+22,PA30,Maintain HR Master Data
+23,PA40,Personnel Actions
+25,PPOME,Organization & Staffing
+26,MM01,Create Material
+27,MM02,Change Material
+28,MM03,Display Material
+29,ME21N,Create Purchase Order
+30,ME22N,Change Purchase Order
+31,ME23N,Display Purchase Order
+32,MIGO,Goods Movement
+33,FB60,Enter Vendor Invoice
+34,FB65,Enter Vendor Credit Memo
+35,FB50,G/L Account Posting
+36,FBL1N,Vendor Line Items
+37,FBL3N,G/L Line Items
+38,FBL5N,Customer Line Items
+39,VA01,Create Sales Order
+40,VA02,Change Sales Order
+41,VA03,Display Sales Order
+42,VL01N,Create Outbound Delivery
+43,VL02N,Change Outbound Delivery
+44,VF01,Create Billing Document
+45,MB51,Material Document List
+46,S_ALR_87012357,Balance Sheet
+47,S_ALR_87012284,Profit & Loss Statement
+48,OB52,Posting Periods
+49,OBYC,Automatic Account Determination
+50,SNOTE,SAP Notes Assistant
+51,BP,"Business Partner (replaces XK01, XD01, etc.)"
+52,Fiori Launchpad (/UI2/FLP),Central S/4HANA user interface
+53,FIN_CUST_CONS_CHECK,Finance Customizing Consistency Check
+54,FIN_CUST_CONS_CHK,FI Migration & Consistency Validation
+55,FINS_CUST_CONS_CHECK,Universal Journal Consistency
+56,FAGLB03,G/L Account Line Item Display (HANA-optimized)
+57,FBL3H,G/L Line Items (HANA version)
+58,FBL1H,Vendor Line Items (HANA version)
+59,FBL5H,Customer Line Items (HANA version)
+60,ACDOCA,Universal Journal Table (display via SE16H)
+61,SE16H,HANA Table Browser (replaces SE16/SE16N)
+62,MIGO,Goods Movement (still active in S/4)
+63,MATDOC,Material Documents (S/4 replacement table)
+64,MM01 / MM02 / MM03,Material Master (S/4 adapted)
+66,F110,Automatic Payment Program
+67,FB60,Vendor Invoice (FI)
+68,FB65,Vendor Credit Memo
+69,FB50,G/L Posting
+70,MIRO,Logistics Invoice Verification
+71,CO03,Display Production Order
+73,CKM3N,Material Price Analysis
+74,OKB9,Default Cost Centers
+75,OB52,Posting Periods
+76,SPRO,IMG Customizing
+77,SCC4,Client Administration
+78,SM37,Background Jobs
+79,ST22,ABAP Dump Analysis
+80,SM21,System Log
+81,SM12,Lock Entries
+82,SM59,RFC Destinations
+83,SNOTE,SAP Notes Assistant
+84,R_S4_PRE_TRANSITION_CHECKS,S/4 Readiness Checks
+85,CVIS_BP_LINK,BP–Customer/Vendor Integration
+86,MD04,Stock/Requirements List
+87,MD01N,MRP Run
+90,VF01,Billing Document
+91,MB5B,Stock on Posting Date
+92,S_ALR_87012357,Balance Sheet (HANA optimized)
+93,S_ALR_87012284,Profit & Loss
+94,SU01,User Maintenance
+95,PFCG,Role Maintenance
+96,AL11,Directory Access
+97,DBACOCKPIT,HANA Database Monitoring
+98,ST04,HANA Performance Monitor
+99,SM50,Work Process Overview
+100,SM66,Global Work Process Overview

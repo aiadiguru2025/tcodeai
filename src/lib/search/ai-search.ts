@@ -10,11 +10,12 @@ import { getCached, setCached } from '@/lib/cache';
 import type { AISearchResult } from '@/types';
 
 const ENHANCED_FALLBACK_THRESHOLD = 0.8; // Trigger enhanced fallback when top confidence is below 80%
+const SKIP_JUDGE_THRESHOLD = 0.85; // Skip LLM Judge if top confidence is above this
 
 const EXPLANATION_MODEL = 'gpt-4o-mini';
-const CACHE_PREFIX = 'ai-search-v2'; // v2: improved term matching ranking
+const CACHE_PREFIX = 'ai-search-v3'; // v3: optimized pipeline with parallel execution
 const CACHE_TTL = 60 * 60 * 24; // 24 hours
-const GPT_TIMEOUT_MS = 8000; // 8 seconds max for GPT call (reduced from 15s)
+const GPT_TIMEOUT_MS = 5000; // 5 seconds max for GPT call (reduced for faster response)
 
 /**
  * Create a timeout promise
@@ -62,11 +63,18 @@ export async function executeAISearch(
 
   console.log('AI search cache miss:', query);
 
-  // Run query expansion and original semantic search in parallel
-  const [expandedQuery, directCandidates] = await Promise.all([
+  // Run query expansion, semantic search, AND country detection in parallel
+  const [expandedQuery, directCandidates, countryMatches] = await Promise.all([
     expandQueryWithSAPTerms(query),
     executeSemanticSearch(query, undefined, false, limit),
+    detectCountryInQuery(query).catch(() => []), // Non-blocking country detection
   ]);
+
+  // Build country context from parallel result
+  let countryContext = '';
+  if (countryMatches.length > 0) {
+    countryContext = `\n\nDETECTED COUNTRY: ${countryMatches[0].country} (MOLGA ${countryMatches[0].molga}, pattern: ${countryMatches[0].pattern}). T-codes containing "${countryMatches[0].pattern}" are for this country and MUST rank highest.`;
+  }
 
   // Get additional candidates using expanded query (if different from original)
   let expandedCandidates: Awaited<ReturnType<typeof executeSemanticSearch>> = [];
@@ -101,17 +109,6 @@ export async function executeAISearch(
   const candidateList = candidates
     .map((c) => `${c.tcode}: ${c.description || 'N/A'}`)
     .join('\n');
-
-  // Detect country in query for GPT context (with error handling)
-  let countryContext = '';
-  try {
-    const countryMatches = await detectCountryInQuery(query);
-    if (countryMatches.length > 0) {
-      countryContext = `\n\nDETECTED COUNTRY: ${countryMatches[0].country} (MOLGA ${countryMatches[0].molga}, pattern: ${countryMatches[0].pattern}). T-codes containing "${countryMatches[0].pattern}" are for this country and MUST rank highest.`;
-    }
-  } catch (countryError) {
-    console.warn('Country detection error, continuing without country context:', countryError);
-  }
 
   // Try to get GPT explanations with timeout
   const openai = new OpenAI();
@@ -207,11 +204,17 @@ Output JSON: {"results":[{"tcode":"XX01","explanation":"brief reason","confidenc
   // Sort results by confidence score (highest first) for accurate "Best Match"
   results.sort((a, b) => b.confidence - a.confidence);
 
-  // Validate results with LLM Judge before caching
-  const { results: validatedResults } = await validateSearchResults(query, results);
+  const topConfidence = results[0]?.confidence ?? 0;
 
-  // Re-sort after potential confidence adjustments from judge
-  validatedResults.sort((a, b) => b.confidence - a.confidence);
+  // OPTIMIZATION: Skip LLM Judge if top confidence is already high (>85%)
+  let validatedResults = results;
+  if (topConfidence < SKIP_JUDGE_THRESHOLD) {
+    const { results: judgedResults } = await validateSearchResults(query, results);
+    validatedResults = judgedResults;
+    validatedResults.sort((a, b) => b.confidence - a.confidence);
+  } else {
+    console.log(`Skipping LLM Judge: top confidence ${(topConfidence * 100).toFixed(0)}% >= ${(SKIP_JUDGE_THRESHOLD * 100).toFixed(0)}%`);
+  }
 
   // Enhance with Google Search, Brave Search, and Deep GPT if confidence is below threshold
   const { results: enhancedResults, enhancementUsed, enhancementDetails } =
@@ -227,24 +230,23 @@ Output JSON: {"results":[{"tcode":"XX01","explanation":"brief reason","confidenc
     console.log(`Enhanced fallback (${enhancementUsed}) used for: ${query}`, enhancementDetails);
   }
 
-  // Apply MOLGA-based boost for country-specific queries (with error handling)
-  let molgaBoostedResults = enhancedResults;
-  try {
-    const molgaResult = await applyMolgaBoost(enhancedResults, query);
-    molgaBoostedResults = molgaResult.results;
-    molgaBoostedResults.sort((a, b) => b.confidence - a.confidence);
-  } catch (molgaError) {
-    console.warn('MOLGA boost error, continuing without boost:', molgaError);
-  }
+  // OPTIMIZATION: Run MOLGA and feedback boosts in parallel
+  const [molgaResult, feedbackBoostedResults] = await Promise.all([
+    applyMolgaBoost(enhancedResults, query).catch((err) => {
+      console.warn('MOLGA boost error:', err);
+      return { results: enhancedResults, molgaDetected: null };
+    }),
+    applyFeedbackBoostToAI(enhancedResults).catch((err) => {
+      console.warn('Feedback boost error:', err);
+      return enhancedResults;
+    }),
+  ]);
 
-  // Apply feedback-based ranking boost from user votes (with error handling)
-  let finalResults = molgaBoostedResults;
-  try {
-    finalResults = await applyFeedbackBoostToAI(molgaBoostedResults);
-    finalResults.sort((a, b) => b.confidence - a.confidence);
-  } catch (feedbackError) {
-    console.warn('Feedback boost error, continuing without boost:', feedbackError);
-  }
+  // Merge boosts: apply MOLGA boost first (country-specific), else use feedback-boosted
+  const finalResults = molgaResult.molgaDetected
+    ? molgaResult.results
+    : feedbackBoostedResults;
+  finalResults.sort((a, b) => b.confidence - a.confidence);
 
   // Store final results in cache (non-blocking, with error handling)
   setCached(CACHE_PREFIX, cacheKey, finalResults, CACHE_TTL).catch((cacheError) => {
