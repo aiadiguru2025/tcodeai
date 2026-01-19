@@ -2,6 +2,7 @@ import prisma from '@/lib/db';
 import type { SearchResult } from '@/types';
 import { executeSemanticSearch } from './semantic-search';
 import { getCached, setCached } from '@/lib/cache';
+import { applyFeedbackBoost } from './feedback-ranking';
 
 const HYBRID_CACHE_PREFIX = 'hybrid';
 const HYBRID_CACHE_TTL = 60 * 60 * 2; // 2 hours for hybrid search results
@@ -88,8 +89,11 @@ export async function hybridSearch(options: SearchOptions): Promise<SearchResult
     }
   }
 
+  // Apply feedback-based ranking boost
+  const resultsWithFeedback = await applyFeedbackBoost(Array.from(resultMap.values()));
+
   // Sort by relevance and return top results
-  const results = Array.from(resultMap.values())
+  const results = resultsWithFeedback
     .sort((a, b) => b.relevanceScore - a.relevanceScore)
     .slice(0, limit);
 

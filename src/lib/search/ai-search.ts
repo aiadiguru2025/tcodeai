@@ -4,6 +4,7 @@ import { expandQueryWithSAPTerms } from './query-expander';
 import { validateSearchResults } from './llm-judge';
 import { generateAIFallbackSuggestions } from './ai-fallback';
 import { enhanceWithWebSearch } from './web-search';
+import { applyFeedbackBoostToAI } from './feedback-ranking';
 import { getCached, setCached } from '@/lib/cache';
 import type { AISearchResult } from '@/types';
 
@@ -208,8 +209,14 @@ Output JSON: {"results":[{"tcode":"XX01","explanation":"brief reason","confidenc
     console.log(`Web fallback enhanced results for: ${query}`);
   }
 
-  // Store final results in cache
-  await setCached(CACHE_PREFIX, cacheKey, enhancedResults, CACHE_TTL);
+  // Apply feedback-based ranking boost from user votes
+  const finalResults = await applyFeedbackBoostToAI(enhancedResults);
 
-  return { results: enhancedResults, cached: false };
+  // Re-sort after feedback boost
+  finalResults.sort((a, b) => b.confidence - a.confidence);
+
+  // Store final results in cache
+  await setCached(CACHE_PREFIX, cacheKey, finalResults, CACHE_TTL);
+
+  return { results: finalResults, cached: false };
 }

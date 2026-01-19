@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import prisma from '@/lib/db';
+import { invalidateFeedbackCache } from '@/lib/search/feedback-ranking';
 
 const feedbackSchema = z.object({
   tcodeId: z.number().optional(),
@@ -43,6 +44,9 @@ export async function POST(request: NextRequest) {
         comment: data.comment,
       },
     });
+
+    // Invalidate feedback cache for this T-code so next search reflects the new vote
+    await invalidateFeedbackCache(data.tcode.toUpperCase());
 
     const response = NextResponse.json({ success: true });
 
