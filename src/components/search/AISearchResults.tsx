@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Sparkles, Lightbulb, ExternalLink, AlertTriangle } from 'lucide-react';
+import { Sparkles, Lightbulb, ExternalLink, AlertTriangle, Globe } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -164,6 +164,12 @@ export function AISearchResults({ results, isLoading, query }: AISearchResultsPr
                     {index === 0 && (
                       <Badge variant="default" className="text-xs">
                         Best Match
+                      </Badge>
+                    )}
+                    {result.source === 'web' && (
+                      <Badge variant="outline" className="text-xs text-blue-600 border-blue-300">
+                        <Globe className="h-3 w-3 mr-1" />
+                        Web Enhanced
                       </Badge>
                     )}
                   </div>

@@ -3,8 +3,11 @@ import { executeSemanticSearch } from './semantic-search';
 import { expandQueryWithSAPTerms } from './query-expander';
 import { validateSearchResults } from './llm-judge';
 import { generateAIFallbackSuggestions } from './ai-fallback';
+import { enhanceWithWebSearch } from './web-search';
 import { getCached, setCached } from '@/lib/cache';
 import type { AISearchResult } from '@/types';
+
+const WEB_FALLBACK_THRESHOLD = 0.6; // Trigger web search when top confidence is below this
 
 const EXPLANATION_MODEL = 'gpt-4o-mini';
 const CACHE_PREFIX = 'ai-search-v2'; // v2: improved term matching ranking
@@ -192,8 +195,21 @@ Output JSON: {"results":[{"tcode":"XX01","explanation":"brief reason","confidenc
   // Re-sort after potential confidence adjustments from judge
   validatedResults.sort((a, b) => b.confidence - a.confidence);
 
-  // Store validated results in cache
-  await setCached(CACHE_PREFIX, cacheKey, validatedResults, CACHE_TTL);
+  // Enhance with web search if confidence is below threshold
+  const { results: enhancedResults, webFallbackUsed } = await enhanceWithWebSearch(
+    query,
+    validatedResults,
+    WEB_FALLBACK_THRESHOLD
+  );
 
-  return { results: validatedResults, cached: false };
+  // Re-sort after web enhancement
+  if (webFallbackUsed) {
+    enhancedResults.sort((a, b) => b.confidence - a.confidence);
+    console.log(`Web fallback enhanced results for: ${query}`);
+  }
+
+  // Store final results in cache
+  await setCached(CACHE_PREFIX, cacheKey, enhancedResults, CACHE_TTL);
+
+  return { results: enhancedResults, cached: false };
 }
