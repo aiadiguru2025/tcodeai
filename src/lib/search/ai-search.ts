@@ -5,6 +5,7 @@ import { validateSearchResults } from './llm-judge';
 import { generateAIFallbackSuggestions } from './ai-fallback';
 import { enhanceWithWebSearch } from './web-search';
 import { applyFeedbackBoostToAI } from './feedback-ranking';
+import { applyMolgaBoost, detectCountryInQuery } from './molga-lookup';
 import { getCached, setCached } from '@/lib/cache';
 import type { AISearchResult } from '@/types';
 
@@ -97,6 +98,12 @@ export async function executeAISearch(
     .map((c) => `${c.tcode}: ${c.description || 'N/A'}`)
     .join('\n');
 
+  // Detect country in query for GPT context
+  const countryMatches = await detectCountryInQuery(query);
+  const countryContext = countryMatches.length > 0
+    ? `\n\nDETECTED COUNTRY: ${countryMatches[0].country} (MOLGA ${countryMatches[0].molga}, pattern: ${countryMatches[0].pattern}). T-codes containing "${countryMatches[0].pattern}" are for this country and MUST rank highest.`
+    : '';
+
   // Try to get GPT explanations with timeout
   const openai = new OpenAI();
 
@@ -109,16 +116,17 @@ export async function executeAISearch(
           content: `You are an SAP expert ranking T-code search results. Score each T-code's relevance to the user's query.
 
 CRITICAL RANKING RULES:
-1. EXACT TERM MATCH IS PRIORITY: If the query contains specific terms (country names like USA/Germany, module names, specific words), T-codes with those EXACT terms in their description MUST rank higher.
-2. For country-specific queries (e.g., "USA payroll"), only T-codes explicitly mentioning that country should get >0.9 confidence.
-3. Generic matches without the specific term should be scored 0.6-0.8 MAX.
-4. SAP country codes in T-codes: M10=USA, M99=Germany, M01=Italy, M41=Hong Kong, M08=UK, M07=South Africa.
+1. MOLGA COUNTRY CODE IS HIGHEST PRIORITY: SAP uses MOLGA codes in T-codes for country-specific functionality. Format: _M## or M## (e.g., M10=USA, M01=Germany, M44=Finland).
+2. If a country is mentioned, T-codes with matching MOLGA pattern MUST get confidence >0.95.
+3. T-codes with DIFFERENT MOLGA codes should get <0.5 confidence (wrong country).
+4. Generic T-codes without MOLGA patterns should score 0.6-0.8.
+5. Common MOLGA codes: M01=Germany, M08=UK, M10=USA, M15=Italy, M22=Japan, M37=Brazil, M40=India, M41=South Korea, M44=Finland.
 
 Output JSON: {"results":[{"tcode":"XX01","explanation":"brief reason","confidence":0.0-1.0}]}`,
         },
         {
           role: 'user',
-          content: `Query: "${query}"\n\nCandidates:\n${candidateList}`,
+          content: `Query: "${query}"${countryContext}\n\nCandidates:\n${candidateList}`,
         },
       ],
       response_format: { type: 'json_object' },
@@ -209,8 +217,15 @@ Output JSON: {"results":[{"tcode":"XX01","explanation":"brief reason","confidenc
     console.log(`Web fallback enhanced results for: ${query}`);
   }
 
+  // Apply MOLGA-based boost for country-specific queries
+  // This ensures T-codes with matching country codes (e.g., M10 for USA) rank higher
+  const { results: molgaBoostedResults } = await applyMolgaBoost(enhancedResults, query);
+
+  // Re-sort after MOLGA boost
+  molgaBoostedResults.sort((a, b) => b.confidence - a.confidence);
+
   // Apply feedback-based ranking boost from user votes
-  const finalResults = await applyFeedbackBoostToAI(enhancedResults);
+  const finalResults = await applyFeedbackBoostToAI(molgaBoostedResults);
 
   // Re-sort after feedback boost
   finalResults.sort((a, b) => b.confidence - a.confidence);

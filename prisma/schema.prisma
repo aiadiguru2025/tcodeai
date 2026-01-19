@@ -87,6 +87,23 @@ model Feedback {
 }
 
 // ============================================
+// MOLGA (Country Grouping) TABLE
+// ============================================
+
+model Molga {
+  molga      Int      @id
+  isoCode    String   @map("iso_code") @db.VarChar(5)
+  country    String   @db.VarChar(100)
+  // Additional aliases for country name variations (e.g., "United States", "America")
+  aliases    String[] @default([])
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([isoCode])
+  @@index([country])
+  @@map("molga")
+}
+
+// ============================================
 // FIORI REFERENCE LIBRARY MODELS
 // ============================================
 
