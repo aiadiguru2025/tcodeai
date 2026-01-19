@@ -15,6 +15,7 @@
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx scripts/seed-tcodes.ts",
+    "db:update-tcodes": "tsx scripts/update-tcodes-from-combined.ts",
     "db:import-fiori": "tsx scripts/import-fiori-apps.ts",
     "db:generate-fiori-embeddings": "tsx scripts/generate-fiori-embeddings.ts",
     "db:studio": "prisma studio",

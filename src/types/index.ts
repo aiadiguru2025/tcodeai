@@ -6,6 +6,7 @@ export interface TCode {
   descriptionEnriched: string | null;
   module: string | null;
   subModule: string | null;
+  packageDesc: string | null;
   isDeprecated: boolean;
   s4hanaStatus: string | null;
   usageCategory: string | null;

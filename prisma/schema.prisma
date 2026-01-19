@@ -15,8 +15,9 @@ model TransactionCode {
   program             String?                @db.VarChar(100)
   description         String?
   descriptionEnriched String?                @map("description_enriched")
-  module              String?                @db.VarChar(20)
-  subModule           String?                @map("sub_module") @db.VarChar(40)
+  module              String?                @db.VarChar(100)
+  subModule           String?                @map("sub_module") @db.VarChar(200)
+  packageDesc         String?                @map("package_desc") @db.VarChar(500)
   isDeprecated        Boolean                @default(false) @map("is_deprecated")
   s4hanaStatus        String?                @map("s4hana_status") @db.VarChar(20)
   usageCategory       String?                @map("usage_category") @db.VarChar(30)

@@ -182,6 +182,18 @@ export default async function TCodePage({ params }: Props) {
                     <dt className="text-sm font-medium text-muted-foreground">Module</dt>
                     <dd className="mt-1 text-sm">{tcode.module || 'Unclassified'}</dd>
                   </div>
+                  {tcode.subModule && (
+                    <div>
+                      <dt className="text-sm font-medium text-muted-foreground">Sub-Module</dt>
+                      <dd className="mt-1 text-sm">{tcode.subModule}</dd>
+                    </div>
+                  )}
+                  {tcode.packageDesc && (
+                    <div className="sm:col-span-2">
+                      <dt className="text-sm font-medium text-muted-foreground">Package</dt>
+                      <dd className="mt-1 text-sm">{tcode.packageDesc}</dd>
+                    </div>
+                  )}
                   {tcode.usageCategory && (
                     <div>
                       <dt className="text-sm font-medium text-muted-foreground">Category</dt>

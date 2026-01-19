@@ -212,6 +212,8 @@ async function executeFullTextSearch(
       { description: { contains: word, mode: 'insensitive' as const } },
       { descriptionEnriched: { contains: word, mode: 'insensitive' as const } },
       { tcode: { contains: word, mode: 'insensitive' as const } },
+      { subModule: { contains: word, mode: 'insensitive' as const } },
+      { packageDesc: { contains: word, mode: 'insensitive' as const } },
     ],
   }));
 
@@ -233,8 +235,8 @@ async function executeFullTextSearch(
   });
 
   return results.map((r) => {
-    // Calculate relevance based on how many words match
-    const text = `${r.tcode} ${r.description || ''} ${r.descriptionEnriched || ''}`.toLowerCase();
+    // Calculate relevance based on how many words match (now including subModule and packageDesc)
+    const text = `${r.tcode} ${r.description || ''} ${r.descriptionEnriched || ''} ${r.subModule || ''} ${r.packageDesc || ''}`.toLowerCase();
     const matchedWords = words.filter((w) => text.includes(w));
     const score = (matchedWords.length / words.length) * 0.8;
 
