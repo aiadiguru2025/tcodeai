@@ -178,7 +178,7 @@ export default async function FioriAppPage({ params }: Props) {
                     {linkedTCodes.map((mapping) => (
                       <Link
                         key={mapping.id}
-                        href={`/tcode/${mapping.tcode!.tcode}`}
+                        href={`/tcode/${encodeURIComponent(mapping.tcode!.tcode)}`}
                         className="flex items-center justify-between rounded-lg border p-3 transition-colors hover:bg-muted"
                       >
                         <div className="flex items-center gap-3">

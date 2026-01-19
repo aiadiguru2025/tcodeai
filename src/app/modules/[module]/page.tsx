@@ -124,7 +124,7 @@ export default async function ModulePage({ params, searchParams }: Props) {
 
           <div className="space-y-2">
             {tcodes.map((tcode) => (
-              <Link key={tcode.tcode} href={`/tcode/${tcode.tcode}`}>
+              <Link key={tcode.tcode} href={`/tcode/${encodeURIComponent(tcode.tcode)}`}>
                 <Card className="transition-shadow hover:shadow-md">
                   <CardContent className="flex items-center justify-between p-4">
                     <div className="flex items-center gap-4">

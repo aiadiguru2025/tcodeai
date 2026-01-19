@@ -18,8 +18,10 @@ interface Props {
 }
 
 async function getTCode(code: string) {
+  // Decode URL-encoded T-code (handles T-codes with "/" like /BEV1/EM0)
+  const decodedCode = decodeURIComponent(code);
   const tcode = await prisma.transactionCode.findUnique({
-    where: { tcode: code.toUpperCase() },
+    where: { tcode: decodedCode.toUpperCase() },
   });
 
   return tcode;
@@ -237,7 +239,7 @@ export default async function TCodePage({ params }: Props) {
                     {relatedTCodes.map((related) => (
                       <Link
                         key={related.tcode}
-                        href={`/tcode/${related.tcode}`}
+                        href={`/tcode/${encodeURIComponent(related.tcode)}`}
                         className="flex items-center justify-between rounded-lg border p-3 transition-colors hover:bg-muted"
                       >
                         <div className="flex items-center gap-3">

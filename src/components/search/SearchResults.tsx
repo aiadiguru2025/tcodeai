@@ -60,7 +60,7 @@ function SearchResultCard({ result, rank }: { result: SearchResult; rank: number
     | undefined;
 
   return (
-    <Link href={`/tcode/${result.tcode}`}>
+    <Link href={`/tcode/${encodeURIComponent(result.tcode)}`}>
       <Card className="transition-shadow hover:shadow-md">
         <CardContent className="p-4">
           <div className="flex items-start justify-between gap-4">

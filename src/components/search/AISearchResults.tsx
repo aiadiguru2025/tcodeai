@@ -140,7 +140,7 @@ export function AISearchResults({ results, isLoading, query }: AISearchResultsPr
           {results.map((result, index) => (
             <Link
               key={result.tcode}
-              href={`/tcode/${result.tcode}`}
+              href={`/tcode/${encodeURIComponent(result.tcode)}`}
               className={cn(
                 'block rounded-lg border p-4 transition-all hover:border-primary hover:shadow-md',
                 index === 0 && 'border-primary/50 bg-primary/5'

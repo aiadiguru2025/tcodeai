@@ -187,7 +187,7 @@ export default function BookmarksPage() {
                       <Card key={bookmark.id}>
                         <CardContent className="flex items-center justify-between p-4">
                           <Link
-                            href={`/tcode/${bookmark.tcode}`}
+                            href={`/tcode/${encodeURIComponent(bookmark.tcode)}`}
                             className="flex-1 hover:underline"
                           >
                             <code className="text-lg font-bold text-primary">
