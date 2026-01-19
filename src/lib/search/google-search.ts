@@ -130,7 +130,7 @@ export async function validateAndFetchTCodes(tcodes: string[]): Promise<AISearch
     tcode: tc.tcode,
     description: tc.description,
     module: tc.module,
-    explanation: 'Found via Google search - commonly mentioned in SAP documentation and forums.',
+    explanation: 'Identified through enhanced search - commonly referenced in SAP documentation.',
     confidence: 0.78, // Slightly higher than Brave (0.75) due to better coverage
     source: 'web' as const,
   }));

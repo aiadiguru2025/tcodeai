@@ -120,7 +120,7 @@ async function validateTCodes(tcodes: string[]): Promise<AISearchResult[]> {
     tcode: tc.tcode,
     description: tc.description,
     module: tc.module,
-    explanation: 'Found via enhanced web search - commonly mentioned in SAP documentation.',
+    explanation: 'Identified through enhanced search - commonly referenced in SAP documentation.',
     confidence: WEB_RESULT_CONFIDENCE,
     source: 'web' as const,
   }));
@@ -168,7 +168,7 @@ function mergeAndRankResults(
       resultMap.set(result.tcode, {
         ...existing,
         confidence: Math.min(0.95, existing.confidence * 1.15), // 15% boost, max 0.95
-        explanation: existing.explanation + ' (verified via web search)',
+        explanation: existing.explanation + ' (verified through enhanced search)',
       });
     } else {
       resultMap.set(result.tcode, result);
