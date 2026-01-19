@@ -37,16 +37,18 @@ const PAGE_SIZE = 50;
 async function getModuleTCodes(module: string, page: number) {
   const skip = (page - 1) * PAGE_SIZE;
 
+  // Use case-insensitive matching to support both short codes (MM) and full names (Materials Management)
   const [tcodes, total] = await Promise.all([
     prisma.transactionCode.findMany({
       where: {
-        module: module.toUpperCase(),
+        module: { equals: module, mode: 'insensitive' },
         isDeprecated: false,
       },
       select: {
         tcode: true,
         description: true,
         program: true,
+        module: true,
       },
       orderBy: { tcode: 'asc' },
       skip,
@@ -54,7 +56,7 @@ async function getModuleTCodes(module: string, page: number) {
     }),
     prisma.transactionCode.count({
       where: {
-        module: module.toUpperCase(),
+        module: { equals: module, mode: 'insensitive' },
         isDeprecated: false,
       },
     }),
@@ -64,21 +66,27 @@ async function getModuleTCodes(module: string, page: number) {
 }
 
 export default async function ModulePage({ params, searchParams }: Props) {
-  const moduleCode = params.module.toUpperCase();
+  // Decode URL-encoded module name (e.g., "Sales%20and%20Distribution" -> "Sales and Distribution")
+  const decodedModule = decodeURIComponent(params.module);
   const page = parseInt(searchParams.page || '1', 10);
 
-  const { tcodes, total, totalPages } = await getModuleTCodes(moduleCode, page);
+  const { tcodes, total, totalPages } = await getModuleTCodes(decodedModule, page);
 
   if (tcodes.length === 0 && page === 1) {
     notFound();
   }
 
-  const info = MODULE_INFO[moduleCode] || {
-    name: moduleCode,
+  // Get the actual module name from the first result for display
+  const actualModuleName = tcodes[0]?.module || decodedModule;
+
+  // Check if it's a known short code for badge styling
+  const moduleUpperCase = decodedModule.toUpperCase();
+  const info = MODULE_INFO[moduleUpperCase] || {
+    name: actualModuleName,
     description: 'SAP Module',
   };
 
-  const moduleVariant = moduleCode.toLowerCase() as
+  const moduleVariant = moduleUpperCase.toLowerCase() as
     | 'mm'
     | 'sd'
     | 'fi'
@@ -104,9 +112,9 @@ export default async function ModulePage({ params, searchParams }: Props) {
           <div className="mb-8">
             <div className="flex items-center gap-3">
               <Badge variant={moduleVariant || 'secondary'} className="text-lg px-3 py-1">
-                {moduleCode}
+                {actualModuleName}
               </Badge>
-              <h1 className="text-2xl font-bold">{info.name}</h1>
+              <h1 className="text-2xl font-bold">{info.name !== actualModuleName ? info.name : ''}</h1>
             </div>
             <p className="mt-2 text-muted-foreground">{info.description}</p>
             <p className="mt-1 text-sm text-muted-foreground">
@@ -136,7 +144,7 @@ export default async function ModulePage({ params, searchParams }: Props) {
             <div className="mt-8 flex items-center justify-center gap-2">
               {page > 1 && (
                 <Link
-                  href={`/modules/${moduleCode}?page=${page - 1}`}
+                  href={`/modules/${encodeURIComponent(actualModuleName)}?page=${page - 1}`}
                   className="rounded-md border px-4 py-2 text-sm hover:bg-muted"
                 >
                   Previous
@@ -147,7 +155,7 @@ export default async function ModulePage({ params, searchParams }: Props) {
               </span>
               {page < totalPages && (
                 <Link
-                  href={`/modules/${moduleCode}?page=${page + 1}`}
+                  href={`/modules/${encodeURIComponent(actualModuleName)}?page=${page + 1}`}
                   className="rounded-md border px-4 py-2 text-sm hover:bg-muted"
                 >
                   Next

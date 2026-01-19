@@ -59,7 +59,7 @@ export default async function ModulesPage() {
               };
 
               return (
-                <Link key={module} href={`/modules/${module}`}>
+                <Link key={module} href={`/modules/${encodeURIComponent(module || 'other')}`}>
                   <Card className="h-full transition-shadow hover:shadow-md">
                     <CardHeader className="pb-2">
                       <div className="flex items-center justify-between">
@@ -75,7 +75,7 @@ export default async function ModulesPage() {
                           {_count.module.toLocaleString()} T-codes
                         </span>
                       </div>
-                      <CardTitle className="text-lg">{info.name}</CardTitle>
+                      <CardTitle className="text-lg">{info.name !== module ? info.name : ''}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <p className="text-sm text-muted-foreground">{info.description}</p>
