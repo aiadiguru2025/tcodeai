@@ -2,32 +2,21 @@ import Link from 'next/link';
 import { Search, Sparkles } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+import { hybridSearch } from '@/lib/search/hybrid-search';
 import type { SearchResult } from '@/types';
 
-async function fetchSearchResults(query: string): Promise<SearchResult[]> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+export async function SearchResults({ query }: { query: string }) {
+  let results: SearchResult[] = [];
 
   try {
-    const res = await fetch(`${baseUrl}/api/v1/search/query`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query }),
-      cache: 'no-store',
+    results = await hybridSearch({
+      query,
+      limit: 20,
+      includeDeprecated: false,
     });
-
-    if (!res.ok) {
-      throw new Error('Search failed');
-    }
-
-    const data = await res.json();
-    return data.results || [];
-  } catch {
-    return [];
+  } catch (error) {
+    console.error('Search error:', error);
   }
-}
-
-export async function SearchResults({ query }: { query: string }) {
-  const results = await fetchSearchResults(query);
 
   if (results.length === 0) {
     return (

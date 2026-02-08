@@ -3,32 +3,18 @@ import { Sparkles, Lightbulb, ExternalLink, AlertTriangle, Globe, Search } from 
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import { executeAISearch } from '@/lib/search/ai-search';
 import type { AISearchResult } from '@/types';
 
-async function fetchAISearchResults(query: string): Promise<AISearchResult[]> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+export async function AISearchResultsServer({ query }: { query: string }) {
+  let results: AISearchResult[] = [];
 
   try {
-    const res = await fetch(`${baseUrl}/api/v1/search/ai`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query, limit: 5 }),
-      cache: 'no-store',
-    });
-
-    if (!res.ok) {
-      throw new Error('AI search failed');
-    }
-
-    const data = await res.json();
-    return data.results || [];
-  } catch {
-    return [];
+    const searchResult = await executeAISearch(query, 5);
+    results = searchResult.results;
+  } catch (error) {
+    console.error('AI search error:', error);
   }
-}
-
-export async function AISearchResultsServer({ query }: { query: string }) {
-  const results = await fetchAISearchResults(query);
 
   if (results.length === 0) {
     return (
