@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Search, Sparkles } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import type { SearchResult } from '@/types';
@@ -30,11 +31,35 @@ export async function SearchResults({ query }: { query: string }) {
 
   if (results.length === 0) {
     return (
-      <div className="py-12 text-center">
-        <p className="text-muted-foreground">No results found for &ldquo;{query}&rdquo;</p>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Try different keywords or check your spelling
+      <div className="py-12 text-center space-y-4">
+        <div className="inline-flex rounded-full bg-muted p-3">
+          <Search className="h-6 w-6 text-muted-foreground" aria-hidden="true" />
+        </div>
+        <p className="text-muted-foreground">
+          No results found for &ldquo;{query}&rdquo;
         </p>
+        <div className="space-y-2 text-sm text-muted-foreground">
+          <p>Suggestions:</p>
+          <ul className="space-y-1">
+            <li>Check your spelling or try a different T-code</li>
+            <li>
+              <Link
+                href={`/search?q=${encodeURIComponent(query)}&mode=ai`}
+                className="inline-flex items-center gap-1 text-primary hover:underline"
+              >
+                <Sparkles className="h-3 w-3" aria-hidden="true" />
+                Try AI search
+              </Link>
+              {' '}for natural language queries
+            </li>
+            <li>
+              <Link href="/modules" className="text-primary hover:underline">
+                Browse by module
+              </Link>
+              {' '}to discover T-codes
+            </li>
+          </ul>
+        </div>
       </div>
     );
   }
