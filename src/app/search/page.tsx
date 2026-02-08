@@ -4,6 +4,7 @@ import { UnifiedSearchBar } from '@/components/search/UnifiedSearchBar';
 import { SearchResults } from '@/components/search/SearchResults';
 import { AISearchResultsServer } from '@/components/search/AISearchResultsServer';
 import { SearchResultsSkeleton } from '@/components/search/SearchResultsSkeleton';
+import { AISearchSkeleton } from '@/components/search/AISearchSkeleton';
 import { Sparkles, Zap } from 'lucide-react';
 
 export default function SearchPage({
@@ -42,13 +43,15 @@ export default function SearchPage({
                 </span>
               </div>
 
-              <Suspense fallback={<SearchResultsSkeleton />}>
-                {mode === 'ai' ? (
+              {mode === 'ai' ? (
+                <Suspense fallback={<AISearchSkeleton />}>
                   <AISearchResultsServer query={query} />
-                ) : (
+                </Suspense>
+              ) : (
+                <Suspense fallback={<SearchResultsSkeleton />}>
                   <SearchResults query={query} />
-                )}
-              </Suspense>
+                </Suspense>
+              )}
             </div>
           )}
         </div>

@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, Loader2, X, Sparkles, Zap } from 'lucide-react';
+import { Search, X, Sparkles, Zap } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
@@ -212,7 +212,11 @@ export function UnifiedSearchBar({ className, initialQuery = '', variant = 'comp
             </button>
           )}
           {isLoading && (
-            <Loader2 className="absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 animate-spin text-muted-foreground" aria-hidden="true" />
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-1.5" aria-hidden="true">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary animate-thinking-dot" style={{ animationDelay: '0s' }} />
+              <span className="h-1.5 w-1.5 rounded-full bg-primary animate-thinking-dot" style={{ animationDelay: '0.2s' }} />
+              <span className="h-1.5 w-1.5 rounded-full bg-primary animate-thinking-dot" style={{ animationDelay: '0.4s' }} />
+            </div>
           )}
         </div>
 
@@ -223,7 +227,7 @@ export function UnifiedSearchBar({ className, initialQuery = '', variant = 'comp
             id="search-suggestions"
             role="listbox"
             aria-label="Search suggestions"
-            className="absolute z-50 mt-2 w-full rounded-lg border bg-popover p-2 shadow-lg"
+            className="absolute z-50 mt-2 w-full rounded-lg border bg-popover p-2 shadow-lg opacity-0 animate-scale-in"
           >
             {suggestions.map((suggestion, index) => (
               <button
@@ -264,7 +268,7 @@ export function UnifiedSearchBar({ className, initialQuery = '', variant = 'comp
             aria-checked={mode === 'auto'}
             onClick={() => setMode('auto')}
             className={cn(
-              'rounded-full px-3 py-1 text-xs font-medium transition-colors min-h-[32px]',
+              'rounded-full px-3 py-1 text-xs font-medium transition-all duration-200 min-h-[32px]',
               mode === 'auto'
                 ? 'bg-primary text-primary-foreground'
                 : 'bg-muted text-muted-foreground hover:text-foreground'
@@ -278,7 +282,7 @@ export function UnifiedSearchBar({ className, initialQuery = '', variant = 'comp
             aria-checked={mode === 'keyword'}
             onClick={() => setMode('keyword')}
             className={cn(
-              'rounded-full px-3 py-1 text-xs font-medium transition-colors flex items-center gap-1 min-h-[32px]',
+              'rounded-full px-3 py-1 text-xs font-medium transition-all duration-200 flex items-center gap-1 min-h-[32px]',
               mode === 'keyword'
                 ? 'bg-primary text-primary-foreground'
                 : 'bg-muted text-muted-foreground hover:text-foreground'
@@ -293,7 +297,7 @@ export function UnifiedSearchBar({ className, initialQuery = '', variant = 'comp
             aria-checked={mode === 'ai'}
             onClick={() => setMode('ai')}
             className={cn(
-              'rounded-full px-3 py-1 text-xs font-medium transition-colors flex items-center gap-1 min-h-[32px]',
+              'rounded-full px-3 py-1 text-xs font-medium transition-all duration-200 flex items-center gap-1 min-h-[32px]',
               mode === 'ai'
                 ? 'bg-primary text-primary-foreground'
                 : 'bg-muted text-muted-foreground hover:text-foreground'

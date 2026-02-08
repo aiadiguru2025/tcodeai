@@ -20,7 +20,7 @@ export async function SearchResults({ query }: { query: string }) {
 
   if (results.length === 0) {
     return (
-      <div className="py-12 text-center space-y-4">
+      <div className="py-12 text-center space-y-4 opacity-0 animate-fade-in-up">
         <div className="inline-flex rounded-full bg-muted p-3">
           <Search className="h-6 w-6 text-muted-foreground" aria-hidden="true" />
         </div>
@@ -56,7 +56,13 @@ export async function SearchResults({ query }: { query: string }) {
   return (
     <div className="space-y-4">
       {results.map((result, index) => (
-        <SearchResultCard key={result.tcode} result={result} rank={index + 1} />
+        <div
+          key={result.tcode}
+          className="opacity-0 animate-fade-in-up"
+          style={{ animationDelay: `${index * 0.05}s` }}
+        >
+          <SearchResultCard result={result} rank={index + 1} />
+        </div>
       ))}
     </div>
   );

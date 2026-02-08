@@ -18,7 +18,7 @@ export async function AISearchResultsServer({ query }: { query: string }) {
 
   if (results.length === 0) {
     return (
-      <div className="py-12 text-center space-y-4">
+      <div className="py-12 text-center space-y-4 opacity-0 animate-fade-in-up">
         <div className="inline-flex rounded-full bg-muted p-3">
           <Search className="h-6 w-6 text-muted-foreground" aria-hidden="true" />
         </div>
@@ -46,7 +46,7 @@ export async function AISearchResultsServer({ query }: { query: string }) {
 
   if (isAIGenerated) {
     return (
-      <Card className="border-amber-500/30 bg-amber-50/30 dark:bg-amber-950/10">
+      <Card className="border-amber-500/30 bg-amber-50/30 dark:bg-amber-950/10 opacity-0 animate-scale-in">
         <CardContent className="p-4">
           <div className="mb-4 space-y-2">
             <div className="flex items-center gap-2 text-sm font-medium">
@@ -63,10 +63,11 @@ export async function AISearchResultsServer({ query }: { query: string }) {
           </div>
 
           <div className="space-y-3">
-            {results.map((result) => (
+            {results.map((result, index) => (
               <div
                 key={result.tcode}
-                className="block rounded-lg border border-amber-200 bg-white p-4 dark:border-amber-800 dark:bg-gray-900"
+                className="block rounded-lg border border-amber-200 bg-white p-4 dark:border-amber-800 dark:bg-gray-900 opacity-0 animate-fade-in-up"
+                style={{ animationDelay: `${0.1 + index * 0.08}s` }}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 space-y-2">
@@ -105,7 +106,7 @@ export async function AISearchResultsServer({ query }: { query: string }) {
   }
 
   return (
-    <Card className="border-primary/20">
+    <Card className="border-primary/20 opacity-0 animate-scale-in">
       <CardContent className="p-4">
         <div className="mb-4 flex items-center gap-2 text-sm font-medium">
           <Sparkles className="h-4 w-4 text-primary" aria-hidden="true" />
@@ -121,9 +122,10 @@ export async function AISearchResultsServer({ query }: { query: string }) {
               key={result.tcode}
               href={`/tcode/${encodeURIComponent(result.tcode)}`}
               className={cn(
-                'block rounded-lg border p-4 transition-all hover:border-primary hover:shadow-md',
+                'block rounded-lg border p-4 transition-all hover:border-primary hover:shadow-md opacity-0 animate-fade-in-up',
                 index === 0 && 'border-primary/50 bg-primary/5'
               )}
+              style={{ animationDelay: `${0.1 + index * 0.08}s` }}
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 space-y-2">
