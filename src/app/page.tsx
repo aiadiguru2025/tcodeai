@@ -37,7 +37,7 @@ export default function Home() {
               <a
                 key={example.label}
                 href={`/search?q=${encodeURIComponent(example.label)}&mode=${example.type === 'tcode' ? 'keyword' : 'ai'}`}
-                className="rounded-full border border-border bg-background px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:border-primary hover:text-foreground min-h-[32px] flex items-center"
+                className="rounded-full border border-border bg-background px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:border-primary hover:text-foreground min-h-[44px] flex items-center"
               >
                 {example.label}
               </a>

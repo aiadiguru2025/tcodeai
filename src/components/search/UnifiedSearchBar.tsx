@@ -268,7 +268,7 @@ export function UnifiedSearchBar({ className, initialQuery = '', variant = 'comp
             aria-checked={mode === 'auto'}
             onClick={() => setMode('auto')}
             className={cn(
-              'rounded-full px-3 py-1 text-xs font-medium transition-all duration-200 min-h-[32px]',
+              'rounded-full px-3 py-1 text-xs font-medium transition-all duration-200 min-h-[44px]',
               mode === 'auto'
                 ? 'bg-primary text-primary-foreground'
                 : 'bg-muted text-muted-foreground hover:text-foreground'
@@ -282,7 +282,7 @@ export function UnifiedSearchBar({ className, initialQuery = '', variant = 'comp
             aria-checked={mode === 'keyword'}
             onClick={() => setMode('keyword')}
             className={cn(
-              'rounded-full px-3 py-1 text-xs font-medium transition-all duration-200 flex items-center gap-1 min-h-[32px]',
+              'rounded-full px-3 py-1 text-xs font-medium transition-all duration-200 flex items-center gap-1 min-h-[44px]',
               mode === 'keyword'
                 ? 'bg-primary text-primary-foreground'
                 : 'bg-muted text-muted-foreground hover:text-foreground'
@@ -297,7 +297,7 @@ export function UnifiedSearchBar({ className, initialQuery = '', variant = 'comp
             aria-checked={mode === 'ai'}
             onClick={() => setMode('ai')}
             className={cn(
-              'rounded-full px-3 py-1 text-xs font-medium transition-all duration-200 flex items-center gap-1 min-h-[32px]',
+              'rounded-full px-3 py-1 text-xs font-medium transition-all duration-200 flex items-center gap-1 min-h-[44px]',
               mode === 'ai'
                 ? 'bg-primary text-primary-foreground'
                 : 'bg-muted text-muted-foreground hover:text-foreground'

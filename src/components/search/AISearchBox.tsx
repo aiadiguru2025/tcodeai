@@ -129,7 +129,7 @@ export function AISearchBox({ className }: AISearchBoxProps) {
             type="button"
             onClick={() => handleExampleClick(example)}
             disabled={isLoading}
-            className="rounded-full border border-border bg-background px-3 py-1 text-xs text-muted-foreground transition-colors hover:border-primary hover:text-foreground disabled:opacity-50"
+            className="rounded-full border border-border bg-background px-3 py-1 text-xs text-muted-foreground transition-colors hover:border-primary hover:text-foreground disabled:opacity-50 min-h-[44px]"
           >
             {example}
           </button>

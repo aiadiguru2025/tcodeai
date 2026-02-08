@@ -45,11 +45,13 @@ export function FioriBookmarkButton({ appId, appName, className }: FioriBookmark
       variant="outline"
       size="icon"
       onClick={toggleBookmark}
-      title={isBookmarked ? 'Remove from favorites' : 'Add to favorites'}
-      className={className}
+      aria-label={isBookmarked ? `Remove ${appId} from favorites` : `Add ${appId} to favorites`}
+      aria-pressed={isBookmarked}
+      className={cn('min-h-[44px] min-w-[44px]', className)}
     >
       <Bookmark
         className={cn('h-4 w-4', isBookmarked && 'fill-current text-yellow-500')}
+        aria-hidden="true"
       />
     </Button>
   );
