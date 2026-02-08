@@ -38,6 +38,7 @@ export function FioriBookmarkButton({ appId, appName, className }: FioriBookmark
     }
 
     localStorage.setItem('tcodeai_fiori_bookmarks', JSON.stringify(bookmarks));
+    window.dispatchEvent(new Event('storage'));
   };
 
   return (

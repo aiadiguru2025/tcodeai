@@ -5,8 +5,9 @@ import Link from 'next/link';
 import { Header } from '@/components/layout/Header';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Bookmark, Trash2, Download, Upload, AppWindow, Terminal } from 'lucide-react';
+import { Bookmark, Trash2, Download, Upload, AppWindow, Terminal, Pencil } from 'lucide-react';
 
 interface TCodeBookmark {
   id: string;
@@ -26,6 +27,8 @@ interface FioriBookmark {
 export default function BookmarksPage() {
   const [tcodeBookmarks, setTcodeBookmarks] = useState<TCodeBookmark[]>([]);
   const [fioriBookmarks, setFioriBookmarks] = useState<FioriBookmark[]>([]);
+  const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
+  const [noteText, setNoteText] = useState('');
 
   useEffect(() => {
     loadBookmarks();
@@ -48,12 +51,42 @@ export default function BookmarksPage() {
     const updated = tcodeBookmarks.filter((b) => b.id !== id);
     localStorage.setItem('tcodeai_bookmarks', JSON.stringify(updated));
     setTcodeBookmarks(updated);
+    window.dispatchEvent(new Event('storage'));
   };
 
   const removeFioriBookmark = (id: string) => {
     const updated = fioriBookmarks.filter((b) => b.id !== id);
     localStorage.setItem('tcodeai_fiori_bookmarks', JSON.stringify(updated));
     setFioriBookmarks(updated);
+    window.dispatchEvent(new Event('storage'));
+  };
+
+  const saveNote = (bookmarkId: string, type: 'tcode' | 'fiori') => {
+    if (type === 'tcode') {
+      const updated = tcodeBookmarks.map((b) =>
+        b.id === bookmarkId ? { ...b, notes: noteText || null } : b
+      );
+      localStorage.setItem('tcodeai_bookmarks', JSON.stringify(updated));
+      setTcodeBookmarks(updated);
+    } else {
+      const updated = fioriBookmarks.map((b) =>
+        b.id === bookmarkId ? { ...b, notes: noteText || null } : b
+      );
+      localStorage.setItem('tcodeai_fiori_bookmarks', JSON.stringify(updated));
+      setFioriBookmarks(updated);
+    }
+    setEditingNoteId(null);
+    setNoteText('');
+  };
+
+  const startEditNote = (id: string, currentNote: string | null) => {
+    setEditingNoteId(id);
+    setNoteText(currentNote || '');
+  };
+
+  const cancelEditNote = () => {
+    setEditingNoteId(null);
+    setNoteText('');
   };
 
   const exportBookmarks = () => {
@@ -83,7 +116,6 @@ export default function BookmarksPage() {
         const text = await file.text();
         const imported = JSON.parse(text);
 
-        // Handle new format with both types
         if (imported.tcodes || imported.fioriApps) {
           if (imported.tcodes) {
             const existing = new Set(tcodeBookmarks.map((b) => b.tcode));
@@ -100,13 +132,13 @@ export default function BookmarksPage() {
             setFioriBookmarks(merged);
           }
         } else if (Array.isArray(imported)) {
-          // Handle old format (T-codes only)
           const existing = new Set(tcodeBookmarks.map((b) => b.tcode));
           const newBookmarks = imported.filter((b: TCodeBookmark) => !existing.has(b.tcode));
           const merged = [...tcodeBookmarks, ...newBookmarks];
           localStorage.setItem('tcodeai_bookmarks', JSON.stringify(merged));
           setTcodeBookmarks(merged);
         }
+        window.dispatchEvent(new Event('storage'));
       } catch {
         alert('Failed to import bookmarks. Please check the file format.');
       }
@@ -185,26 +217,76 @@ export default function BookmarksPage() {
                   <div className="space-y-3">
                     {tcodeBookmarks.map((bookmark) => (
                       <Card key={bookmark.id}>
-                        <CardContent className="flex items-center justify-between p-4">
-                          <Link
-                            href={`/tcode/${encodeURIComponent(bookmark.tcode)}`}
-                            className="flex-1 hover:underline"
-                          >
-                            <code className="text-lg font-bold text-primary">
-                              {bookmark.tcode}
-                            </code>
-                            <p className="text-sm text-muted-foreground">
-                              Added {new Date(bookmark.createdAt).toLocaleDateString()}
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between">
+                            <Link
+                              href={`/tcode/${encodeURIComponent(bookmark.tcode)}`}
+                              className="flex-1 hover:underline"
+                            >
+                              <code className="text-lg font-bold text-primary">
+                                {bookmark.tcode}
+                              </code>
+                              <p className="text-sm text-muted-foreground">
+                                Added {new Date(bookmark.createdAt).toLocaleDateString()}
+                              </p>
+                            </Link>
+                            <div className="flex items-center gap-1">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => startEditNote(bookmark.id, bookmark.notes)}
+                                className="text-xs text-muted-foreground min-h-[44px]"
+                              >
+                                <Pencil className="mr-1 h-3 w-3" />
+                                {bookmark.notes ? 'Edit note' : 'Add note'}
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => removeTcodeBookmark(bookmark.id)}
+                                aria-label={`Remove ${bookmark.tcode} bookmark`}
+                                className="min-h-[44px] min-w-[44px]"
+                              >
+                                <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
+                              </Button>
+                            </div>
+                          </div>
+
+                          {bookmark.notes && editingNoteId !== bookmark.id && (
+                            <p className="mt-2 text-sm text-muted-foreground italic border-l-2 border-muted pl-3">
+                              {bookmark.notes}
                             </p>
-                          </Link>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => removeTcodeBookmark(bookmark.id)}
-                            title="Remove bookmark"
-                          >
-                            <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
-                          </Button>
+                          )}
+
+                          {editingNoteId === bookmark.id && (
+                            <div className="mt-3 space-y-2">
+                              <Textarea
+                                value={noteText}
+                                onChange={(e) => setNoteText(e.target.value)}
+                                placeholder="Add a note..."
+                                className="text-sm"
+                                rows={2}
+                                autoFocus
+                              />
+                              <div className="flex gap-2">
+                                <Button
+                                  size="sm"
+                                  onClick={() => saveNote(bookmark.id, 'tcode')}
+                                  className="min-h-[44px]"
+                                >
+                                  Save
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={cancelEditNote}
+                                  className="min-h-[44px]"
+                                >
+                                  Cancel
+                                </Button>
+                              </div>
+                            </div>
+                          )}
                         </CardContent>
                       </Card>
                     ))}
@@ -226,32 +308,82 @@ export default function BookmarksPage() {
                   <div className="space-y-3">
                     {fioriBookmarks.map((bookmark) => (
                       <Card key={bookmark.id}>
-                        <CardContent className="flex items-center justify-between p-4">
-                          <Link
-                            href={`/fiori/${encodeURIComponent(bookmark.appId)}`}
-                            className="flex-1 hover:underline"
-                          >
-                            <div className="flex items-center gap-2">
-                              <AppWindow className="h-4 w-4 text-muted-foreground" />
-                              <code className="text-lg font-bold text-primary">
-                                {bookmark.appId}
-                              </code>
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between">
+                            <Link
+                              href={`/fiori/${encodeURIComponent(bookmark.appId)}`}
+                              className="flex-1 hover:underline"
+                            >
+                              <div className="flex items-center gap-2">
+                                <AppWindow className="h-4 w-4 text-muted-foreground" />
+                                <code className="text-lg font-bold text-primary">
+                                  {bookmark.appId}
+                                </code>
+                              </div>
+                              {bookmark.appName && (
+                                <p className="text-sm">{bookmark.appName}</p>
+                              )}
+                              <p className="text-sm text-muted-foreground">
+                                Added {new Date(bookmark.createdAt).toLocaleDateString()}
+                              </p>
+                            </Link>
+                            <div className="flex items-center gap-1">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => startEditNote(bookmark.id, bookmark.notes)}
+                                className="text-xs text-muted-foreground min-h-[44px]"
+                              >
+                                <Pencil className="mr-1 h-3 w-3" />
+                                {bookmark.notes ? 'Edit note' : 'Add note'}
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => removeFioriBookmark(bookmark.id)}
+                                aria-label={`Remove ${bookmark.appId} bookmark`}
+                                className="min-h-[44px] min-w-[44px]"
+                              >
+                                <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
+                              </Button>
                             </div>
-                            {bookmark.appName && (
-                              <p className="text-sm">{bookmark.appName}</p>
-                            )}
-                            <p className="text-sm text-muted-foreground">
-                              Added {new Date(bookmark.createdAt).toLocaleDateString()}
+                          </div>
+
+                          {bookmark.notes && editingNoteId !== bookmark.id && (
+                            <p className="mt-2 text-sm text-muted-foreground italic border-l-2 border-muted pl-3">
+                              {bookmark.notes}
                             </p>
-                          </Link>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => removeFioriBookmark(bookmark.id)}
-                            title="Remove bookmark"
-                          >
-                            <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
-                          </Button>
+                          )}
+
+                          {editingNoteId === bookmark.id && (
+                            <div className="mt-3 space-y-2">
+                              <Textarea
+                                value={noteText}
+                                onChange={(e) => setNoteText(e.target.value)}
+                                placeholder="Add a note..."
+                                className="text-sm"
+                                rows={2}
+                                autoFocus
+                              />
+                              <div className="flex gap-2">
+                                <Button
+                                  size="sm"
+                                  onClick={() => saveNote(bookmark.id, 'fiori')}
+                                  className="min-h-[44px]"
+                                >
+                                  Save
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={cancelEditNote}
+                                  className="min-h-[44px]"
+                                >
+                                  Cancel
+                                </Button>
+                              </div>
+                            </div>
+                          )}
                         </CardContent>
                       </Card>
                     ))}

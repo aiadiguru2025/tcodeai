@@ -94,6 +94,10 @@ const config: Config = {
           '50%': { backgroundPosition: '100% 50%' },
           '100%': { backgroundPosition: '0% 50%' },
         },
+        'page-fade-in': {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
@@ -103,6 +107,7 @@ const config: Config = {
         'scale-in': 'scale-in 0.3s ease-out forwards',
         'thinking-dot': 'thinking-dot 1.4s ease-in-out infinite',
         'gradient-shift': 'gradient-shift 3s ease infinite',
+        'page-fade-in': 'page-fade-in 0.2s ease-out forwards',
       },
     },
   },

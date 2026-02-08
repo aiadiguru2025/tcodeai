@@ -36,6 +36,7 @@ export function BookmarkButton({ tcode, className }: BookmarkButtonProps) {
     }
 
     localStorage.setItem('tcodeai_bookmarks', JSON.stringify(bookmarks));
+    window.dispatchEvent(new Event('storage'));
   };
 
   return (

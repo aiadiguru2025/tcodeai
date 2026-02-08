@@ -5,17 +5,31 @@ import { Card, CardContent } from '@/components/ui/card';
 import { hybridSearch } from '@/lib/search/hybrid-search';
 import type { SearchResult } from '@/types';
 
-export async function SearchResults({ query }: { query: string }) {
+interface SearchResultsProps {
+  query: string;
+  module?: string;
+  includeDeprecated?: boolean;
+  sort?: string;
+}
+
+export async function SearchResults({ query, module, includeDeprecated = false, sort }: SearchResultsProps) {
   let results: SearchResult[] = [];
 
   try {
     results = await hybridSearch({
       query,
+      modules: module ? [module] : undefined,
       limit: 20,
-      includeDeprecated: false,
+      includeDeprecated,
     });
   } catch (error) {
     console.error('Search error:', error);
+  }
+
+  if (sort === 'name-asc') {
+    results.sort((a, b) => a.tcode.localeCompare(b.tcode));
+  } else if (sort === 'name-desc') {
+    results.sort((a, b) => b.tcode.localeCompare(a.tcode));
   }
 
   if (results.length === 0) {

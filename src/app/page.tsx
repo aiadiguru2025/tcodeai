@@ -1,7 +1,8 @@
 import { UnifiedSearchBar } from '@/components/search/UnifiedSearchBar';
 import { Header } from '@/components/layout/Header';
+import prisma from '@/lib/db';
 
-const EXAMPLE_SEARCHES = [
+const FALLBACK_SEARCHES = [
   { label: 'ME21N', type: 'tcode' as const },
   { label: 'Create purchase order', type: 'ai' as const },
   { label: 'VA01', type: 'tcode' as const },
@@ -10,7 +11,39 @@ const EXAMPLE_SEARCHES = [
   { label: 'FB01', type: 'tcode' as const },
 ];
 
-export default function Home() {
+async function getPopularTCodes() {
+  try {
+    const popular = await prisma.searchLog.groupBy({
+      by: ['selectedTcodeId'],
+      where: { selectedTcodeId: { not: null } },
+      _count: { selectedTcodeId: true },
+      orderBy: { _count: { selectedTcodeId: 'desc' } },
+      take: 8,
+    });
+
+    if (popular.length < 3) return null;
+
+    const tcodeIds = popular.map((p) => p.selectedTcodeId!);
+    const tcodes = await prisma.transactionCode.findMany({
+      where: { id: { in: tcodeIds } },
+      select: { id: true, tcode: true },
+    });
+
+    const tcodeMap = new Map(tcodes.map((t) => [t.id, t]));
+
+    return popular
+      .map((p) => tcodeMap.get(p.selectedTcodeId!))
+      .filter(Boolean)
+      .map((t) => ({ label: t!.tcode, type: 'tcode' as const }));
+  } catch {
+    return null;
+  }
+}
+
+export default async function Home() {
+  const popularTCodes = await getPopularTCodes();
+  const searches = popularTCodes || FALLBACK_SEARCHES;
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
       <Header />
@@ -18,11 +51,10 @@ export default function Home() {
         <div className="flex flex-col items-center justify-center space-y-8 pt-12 md:pt-24">
           <div className="space-y-4 text-center">
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-              <span className="text-primary">TCode</span>AI
+              Stop Memorizing T-Codes.
             </h1>
             <p className="mx-auto max-w-2xl text-lg text-muted-foreground md:text-xl">
-              Find SAP transaction codes using plain English. Search by T-code name or describe what
-              you need.
+              Just describe what you need. AI finds the right SAP transaction in seconds.
             </p>
           </div>
 
@@ -30,10 +62,12 @@ export default function Home() {
             <UnifiedSearchBar variant="hero" />
           </div>
 
-          {/* Example searches */}
+          {/* Example / Popular searches */}
           <div className="flex flex-wrap justify-center gap-2">
-            <span className="text-xs text-muted-foreground self-center">Try:</span>
-            {EXAMPLE_SEARCHES.map((example) => (
+            <span className="text-xs text-muted-foreground self-center">
+              {popularTCodes ? 'Popular:' : 'Try:'}
+            </span>
+            {searches.map((example) => (
               <a
                 key={example.label}
                 href={`/search?q=${encodeURIComponent(example.label)}&mode=${example.type === 'tcode' ? 'keyword' : 'ai'}`}

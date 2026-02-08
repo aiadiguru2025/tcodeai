@@ -33,8 +33,8 @@ export default function AboutPage() {
               About <span className="text-primary">TCode</span>AI
             </h1>
             <p className="text-lg text-muted-foreground">
-              The fastest way to find any SAP transaction code. Search by name, keyword, or
-              describe what you need in plain English.
+              Stop memorizing T-codes. Just describe what you need &mdash; AI finds the right
+              SAP transaction in seconds.
             </p>
           </div>
 

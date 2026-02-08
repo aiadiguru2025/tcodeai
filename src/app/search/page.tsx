@@ -5,15 +5,19 @@ import { SearchResults } from '@/components/search/SearchResults';
 import { AISearchResultsServer } from '@/components/search/AISearchResultsServer';
 import { SearchResultsSkeleton } from '@/components/search/SearchResultsSkeleton';
 import { AISearchSkeleton } from '@/components/search/AISearchSkeleton';
+import { SearchFilters } from '@/components/search/SearchFilters';
 import { Sparkles, Zap } from 'lucide-react';
 
 export default function SearchPage({
   searchParams,
 }: {
-  searchParams: { q?: string; mode?: string };
+  searchParams: { q?: string; mode?: string; module?: string; deprecated?: string; sort?: string };
 }) {
   const query = searchParams.q || '';
   const mode = searchParams.mode === 'ai' ? 'ai' : 'keyword';
+  const filterModule = searchParams.module || '';
+  const includeDeprecated = searchParams.deprecated === 'true';
+  const sort = searchParams.sort || 'relevance';
 
   return (
     <div className="min-h-screen bg-background">
@@ -43,13 +47,24 @@ export default function SearchPage({
                 </span>
               </div>
 
+              {mode === 'keyword' && (
+                <Suspense>
+                  <SearchFilters />
+                </Suspense>
+              )}
+
               {mode === 'ai' ? (
                 <Suspense fallback={<AISearchSkeleton />}>
                   <AISearchResultsServer query={query} />
                 </Suspense>
               ) : (
                 <Suspense fallback={<SearchResultsSkeleton />}>
-                  <SearchResults query={query} />
+                  <SearchResults
+                    query={query}
+                    module={filterModule}
+                    includeDeprecated={includeDeprecated}
+                    sort={sort}
+                  />
                 </Suspense>
               )}
             </div>

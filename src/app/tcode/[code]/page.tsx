@@ -9,7 +9,8 @@ import { BookmarkButton } from '@/components/bookmarks/BookmarkButton';
 import { CopyButton } from '@/components/tcode/CopyButton';
 import { TCodeFeedback } from '@/components/tcode/TCodeFeedback';
 import prisma from '@/lib/db';
-import { ArrowLeft, ExternalLink, AppWindow } from 'lucide-react';
+import { executeSemanticSearch } from '@/lib/search/semantic-search';
+import { ExternalLink, AppWindow } from 'lucide-react';
 import { FioriAppList } from '@/components/fiori/FioriAppCard';
 import type { FioriApp } from '@/types';
 
@@ -56,33 +57,43 @@ async function getFioriApps(tcode: string): Promise<FioriApp[]> {
   }));
 }
 
-async function getRelatedTCodes(tcode: string, module: string | null) {
-  // Find related T-codes by prefix pattern
-  const prefix = tcode.replace(/[0-9N]+$/, '');
+async function getRelatedTCodes(tcode: string, description: string | null, module: string | null) {
+  // Try semantic similarity first
+  try {
+    if (description && process.env.OPENAI_API_KEY) {
+      const semanticResults = await executeSemanticSearch(description, undefined, false, 6);
+      const filtered = semanticResults.filter((r) => r.tcode !== tcode).slice(0, 5);
+      if (filtered.length > 0) {
+        return filtered.map((r) => ({
+          tcode: r.tcode,
+          description: r.description,
+          program: r.program,
+          module: r.module,
+          isDeprecated: r.isDeprecated,
+        }));
+      }
+    }
+  } catch (error) {
+    console.error('Semantic related search failed, falling back to prefix:', error);
+  }
 
+  // Fallback: prefix-based matching
+  const prefix = tcode.replace(/[0-9N]+$/, '');
   const related = await prisma.transactionCode.findMany({
     where: {
-      tcode: {
-        startsWith: prefix,
-        not: tcode,
-      },
+      tcode: { startsWith: prefix, not: tcode },
       isDeprecated: false,
     },
     take: 5,
     orderBy: { tcode: 'asc' },
   });
 
-  // If module is known, also get popular T-codes from same module
   let sameModule: typeof related = [];
   if (module && related.length < 5) {
     sameModule = await prisma.transactionCode.findMany({
       where: {
         module,
-        NOT: {
-          tcode: {
-            in: [...related.map((r) => r.tcode), tcode],
-          },
-        },
+        NOT: { tcode: { in: [...related.map((r) => r.tcode), tcode] } },
         isDeprecated: false,
         description: { not: null },
       },
@@ -120,7 +131,7 @@ export default async function TCodePage({ params }: Props) {
   }
 
   const [relatedTCodes, fioriApps] = await Promise.all([
-    getRelatedTCodes(tcode.tcode, tcode.module),
+    getRelatedTCodes(tcode.tcode, tcode.description || tcode.descriptionEnriched, tcode.module),
     getFioriApps(tcode.tcode),
   ]);
 
@@ -139,13 +150,34 @@ export default async function TCodePage({ params }: Props) {
       <Header />
       <main id="main-content" className="container mx-auto px-4 py-8">
         <div className="mx-auto max-w-4xl">
-          <Link
-            href="/"
-            className="mb-6 inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to search
-          </Link>
+          <nav aria-label="Breadcrumb" className="mb-6">
+            <ol className="flex items-center gap-1.5 text-sm text-muted-foreground">
+              <li>
+                <Link href="/" className="hover:text-foreground transition-colors">
+                  Home
+                </Link>
+              </li>
+              <li aria-hidden="true">/</li>
+              {tcode.module && (
+                <>
+                  <li>
+                    <Link
+                      href={`/modules/${encodeURIComponent(tcode.module)}`}
+                      className="hover:text-foreground transition-colors"
+                    >
+                      {tcode.module}
+                    </Link>
+                  </li>
+                  <li aria-hidden="true">/</li>
+                </>
+              )}
+              <li>
+                <span className="text-foreground font-medium" aria-current="page">
+                  {tcode.tcode}
+                </span>
+              </li>
+            </ol>
+          </nav>
 
           <div className="space-y-6">
             {/* Main Info Card */}
