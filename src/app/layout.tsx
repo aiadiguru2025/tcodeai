@@ -37,7 +37,7 @@ export default function RootLayout({
         <Providers>
           {children}
           <footer className="border-t border-border/40 py-6 text-center text-sm text-muted-foreground">
-            <span className="font-medium"><span className="text-primary">TCode</span>AI</span> &copy; 2026
+            &copy; 2026 <span className="font-medium"><span className="text-primary">TCode</span>AI</span>
           </footer>
         </Providers>
         <Analytics />
