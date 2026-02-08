@@ -167,21 +167,6 @@ export default function AboutPage() {
             </Card>
           </section>
 
-          {/* Open source / built with */}
-          <section className="space-y-3">
-            <h2 className="text-xl font-semibold">Built With</h2>
-            <div className="flex flex-wrap gap-2">
-              {TECH_STACK.map((tech) => (
-                <span
-                  key={tech}
-                  className="rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground"
-                >
-                  {tech}
-                </span>
-              ))}
-            </div>
-          </section>
-
           {/* CTA */}
           <div className="rounded-xl border bg-primary/5 p-6 text-center space-y-3">
             <h3 className="font-semibold">Ready to find your T-code?</h3>
@@ -284,16 +269,4 @@ const MODULES = [
   'BW / BI',
   'GRC',
   'IS (Industry Solutions)',
-];
-
-const TECH_STACK = [
-  'Next.js 14',
-  'React',
-  'TypeScript',
-  'Tailwind CSS',
-  'PostgreSQL',
-  'Prisma',
-  'pgvector',
-  'OpenAI',
-  'Vercel',
 ];
