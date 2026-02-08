@@ -73,7 +73,7 @@ export default async function FioriAppPage({ params }: Props) {
   const linkedTCodes = app.tcodeMappings.filter((m) => m.tcode);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex-1 bg-background">
       <Header />
       <main className="container mx-auto px-4 py-8">
         <div className="mx-auto max-w-4xl">

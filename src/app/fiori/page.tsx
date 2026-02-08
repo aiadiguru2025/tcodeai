@@ -38,7 +38,7 @@ export default async function FioriPage() {
   const [stats, recentApps] = await Promise.all([getFioriStats(), getRecentFioriApps()]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="flex-1 bg-background">
       <Header />
       <main className="container mx-auto px-4 py-8">
         <div className="mx-auto max-w-6xl space-y-8">

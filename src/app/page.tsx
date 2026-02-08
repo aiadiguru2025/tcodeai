@@ -45,7 +45,7 @@ export default async function Home() {
   const searches = popularTCodes || FALLBACK_SEARCHES;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+    <div className="flex-1 bg-gradient-to-b from-background to-muted/20">
       <Header />
       <main id="main-content" className="container mx-auto px-4 py-8">
         <div className="flex flex-col items-center justify-center space-y-8 pt-12 md:pt-24">
