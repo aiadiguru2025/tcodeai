@@ -34,7 +34,12 @@ export default function RootLayout({
         >
           Skip to content
         </a>
-        <Providers>{children}</Providers>
+        <Providers>
+          {children}
+          <footer className="border-t border-border/40 py-6 text-center text-sm text-muted-foreground">
+            <span className="font-medium"><span className="text-primary">TCode</span>AI</span> &copy; 2026
+          </footer>
+        </Providers>
         <Analytics />
         <SpeedInsights />
       </body>
