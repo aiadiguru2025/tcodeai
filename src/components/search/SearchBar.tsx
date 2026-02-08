@@ -130,10 +130,12 @@ export function SearchBar({ className, initialQuery = '' }: { className?: string
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const activeDescendantId = selectedIndex >= 0 ? `suggestion-${suggestions[selectedIndex]?.tcode}` : undefined;
+
   return (
-    <form onSubmit={handleSubmit} className={cn('relative', className)}>
+    <form onSubmit={handleSubmit} className={cn('relative', className)} role="search">
       <div className="relative">
-        <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+        <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
         <Input
           ref={inputRef}
           type="text"
@@ -148,6 +150,11 @@ export function SearchBar({ className, initialQuery = '' }: { className?: string
           onKeyDown={handleKeyDown}
           className="h-14 pl-12 pr-12 text-lg shadow-lg"
           aria-label="Search SAP transaction codes"
+          role="combobox"
+          aria-expanded={showSuggestions && suggestions.length > 0}
+          aria-controls="search-suggestions"
+          aria-activedescendant={activeDescendantId}
+          aria-autocomplete="list"
           autoComplete="off"
         />
         {query && (
@@ -158,13 +165,14 @@ export function SearchBar({ className, initialQuery = '' }: { className?: string
               setSuggestions([]);
               inputRef.current?.focus();
             }}
-            className="absolute right-12 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground"
+            className="absolute right-12 top-1/2 -translate-y-1/2 min-h-[44px] min-w-[44px] flex items-center justify-center text-muted-foreground hover:text-foreground"
+            aria-label="Clear search"
           >
             <X className="h-4 w-4" />
           </button>
         )}
         {isLoading && (
-          <Loader2 className="absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 animate-spin text-muted-foreground" />
+          <Loader2 className="absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 animate-spin text-muted-foreground" aria-hidden="true" />
         )}
       </div>
 
@@ -172,15 +180,21 @@ export function SearchBar({ className, initialQuery = '' }: { className?: string
       {showSuggestions && suggestions.length > 0 && (
         <div
           ref={suggestionsRef}
+          id="search-suggestions"
+          role="listbox"
+          aria-label="Search suggestions"
           className="absolute z-50 mt-2 w-full rounded-lg border bg-popover p-2 shadow-lg"
         >
           {suggestions.map((suggestion, index) => (
             <button
               key={suggestion.tcode}
+              id={`suggestion-${suggestion.tcode}`}
               type="button"
+              role="option"
+              aria-selected={index === selectedIndex}
               onClick={() => handleSelectSuggestion(suggestion)}
               className={cn(
-                'flex w-full items-center justify-between rounded-md px-3 py-2 text-left transition-colors',
+                'flex w-full items-center justify-between rounded-md px-3 py-2 text-left transition-colors min-h-[44px]',
                 index === selectedIndex ? 'bg-accent' : 'hover:bg-muted'
               )}
             >

@@ -48,15 +48,17 @@ export function VoteButtons({ tcodeId, tcode, onVote }: VoteButtonsProps) {
   };
 
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-1" role="group" aria-label="Rate this T-code">
       <span className="mr-2 text-xs text-muted-foreground">Helpful?</span>
       <Button
         variant="ghost"
         size="sm"
         onClick={() => handleVote(1)}
         disabled={isSubmitting}
+        aria-label="Upvote - mark as helpful"
+        aria-pressed={vote === 1}
         className={cn(
-          'h-8 px-2',
+          'min-h-[44px] min-w-[44px] px-2',
           vote === 1 && 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
         )}
       >
@@ -67,8 +69,10 @@ export function VoteButtons({ tcodeId, tcode, onVote }: VoteButtonsProps) {
         size="sm"
         onClick={() => handleVote(-1)}
         disabled={isSubmitting}
+        aria-label="Downvote - mark as not helpful"
+        aria-pressed={vote === -1}
         className={cn(
-          'h-8 px-2',
+          'min-h-[44px] min-w-[44px] px-2',
           vote === -1 && 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300'
         )}
       >

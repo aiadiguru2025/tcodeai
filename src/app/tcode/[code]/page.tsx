@@ -137,7 +137,7 @@ export default async function TCodePage({ params }: Props) {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="container mx-auto px-4 py-8">
+      <main id="main-content" className="container mx-auto px-4 py-8">
         <div className="mx-auto max-w-4xl">
           <Link
             href="/"

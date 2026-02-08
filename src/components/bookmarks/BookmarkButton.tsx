@@ -43,11 +43,13 @@ export function BookmarkButton({ tcode, className }: BookmarkButtonProps) {
       variant="outline"
       size="icon"
       onClick={toggleBookmark}
-      title={isBookmarked ? 'Remove bookmark' : 'Add bookmark'}
-      className={className}
+      aria-label={isBookmarked ? `Remove ${tcode} from bookmarks` : `Bookmark ${tcode}`}
+      aria-pressed={isBookmarked}
+      className={cn('min-h-[44px] min-w-[44px]', className)}
     >
       <Bookmark
         className={cn('h-4 w-4', isBookmarked && 'fill-current text-yellow-500')}
+        aria-hidden="true"
       />
     </Button>
   );

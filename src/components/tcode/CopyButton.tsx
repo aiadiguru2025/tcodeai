@@ -34,9 +34,10 @@ export function CopyButton({ text }: CopyButtonProps) {
       variant="outline"
       size="icon"
       onClick={handleCopy}
-      title={copied ? 'Copied!' : 'Copy T-code'}
+      aria-label={copied ? 'Copied to clipboard' : `Copy ${text} to clipboard`}
+      className="min-h-[44px] min-w-[44px]"
     >
-      {copied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+      {copied ? <Check className="h-4 w-4 text-green-500" aria-hidden="true" /> : <Copy className="h-4 w-4" aria-hidden="true" />}
     </Button>
   );
 }
