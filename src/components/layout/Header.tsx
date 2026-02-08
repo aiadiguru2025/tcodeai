@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
-import { Sun, Moon, Bookmark, AppWindow } from 'lucide-react';
+import { Sun, Moon, Bookmark, AppWindow, HelpCircle } from 'lucide-react';
 
 export function Header() {
   const { theme, setTheme } = useTheme();
@@ -36,6 +36,18 @@ export function Header() {
             >
               Bookmarks
             </Link>
+            <Link
+              href="/help"
+              className="text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Help
+            </Link>
+            <Link
+              href="/about"
+              className="text-muted-foreground transition-colors hover:text-foreground"
+            >
+              About
+            </Link>
           </nav>
         </div>
         <div className="flex flex-1 items-center justify-end space-x-1">
@@ -59,6 +71,17 @@ export function Header() {
           >
             <Link href="/bookmarks">
               <Bookmark className="h-5 w-5" aria-hidden="true" />
+            </Link>
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="Help"
+            className="min-h-[44px] min-w-[44px]"
+            asChild
+          >
+            <Link href="/help">
+              <HelpCircle className="h-5 w-5" aria-hidden="true" />
             </Link>
           </Button>
           <Button
