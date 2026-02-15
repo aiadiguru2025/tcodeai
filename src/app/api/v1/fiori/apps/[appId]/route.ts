@@ -3,10 +3,11 @@ import prisma from '@/lib/db';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { appId: string } }
+  { params }: { params: Promise<{ appId: string }> }
 ) {
   try {
-    const decodedAppId = decodeURIComponent(params.appId);
+    const { appId } = await params;
+    const decodedAppId = decodeURIComponent(appId);
     const app = await prisma.fioriApp.findUnique({
       where: { appId: decodedAppId },
       include: {

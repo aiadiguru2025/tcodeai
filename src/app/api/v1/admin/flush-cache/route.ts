@@ -1,5 +1,45 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { timingSafeEqual } from 'crypto';
 import { flushAllCache, getCacheStats } from '@/lib/cache';
+
+/**
+ * Validate admin authorization using timing-safe comparison
+ */
+function validateAdminAuth(request: NextRequest): { authorized: boolean; response?: NextResponse } {
+  const authHeader = request.headers.get('authorization');
+  const adminSecret = process.env.ADMIN_SECRET;
+
+  if (!adminSecret) {
+    return {
+      authorized: false,
+      response: NextResponse.json(
+        { error: 'Admin API not configured.' },
+        { status: 503 }
+      ),
+    };
+  }
+
+  const token = authHeader?.replace('Bearer ', '') || '';
+
+  // Use timing-safe comparison to prevent timing attacks
+  try {
+    const tokenBuffer = Buffer.from(token);
+    const secretBuffer = Buffer.from(adminSecret);
+    if (tokenBuffer.length !== secretBuffer.length || !timingSafeEqual(tokenBuffer, secretBuffer)) {
+      return {
+        authorized: false,
+        response: NextResponse.json({ error: 'Unauthorized.' }, { status: 401 }),
+      };
+    }
+  } catch {
+    return {
+      authorized: false,
+      response: NextResponse.json({ error: 'Unauthorized.' }, { status: 401 }),
+    };
+  }
+
+  return { authorized: true };
+}
 
 /**
  * POST /api/v1/admin/flush-cache
@@ -12,35 +52,12 @@ import { flushAllCache, getCacheStats } from '@/lib/cache';
  *   -H "Authorization: Bearer YOUR_ADMIN_SECRET"
  */
 export async function POST(request: NextRequest) {
-  // Check authorization
-  const authHeader = request.headers.get('authorization');
-  const adminSecret = process.env.ADMIN_SECRET;
-
-  // If no admin secret is configured, deny all requests
-  if (!adminSecret) {
-    return NextResponse.json(
-      { error: 'Admin API not configured. Set ADMIN_SECRET environment variable.' },
-      { status: 503 }
-    );
-  }
-
-  // Validate auth header
-  const token = authHeader?.replace('Bearer ', '');
-  if (token !== adminSecret) {
-    return NextResponse.json(
-      { error: 'Unauthorized. Invalid or missing Authorization header.' },
-      { status: 401 }
-    );
-  }
+  const auth = validateAdminAuth(request);
+  if (!auth.authorized) return auth.response!;
 
   try {
-    // Get stats before flush
     const beforeStats = getCacheStats();
-
-    // Flush all cache
     const result = await flushAllCache();
-
-    // Get stats after flush
     const afterStats = getCacheStats();
 
     return NextResponse.json({
@@ -52,23 +69,23 @@ export async function POST(request: NextRequest) {
         redisWasAvailable: beforeStats.redisAvailable,
         currentMemoryEntries: afterStats.memoryEntries,
       },
-      ...(result.error && { warning: result.error }),
+      ...(result.error && { warning: 'Redis flush encountered an issue' }),
     });
-  } catch (error) {
-    console.error('Cache flush error:', error);
-    return NextResponse.json(
-      { error: 'Failed to flush cache', details: error instanceof Error ? error.message : 'Unknown error' },
-      { status: 500 }
-    );
+  } catch {
+    return NextResponse.json({ error: 'Failed to flush cache' }, { status: 500 });
   }
 }
 
 /**
  * GET /api/v1/admin/flush-cache
  *
- * Get current cache statistics (no auth required for read-only)
+ * Get current cache statistics
+ * Requires ADMIN_SECRET header for authorization
  */
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const auth = validateAdminAuth(request);
+  if (!auth.authorized) return auth.response!;
+
   const stats = getCacheStats();
 
   return NextResponse.json({

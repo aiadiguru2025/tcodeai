@@ -10,7 +10,7 @@ import prisma from '@/lib/db';
 import { ArrowLeft, AppWindow, ExternalLink } from 'lucide-react';
 
 interface Props {
-  params: { appId: string };
+  params: Promise<{ appId: string }>;
 }
 
 async function getFioriApp(appId: string) {
@@ -36,7 +36,8 @@ async function getFioriApp(appId: string) {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const decodedAppId = decodeURIComponent(params.appId);
+  const { appId } = await params;
+  const decodedAppId = decodeURIComponent(appId);
   const app = await getFioriApp(decodedAppId);
 
   if (!app) {
@@ -59,7 +60,8 @@ const UI_TECH_STYLES: Record<string, string> = {
 };
 
 export default async function FioriAppPage({ params }: Props) {
-  const decodedAppId = decodeURIComponent(params.appId);
+  const { appId } = await params;
+  const decodedAppId = decodeURIComponent(appId);
   const app = await getFioriApp(decodedAppId);
 
   if (!app) {

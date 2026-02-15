@@ -1,4 +1,5 @@
 import OpenAI from 'openai';
+import { Prisma } from '@prisma/client';
 import prisma from '@/lib/db';
 import { getCached, setCached } from '@/lib/cache';
 import type { SearchResult } from '@/types';
@@ -63,20 +64,19 @@ export async function executeSemanticSearch(
     }
     const embeddingStr = `[${queryEmbedding.join(',')}]`;
 
-    // Build dynamic WHERE conditions
-    let whereConditions = 'embedding IS NOT NULL';
+    // Build dynamic WHERE conditions using parameterized queries (prevents SQL injection)
+    let whereClause = Prisma.sql`embedding IS NOT NULL`;
 
     if (!includeDeprecated) {
-      whereConditions += ' AND is_deprecated = false';
+      whereClause = Prisma.sql`${whereClause} AND is_deprecated = false`;
     }
 
     if (modules && modules.length > 0) {
-      const moduleList = modules.map((m) => `'${m.replace(/'/g, "''")}'`).join(',');
-      whereConditions += ` AND module IN (${moduleList})`;
+      whereClause = Prisma.sql`${whereClause} AND module IN (${Prisma.join(modules)})`;
     }
 
-    // Execute vector similarity search using cosine distance
-    const results = await prisma.$queryRawUnsafe<
+    // Execute vector similarity search using cosine distance with parameterized query
+    const results = await prisma.$queryRaw<
       {
         id: number;
         tcode: string;
@@ -87,17 +87,17 @@ export async function executeSemanticSearch(
         similarity: number;
       }[]
     >(
-      `SELECT
+      Prisma.sql`SELECT
         id,
         tcode,
         program,
         description,
         module,
         is_deprecated,
-        1 - (embedding <=> '${embeddingStr}'::vector) as similarity
+        1 - (embedding <=> ${embeddingStr}::vector) as similarity
       FROM transaction_codes
-      WHERE ${whereConditions}
-      ORDER BY embedding <=> '${embeddingStr}'::vector
+      WHERE ${whereClause}
+      ORDER BY embedding <=> ${embeddingStr}::vector
       LIMIT ${limit}`
     );
 

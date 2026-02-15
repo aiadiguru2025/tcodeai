@@ -9,8 +9,8 @@ import { ArrowLeft } from 'lucide-react';
 export const dynamic = 'force-dynamic';
 
 interface Props {
-  params: { module: string };
-  searchParams: { page?: string };
+  params: Promise<{ module: string }>;
+  searchParams: Promise<{ page?: string }>;
 }
 
 const MODULE_INFO: Record<string, { name: string; description: string }> = {
@@ -66,9 +66,11 @@ async function getModuleTCodes(module: string, page: number) {
 }
 
 export default async function ModulePage({ params, searchParams }: Props) {
+  const resolvedParams = await params;
+  const resolvedSearchParams = await searchParams;
   // Decode URL-encoded module name (e.g., "Sales%20and%20Distribution" -> "Sales and Distribution")
-  const decodedModule = decodeURIComponent(params.module);
-  const page = parseInt(searchParams.page || '1', 10);
+  const decodedModule = decodeURIComponent(resolvedParams.module);
+  const page = parseInt(resolvedSearchParams.page || '1', 10);
 
   const { tcodes, total, totalPages } = await getModuleTCodes(decodedModule, page);
 

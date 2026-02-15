@@ -51,14 +51,9 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { query, limit } = querySchema.parse(body);
 
-    console.log(`AI search started: "${query.substring(0, 50)}..."`);
-
     const { results, cached, timedOut } = await executeWithTimeout(query, limit, GLOBAL_TIMEOUT_MS);
 
     const processingTimeMs = Date.now() - startTime;
-    console.log(
-      `AI search completed in ${processingTimeMs}ms, ${results.length} results, cached: ${cached}, timedOut: ${timedOut || false}`
-    );
 
     const response = {
       results,
@@ -76,16 +71,14 @@ export async function POST(request: NextRequest) {
 
     const processingTimeMs = Date.now() - startTime;
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    const errorStack = error instanceof Error ? error.stack : undefined;
 
     console.error(`AI search POST error after ${processingTimeMs}ms:`, errorMessage);
-    if (errorStack) {
-      console.error('Stack trace:', errorStack);
-    }
 
-    return NextResponse.json({ error: `AI search failed: ${errorMessage}. Please try again.` }, { status: 500 });
+    return NextResponse.json({ error: 'AI search failed. Please try again.' }, { status: 500 });
   }
 }
+
+const MAX_QUERY_LENGTH = 500;
 
 export async function GET(request: NextRequest) {
   const startTime = Date.now();
@@ -96,15 +89,14 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Query parameter "q" must be at least 3 characters' }, { status: 400 });
   }
 
-  try {
-    console.log(`AI search GET started: "${query.substring(0, 50)}..."`);
+  if (query.length > MAX_QUERY_LENGTH) {
+    return NextResponse.json({ error: `Query must not exceed ${MAX_QUERY_LENGTH} characters` }, { status: 400 });
+  }
 
+  try {
     const { results, cached, timedOut } = await executeWithTimeout(query, 5, GLOBAL_TIMEOUT_MS);
 
     const processingTimeMs = Date.now() - startTime;
-    console.log(
-      `AI search GET completed in ${processingTimeMs}ms, ${results.length} results, cached: ${cached}, timedOut: ${timedOut || false}`
-    );
 
     const response = {
       results,
@@ -118,13 +110,9 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     const processingTimeMs = Date.now() - startTime;
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    const errorStack = error instanceof Error ? error.stack : undefined;
 
     console.error(`AI search GET error after ${processingTimeMs}ms:`, errorMessage);
-    if (errorStack) {
-      console.error('Stack trace:', errorStack);
-    }
 
-    return NextResponse.json({ error: `AI search failed: ${errorMessage}. Please try again.` }, { status: 500 });
+    return NextResponse.json({ error: 'AI search failed. Please try again.' }, { status: 500 });
   }
 }

@@ -3,10 +3,11 @@ import prisma from '@/lib/db';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { tcode: string } }
+  { params }: { params: Promise<{ tcode: string }> }
 ) {
   try {
-    const tcode = params.tcode.toUpperCase();
+    const { tcode: tcodeParam } = await params;
+    const tcode = tcodeParam.toUpperCase();
 
     // Find Fiori apps associated with this T-code
     const fioriApps = await prisma.fioriApp.findMany({

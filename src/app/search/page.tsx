@@ -8,16 +8,17 @@ import { AISearchSkeleton } from '@/components/search/AISearchSkeleton';
 import { SearchFilters } from '@/components/search/SearchFilters';
 import { Sparkles, Zap } from 'lucide-react';
 
-export default function SearchPage({
+export default async function SearchPage({
   searchParams,
 }: {
-  searchParams: { q?: string; mode?: string; module?: string; deprecated?: string; sort?: string };
+  searchParams: Promise<{ q?: string; mode?: string; module?: string; deprecated?: string; sort?: string }>;
 }) {
-  const query = searchParams.q || '';
-  const mode = searchParams.mode === 'ai' ? 'ai' : 'keyword';
-  const filterModule = searchParams.module || '';
-  const includeDeprecated = searchParams.deprecated === 'true';
-  const sort = searchParams.sort || 'relevance';
+  const resolvedParams = await searchParams;
+  const query = resolvedParams.q || '';
+  const mode = resolvedParams.mode === 'ai' ? 'ai' : 'keyword';
+  const filterModule = resolvedParams.module || '';
+  const includeDeprecated = resolvedParams.deprecated === 'true';
+  const sort = resolvedParams.sort || 'relevance';
 
   return (
     <div className="flex-1 bg-background">

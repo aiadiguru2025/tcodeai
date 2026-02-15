@@ -15,7 +15,7 @@ import { FioriAppList } from '@/components/fiori/FioriAppCard';
 import type { FioriApp } from '@/types';
 
 interface Props {
-  params: { code: string };
+  params: Promise<{ code: string }>;
 }
 
 async function getTCode(code: string) {
@@ -105,7 +105,8 @@ async function getRelatedTCodes(tcode: string, description: string | null, modul
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const tcode = await getTCode(params.code);
+  const { code } = await params;
+  const tcode = await getTCode(code);
 
   if (!tcode) {
     return {
@@ -124,7 +125,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function TCodePage({ params }: Props) {
-  const tcode = await getTCode(params.code);
+  const { code } = await params;
+  const tcode = await getTCode(code);
 
   if (!tcode) {
     notFound();
