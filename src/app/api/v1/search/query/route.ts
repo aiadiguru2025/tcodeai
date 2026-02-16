@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { hybridSearch } from '@/lib/search/hybrid-search';
+import { MAX_QUERY_LENGTH } from '@/lib/utils';
 
 const searchRequestSchema = z.object({
-  query: z.string().min(1).max(500),
+  query: z.string().min(1).max(MAX_QUERY_LENGTH),
   modules: z.array(z.string()).optional(),
   limit: z.number().min(1).max(100).optional().default(20),
   includeDeprecated: z.boolean().optional().default(false),
@@ -56,6 +57,13 @@ export async function GET(request: NextRequest) {
   if (!query) {
     return NextResponse.json(
       { error: 'Query parameter "q" is required' },
+      { status: 400 }
+    );
+  }
+
+  if (query.length > MAX_QUERY_LENGTH) {
+    return NextResponse.json(
+      { error: `Query must not exceed ${MAX_QUERY_LENGTH} characters` },
       { status: 400 }
     );
   }

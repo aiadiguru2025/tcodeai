@@ -1,5 +1,6 @@
 import OpenAI from 'openai';
 import { getCached, setCached } from '@/lib/cache';
+import { sanitizeQueryForLLM, debugLog } from '@/lib/utils';
 
 const CACHE_PREFIX = 'query-expand';
 const CACHE_TTL = 60 * 60 * 24 * 7; // 7 days
@@ -21,7 +22,7 @@ export async function expandQueryWithSAPTerms(query: string): Promise<string> {
   // Check cache first
   const cached = await getCached<string>(CACHE_PREFIX, query);
   if (cached) {
-    console.log('Query expansion cache hit:', query.substring(0, 30));
+    debugLog('Query expansion cache hit:', query.substring(0, 30));
     return cached;
   }
 
@@ -58,7 +59,7 @@ Output: "create purchase order PO ME21N procurement MM materials management purc
         },
         {
           role: 'user',
-          content: query,
+          content: sanitizeQueryForLLM(query),
         },
       ],
       temperature: 0.3,
@@ -78,6 +79,6 @@ Output: "create purchase order PO ME21N procurement MM materials management purc
     setCached(CACHE_PREFIX, query, expanded, CACHE_TTL);
   }
 
-  console.log('Query expanded:', query, '->', expanded.substring(0, 60) + '...');
+  debugLog('Query expanded:', query, '->', expanded.substring(0, 60) + '...');
   return expanded;
 }

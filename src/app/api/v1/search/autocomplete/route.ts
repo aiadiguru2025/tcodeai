@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db';
+import { MAX_QUERY_LENGTH } from '@/lib/utils';
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const query = searchParams.get('q');
 
-  if (!query || query.length < 2) {
+  if (!query || query.length < 2 || query.length > MAX_QUERY_LENGTH) {
     return NextResponse.json({ suggestions: [] });
   }
 

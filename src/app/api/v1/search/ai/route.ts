@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { executeAISearch } from '@/lib/search/ai-search';
+import { MAX_QUERY_LENGTH } from '@/lib/utils';
 
 const querySchema = z.object({
-  query: z.string().min(3, 'Query must be at least 3 characters'),
+  query: z.string().min(3, 'Query must be at least 3 characters').max(MAX_QUERY_LENGTH),
   limit: z.number().min(1).max(10).optional().default(5),
 });
 
@@ -77,8 +78,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'AI search failed. Please try again.' }, { status: 500 });
   }
 }
-
-const MAX_QUERY_LENGTH = 500;
 
 export async function GET(request: NextRequest) {
   const startTime = Date.now();

@@ -7,6 +7,7 @@ import { enhancedLowConfidenceFallback } from './enhanced-fallback';
 import { applyFeedbackBoostToAI } from './feedback-ranking';
 import { applyMolgaBoost, detectCountryInQuery } from './molga-lookup';
 import { getCached, setCached } from '@/lib/cache';
+import { sanitizeQueryForLLM, debugLog } from '@/lib/utils';
 import type { AISearchResult } from '@/types';
 
 const ENHANCED_FALLBACK_THRESHOLD = 0.8; // Trigger enhanced fallback when top confidence is below 80%
@@ -52,7 +53,7 @@ export async function executeAISearch(
   try {
     const cached = await getCached<AISearchResult[]>(CACHE_PREFIX, cacheKey);
     if (cached) {
-      console.log('AI search cache hit:', query);
+      debugLog('AI search cache hit:', query);
       // Sort cached results by confidence (older cache entries may not be sorted)
       cached.sort((a, b) => b.confidence - a.confidence);
       return { results: cached, cached: true };
@@ -61,7 +62,7 @@ export async function executeAISearch(
     console.warn('Cache read error, continuing without cache:', cacheError);
   }
 
-  console.log('AI search cache miss:', query);
+  debugLog('AI search cache miss:', query);
 
   // Run query expansion, semantic search, AND country detection in parallel
   const [expandedQuery, directCandidates, countryMatches] = await Promise.all([
@@ -96,10 +97,10 @@ export async function executeAISearch(
 
   if (candidates.length === 0) {
     // No database results found - try AI fallback
-    console.log('No database candidates found, trying AI fallback for:', query);
+    debugLog('No database candidates found, trying AI fallback for:', query);
     const fallbackResults = await generateAIFallbackSuggestions(query, limit);
     if (fallbackResults.length > 0) {
-      console.log(`AI fallback returned ${fallbackResults.length} suggestions`);
+      debugLog(`AI fallback returned ${fallbackResults.length} suggestions`);
       return { results: fallbackResults, cached: false };
     }
     return { results: [], cached: false };
@@ -132,7 +133,7 @@ Output JSON: {"results":[{"tcode":"XX01","explanation":"brief reason","confidenc
         },
         {
           role: 'user',
-          content: `Query: "${query}"${countryContext}\n\nCandidates:\n${candidateList}`,
+          content: `Query: "${sanitizeQueryForLLM(query)}"${countryContext}\n\nCandidates:\n${candidateList}`,
         },
       ],
       response_format: { type: 'json_object' },
@@ -152,7 +153,7 @@ Output JSON: {"results":[{"tcode":"XX01","explanation":"brief reason","confidenc
 
   if (!content) {
     // Timeout or error - use default explanations
-    console.log('GPT timed out or failed, using semantic results');
+    debugLog('GPT timed out or failed, using semantic results');
     results = createDefaultResults(candidates);
   } else {
     try {
@@ -213,7 +214,7 @@ Output JSON: {"results":[{"tcode":"XX01","explanation":"brief reason","confidenc
     validatedResults = judgedResults;
     validatedResults.sort((a, b) => b.confidence - a.confidence);
   } else {
-    console.log(`Skipping LLM Judge: top confidence ${(topConfidence * 100).toFixed(0)}% >= ${(SKIP_JUDGE_THRESHOLD * 100).toFixed(0)}%`);
+    debugLog(`Skipping LLM Judge: top confidence ${(topConfidence * 100).toFixed(0)}% >= ${(SKIP_JUDGE_THRESHOLD * 100).toFixed(0)}%`);
   }
 
   // Enhance with Google Search, Brave Search, and Deep GPT if confidence is below threshold
@@ -227,7 +228,7 @@ Output JSON: {"results":[{"tcode":"XX01","explanation":"brief reason","confidenc
   // Re-sort after enhancement
   if (enhancementUsed !== 'none') {
     enhancedResults.sort((a, b) => b.confidence - a.confidence);
-    console.log(`Enhanced fallback (${enhancementUsed}) used for: ${query}`, enhancementDetails);
+    debugLog(`Enhanced fallback (${enhancementUsed}) used for: ${query}`, enhancementDetails);
   }
 
   // OPTIMIZATION: Run MOLGA and feedback boosts in parallel

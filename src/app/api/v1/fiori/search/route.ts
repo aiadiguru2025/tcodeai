@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { searchFioriAppsHybrid } from '@/lib/search/fiori-search';
+import { MAX_QUERY_LENGTH } from '@/lib/utils';
 
 const searchSchema = z.object({
-  q: z.string().min(1),
+  q: z.string().min(1).max(MAX_QUERY_LENGTH),
   tech: z.string().optional(),
   limit: z.coerce.number().min(1).max(50).default(20),
   semantic: z.coerce.boolean().default(true),

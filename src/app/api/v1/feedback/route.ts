@@ -7,7 +7,7 @@ const feedbackSchema = z.object({
   tcodeId: z.number().optional(),
   tcode: z.string().min(1),
   vote: z.union([z.literal(1), z.literal(-1)]),
-  comment: z.string().optional(),
+  comment: z.string().max(1000).optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
       response.cookies.set('session_id', sessionId, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
+        sameSite: 'strict',
         maxAge: 60 * 60 * 24 * 365, // 1 year
       });
     }

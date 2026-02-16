@@ -2,6 +2,7 @@ import OpenAI from 'openai';
 import { Prisma } from '@prisma/client';
 import prisma from '@/lib/db';
 import { getCached, setCached } from '@/lib/cache';
+import { debugLog } from '@/lib/utils';
 import type { SearchResult } from '@/types';
 
 const EMBEDDING_MODEL = 'text-embedding-3-small';
@@ -17,7 +18,7 @@ async function getQueryEmbedding(query: string): Promise<number[] | null> {
   // Check embedding cache first
   const cached = await getCached<number[]>(EMBEDDING_CACHE_PREFIX, query);
   if (cached) {
-    console.log('Embedding cache hit:', query.substring(0, 30));
+    debugLog('Embedding cache hit:', query.substring(0, 30));
     return cached;
   }
 
@@ -52,7 +53,7 @@ export async function executeSemanticSearch(
   // Check cache for full search results
   const cachedResults = await getCached<SearchResult[]>(SEMANTIC_CACHE_PREFIX, cacheKey);
   if (cachedResults) {
-    console.log('Semantic search cache hit:', query.substring(0, 30));
+    debugLog('Semantic search cache hit:', query.substring(0, 30));
     return cachedResults;
   }
 

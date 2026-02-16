@@ -3,6 +3,7 @@ import type { SearchResult } from '@/types';
 import { executeSemanticSearch } from './semantic-search';
 import { getCached, setCached } from '@/lib/cache';
 import { applyFeedbackBoost } from './feedback-ranking';
+import { debugLog } from '@/lib/utils';
 
 const HYBRID_CACHE_PREFIX = 'hybrid';
 const HYBRID_CACHE_TTL = 60 * 60 * 2; // 2 hours for hybrid search results
@@ -25,7 +26,7 @@ export async function hybridSearch(options: SearchOptions): Promise<SearchResult
   // Check cache first
   const cached = await getCached<SearchResult[]>(HYBRID_CACHE_PREFIX, cacheKey);
   if (cached) {
-    console.log('Hybrid search cache hit:', query.substring(0, 30));
+    debugLog('Hybrid search cache hit:', query.substring(0, 30));
     return cached;
   }
 

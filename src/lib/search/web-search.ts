@@ -1,4 +1,5 @@
 import prisma from '@/lib/db';
+import { debugLog } from '@/lib/utils';
 import type { AISearchResult } from '@/types';
 
 const WEB_SEARCH_TIMEOUT_MS = 5000;
@@ -48,7 +49,7 @@ export function extractTCodes(text: string): string[] {
 export async function fetchBraveSearch(query: string): Promise<string> {
   const apiKey = process.env.BRAVE_SEARCH_API_KEY;
   if (!apiKey) {
-    console.log('Brave Search API key not configured');
+    debugLog('Brave Search API key not configured');
     return '';
   }
 
@@ -86,7 +87,7 @@ export async function fetchBraveSearch(query: string): Promise<string> {
       .join(' ');
   } catch (error) {
     if (error instanceof Error && error.name === 'AbortError') {
-      console.log('Web search timed out');
+      debugLog('Web search timed out');
     } else {
       console.error('Web search error:', error);
     }
@@ -140,24 +141,24 @@ export async function enhanceWithWebSearch(
     return { results: existingResults, webFallbackUsed: false };
   }
 
-  console.log(`Web fallback triggered: top confidence ${topConfidence.toFixed(2)} < ${confidenceThreshold}`);
+  debugLog(`Web fallback triggered: top confidence ${topConfidence.toFixed(2)} < ${confidenceThreshold}`);
 
   // Perform web search
   const webQuery = `SAP transaction code ${query}`;
   const webContent = await fetchBraveSearch(webQuery);
 
   if (!webContent) {
-    console.log('Web search returned no content');
+    debugLog('Web search returned no content');
     return { results: existingResults, webFallbackUsed: false };
   }
 
   // Extract potential T-codes from web content
   const extractedTCodes = extractTCodes(webContent);
-  console.log(`Extracted ${extractedTCodes.length} potential T-codes from web:`, extractedTCodes.slice(0, 10));
+  debugLog(`Extracted ${extractedTCodes.length} potential T-codes from web:`, extractedTCodes.slice(0, 10));
 
   // Validate against database
   const webResults = await validateAndFetchTCodes(extractedTCodes);
-  console.log(`Validated ${webResults.length} T-codes from database`);
+  debugLog(`Validated ${webResults.length} T-codes from database`);
 
   if (webResults.length === 0) {
     return { results: existingResults, webFallbackUsed: false };

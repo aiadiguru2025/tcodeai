@@ -1,5 +1,6 @@
 import prisma from '@/lib/db';
 import { getCached, setCached } from '@/lib/cache';
+import { debugLog } from '@/lib/utils';
 
 const MOLGA_CACHE_PREFIX = 'molga-map';
 const MOLGA_CACHE_TTL = 60 * 60 * 24; // 24 hours - MOLGA data rarely changes
@@ -167,7 +168,7 @@ export async function applyMolgaBoost<
 
   // Use the first match (most relevant)
   const molgaMatch = countryMatches[0];
-  console.log(`MOLGA detected: ${molgaMatch.country} (${molgaMatch.pattern}) from "${molgaMatch.matchedTerm}"`);
+  debugLog(`MOLGA detected: ${molgaMatch.country} (${molgaMatch.pattern}) from "${molgaMatch.matchedTerm}"`);
 
   // Apply boost to T-codes containing the matching MOLGA pattern
   for (const result of results) {
@@ -181,7 +182,7 @@ export async function applyMolgaBoost<
       if (result.relevanceScore !== undefined) {
         result.relevanceScore = Math.min(1.0, result.relevanceScore * 1.5);
       }
-      console.log(`  ✓ Boosted ${result.tcode} (MOLGA ${tcodeMolga} matches)`);
+      debugLog(`  ✓ Boosted ${result.tcode} (MOLGA ${tcodeMolga} matches)`);
     } else if (tcodeMolga !== null && tcodeMolga !== molgaMatch.molga) {
       // Different MOLGA - penalize (wrong country)
       if (result.confidence !== undefined) {
@@ -190,7 +191,7 @@ export async function applyMolgaBoost<
       if (result.relevanceScore !== undefined) {
         result.relevanceScore *= 0.5;
       }
-      console.log(`  ✗ Penalized ${result.tcode} (MOLGA ${tcodeMolga} doesn't match ${molgaMatch.molga})`);
+      debugLog(`  ✗ Penalized ${result.tcode} (MOLGA ${tcodeMolga} doesn't match ${molgaMatch.molga})`);
     }
     // T-codes without MOLGA pattern are not modified
   }

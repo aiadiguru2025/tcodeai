@@ -1,5 +1,6 @@
 import type { AISearchResult } from '@/types';
 import prisma from '@/lib/db';
+import { debugLog } from '@/lib/utils';
 
 const GOOGLE_SEARCH_TIMEOUT_MS = 5000;
 
@@ -53,7 +54,7 @@ export function extractTCodes(text: string): string[] {
 export async function fetchGoogleSearch(query: string): Promise<GoogleSearchResult[]> {
   const apiKey = process.env.SERPAPI_API_KEY;
   if (!apiKey) {
-    console.log('SerpAPI key not configured');
+    debugLog('SerpAPI key not configured');
     return [];
   }
 
@@ -87,7 +88,7 @@ export async function fetchGoogleSearch(query: string): Promise<GoogleSearchResu
   } catch (error) {
     clearTimeout(timeoutId);
     if (error instanceof Error && error.name === 'AbortError') {
-      console.log('Google search timed out');
+      debugLog('Google search timed out');
     } else {
       console.error('Google search error:', error);
     }
@@ -154,10 +155,10 @@ export async function searchGoogleForTCodes(
     .join(' ');
 
   const extractedTCodes = extractTCodesFromGoogleResults(googleResults);
-  console.log(`Google: Extracted ${extractedTCodes.length} potential T-codes:`, extractedTCodes.slice(0, 10));
+  debugLog(`Google: Extracted ${extractedTCodes.length} potential T-codes:`, extractedTCodes.slice(0, 10));
 
   const validatedResults = await validateAndFetchTCodes(extractedTCodes);
-  console.log(`Google: Validated ${validatedResults.length} T-codes from database`);
+  debugLog(`Google: Validated ${validatedResults.length} T-codes from database`);
 
   return {
     tcodes: extractedTCodes,

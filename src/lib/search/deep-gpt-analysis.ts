@@ -1,4 +1,5 @@
 import OpenAI from 'openai';
+import { sanitizeQueryForLLM, debugLog } from '@/lib/utils';
 import type { AISearchResult } from '@/types';
 
 const DEEP_GPT_MODEL = 'gpt-4o-mini';
@@ -44,7 +45,7 @@ function buildDeepAnalysisPrompt(
 
   return `You are an SAP expert performing DEEP ANALYSIS on a search query where standard search returned low confidence results (best match: ${(topConfidence * 100).toFixed(0)}%).
 
-USER QUERY: "${query}"
+USER QUERY: "${sanitizeQueryForLLM(query)}"
 
 EXISTING CANDIDATES (from database):
 ${candidatesInfo || 'No candidates found'}
@@ -131,7 +132,7 @@ export async function performDeepGPTAnalysis(
   webContent: string
 ): Promise<DeepAnalysisResult | null> {
   if (!process.env.OPENAI_API_KEY) {
-    console.log('OpenAI API key not configured for deep analysis');
+    debugLog('OpenAI API key not configured for deep analysis');
     return null;
   }
 
@@ -167,19 +168,19 @@ export async function performDeepGPTAnalysis(
   const content = await Promise.race([gptPromise, timeout(DEEP_GPT_TIMEOUT_MS, null)]);
 
   if (!content) {
-    console.log('Deep GPT analysis timed out or failed');
+    debugLog('Deep GPT analysis timed out or failed');
     return null;
   }
 
   const result = parseDeepAnalysisResponse(content);
 
   if (result) {
-    console.log(`Deep GPT analysis completed: ${result.suggestedTCodes.length} suggestions`);
+    debugLog(`Deep GPT analysis completed: ${result.suggestedTCodes.length} suggestions`);
     if (result.queryInterpretation) {
-      console.log(`Query interpretation: ${result.queryInterpretation}`);
+      debugLog(`Query interpretation: ${result.queryInterpretation}`);
     }
     if (result.ambiguityNotes) {
-      console.log(`Ambiguity notes: ${result.ambiguityNotes}`);
+      debugLog(`Ambiguity notes: ${result.ambiguityNotes}`);
     }
   }
 

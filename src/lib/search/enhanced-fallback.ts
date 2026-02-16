@@ -2,6 +2,7 @@ import type { AISearchResult } from '@/types';
 import { searchGoogleForTCodes } from './google-search';
 import { performDeepGPTAnalysis, deepAnalysisToAIResults } from './deep-gpt-analysis';
 import prisma from '@/lib/db';
+import { debugLog } from '@/lib/utils';
 
 // Configuration
 const DEFAULT_CONFIDENCE_THRESHOLD = 0.8; // Trigger when top confidence < 80%
@@ -31,7 +32,7 @@ export interface EnhancedFallbackResult {
 async function fetchBraveSearch(query: string): Promise<string> {
   const apiKey = process.env.BRAVE_SEARCH_API_KEY;
   if (!apiKey) {
-    console.log('Brave Search API key not configured');
+    debugLog('Brave Search API key not configured');
     return '';
   }
 
@@ -65,7 +66,7 @@ async function fetchBraveSearch(query: string): Promise<string> {
       .join(' ');
   } catch (error) {
     if (error instanceof Error && error.name === 'AbortError') {
-      console.log('Brave search timed out');
+      debugLog('Brave search timed out');
     } else {
       console.error('Brave search error:', error);
     }
@@ -210,7 +211,7 @@ export async function enhancedLowConfidenceFallback(
     };
   }
 
-  console.log(
+  debugLog(
     `Enhanced fallback triggered: top confidence ${(topConfidence * 100).toFixed(0)}% < ${(confidenceThreshold * 100).toFixed(0)}%`
   );
 
@@ -246,7 +247,7 @@ export async function enhancedLowConfidenceFallback(
     const result = await Promise.race([enhancementPromise, timeoutPromise]);
 
     if (!result) {
-      console.log('Enhanced fallback timed out');
+      debugLog('Enhanced fallback timed out');
       return {
         results: existingResults,
         enhancementUsed: 'none',
@@ -303,7 +304,7 @@ export async function enhancedLowConfidenceFallback(
       deepGPTResults.length
     );
 
-    console.log(
+    debugLog(
       `Enhanced fallback completed in ${processingTimeMs}ms: ` +
         `Google=${googleResults.length}, Brave=${braveValidated.length}, GPT=${deepGPTResults.length}`
     );

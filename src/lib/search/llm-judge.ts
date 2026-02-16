@@ -1,4 +1,5 @@
 import OpenAI from 'openai';
+import { sanitizeQueryForLLM, debugLog } from '@/lib/utils';
 import type { AISearchResult } from '@/types';
 
 // Constants
@@ -120,7 +121,7 @@ Generated Confidence: ${r.confidence.toFixed(2)}
     )
     .join('\n');
 
-  return `Query: "${query}"
+  return `Query: "${sanitizeQueryForLLM(query)}"
 
 Results to validate:
 ${resultsText}
@@ -193,7 +194,7 @@ function logJudgeResults(query: string, metrics: JudgeMetrics): void {
   const { corrections, processingTimeMs } = metrics;
 
   if (corrections.explanationsFixed > 0 || corrections.confidencesAdjusted > 0) {
-    console.log(
+    debugLog(
       `[LLM Judge] Query: "${query.substring(0, 30)}..." | ` +
         `Corrections: ${corrections.explanationsFixed} explanations, ` +
         `${corrections.confidencesAdjusted} confidences | ` +
@@ -204,10 +205,10 @@ function logJudgeResults(query: string, metrics: JudgeMetrics): void {
     metrics.verdicts
       .filter((v) => v.correctedExplanation || v.correctedConfidence !== null)
       .forEach((v) => {
-        console.log(`  - ${v.tcode}: ${v.reasoning}`);
+        debugLog(`  - ${v.tcode}: ${v.reasoning}`);
       });
   } else {
-    console.log(
+    debugLog(
       `[LLM Judge] Query: "${query.substring(0, 30)}..." | ` +
         `No corrections needed | Time: ${processingTimeMs}ms`
     );
@@ -261,7 +262,7 @@ export async function validateSearchResults(
 ): Promise<{ results: AISearchResult[]; judgeMetrics: JudgeMetrics | null }> {
   // Early return if judge is disabled
   if (!judgeConfig.enabled) {
-    console.log('[LLM Judge] Disabled, skipping validation');
+    debugLog('[LLM Judge] Disabled, skipping validation');
     return { results, judgeMetrics: null };
   }
 

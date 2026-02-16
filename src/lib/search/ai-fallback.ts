@@ -1,5 +1,6 @@
 import OpenAI from 'openai';
 import { getCached, setCached } from '@/lib/cache';
+import { sanitizeQueryForLLM, debugLog } from '@/lib/utils';
 import type { AISearchResult } from '@/types';
 
 const FALLBACK_MODEL = 'gpt-4o-mini';
@@ -52,7 +53,7 @@ IMPORTANT RULES:
 4. Provide a brief, accurate description
 5. Explain WHY this T-code matches the user's query
 
-User's search query: "${query}"
+User's search query: "${sanitizeQueryForLLM(query)}"
 
 Respond with JSON: {"suggestions":[{"tcode":"XX01","description":"Description","module":"XX","explanation":"Why this matches","confidence":0.0-0.6}]}
 
@@ -153,7 +154,7 @@ export async function generateAIFallbackSuggestions(
   limit: number = 3
 ): Promise<AISearchResult[]> {
   if (!process.env.OPENAI_API_KEY) {
-    console.log('OpenAI API key not configured for AI fallback');
+    debugLog('OpenAI API key not configured for AI fallback');
     return [];
   }
 
@@ -161,11 +162,11 @@ export async function generateAIFallbackSuggestions(
   const cacheKey = `${query.toLowerCase().trim()}:${limit}`;
   const cached = await getCached<AISearchResult[]>(CACHE_PREFIX, cacheKey);
   if (cached) {
-    console.log('AI fallback cache hit:', query);
+    debugLog('AI fallback cache hit:', query);
     return cached;
   }
 
-  console.log('AI fallback cache miss, generating suggestions for:', query);
+  debugLog('AI fallback cache miss, generating suggestions for:', query);
 
   const openai = new OpenAI();
 
@@ -177,11 +178,11 @@ export async function generateAIFallbackSuggestions(
   ]);
 
   if (suggestions.length === 0) {
-    console.log('AI fallback: No suggestions generated');
+    debugLog('AI fallback: No suggestions generated');
     return [];
   }
 
-  console.log(`AI fallback: Generated ${suggestions.length} suggestions, validating...`);
+  debugLog(`AI fallback: Generated ${suggestions.length} suggestions, validating...`);
 
   // Step 2: Validate suggestions with timeout
   const validationPromise = validateSuggestions(openai, suggestions);
@@ -200,7 +201,7 @@ export async function generateAIFallbackSuggestions(
 
     // Skip if validation explicitly marked as invalid
     if (validation && !validation.isValid) {
-      console.log(`AI fallback: Filtered out invalid T-code ${suggestion.tcode}`);
+      debugLog(`AI fallback: Filtered out invalid T-code ${suggestion.tcode}`);
       continue;
     }
 
@@ -241,6 +242,6 @@ export async function generateAIFallbackSuggestions(
     await setCached(CACHE_PREFIX, cacheKey, finalResults, CACHE_TTL);
   }
 
-  console.log(`AI fallback: Returning ${finalResults.length} validated suggestions`);
+  debugLog(`AI fallback: Returning ${finalResults.length} validated suggestions`);
   return finalResults;
 }
