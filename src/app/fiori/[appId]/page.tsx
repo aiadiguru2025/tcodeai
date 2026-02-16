@@ -3,6 +3,8 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { Header } from '@/components/layout/Header';
 import { Badge } from '@/components/ui/badge';
+
+export const dynamic = 'force-dynamic';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CopyButton } from '@/components/tcode/CopyButton';
 import { FioriBookmarkButton } from '@/components/fiori/FioriBookmarkButton';

@@ -3,6 +3,8 @@ import { Header } from '@/components/layout/Header';
 import prisma from '@/lib/db';
 import { FioriAppList } from '@/components/fiori/FioriAppCard';
 import { FioriSearch } from '@/components/fiori/FioriSearch';
+
+export const dynamic = 'force-dynamic';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AppWindow } from 'lucide-react';

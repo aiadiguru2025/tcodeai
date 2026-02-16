@@ -2,6 +2,8 @@ import { UnifiedSearchBar } from '@/components/search/UnifiedSearchBar';
 import { Header } from '@/components/layout/Header';
 import prisma from '@/lib/db';
 
+export const dynamic = 'force-dynamic';
+
 const FALLBACK_SEARCHES = [
   { label: 'ME21N', type: 'tcode' as const },
   { label: 'Create purchase order', type: 'ai' as const },
