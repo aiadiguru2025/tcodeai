@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.error('Search error:', error);
+    console.error('Search error:', error instanceof Error ? error.message : 'Unknown error');
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -88,7 +88,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Search error:', error);
+    console.error('Search error:', error instanceof Error ? error.message : 'Unknown error');
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

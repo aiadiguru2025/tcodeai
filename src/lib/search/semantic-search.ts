@@ -2,7 +2,7 @@ import OpenAI from 'openai';
 import { Prisma } from '@prisma/client';
 import prisma from '@/lib/db';
 import { getCached, setCached } from '@/lib/cache';
-import { debugLog } from '@/lib/utils';
+import { debugLog, validateEmbedding, embeddingToSqlString } from '@/lib/utils';
 import type { SearchResult } from '@/types';
 
 const EMBEDDING_MODEL = 'text-embedding-3-small';
@@ -60,10 +60,10 @@ export async function executeSemanticSearch(
   try {
     // Get embedding (uses cache when available)
     const queryEmbedding = await getQueryEmbedding(query);
-    if (!queryEmbedding) {
+    if (!queryEmbedding || !validateEmbedding(queryEmbedding)) {
       return [];
     }
-    const embeddingStr = `[${queryEmbedding.join(',')}]`;
+    const embeddingStr = embeddingToSqlString(queryEmbedding);
 
     // Build dynamic WHERE conditions using parameterized queries (prevents SQL injection)
     let whereClause = Prisma.sql`embedding IS NOT NULL`;
@@ -117,7 +117,7 @@ export async function executeSemanticSearch(
 
     return searchResults;
   } catch (error) {
-    console.error('Semantic search error:', error);
+    console.error('Semantic search error:', error instanceof Error ? error.message : 'Unknown error');
     return [];
   }
 }

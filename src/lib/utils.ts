@@ -50,8 +50,41 @@ export const MAX_QUERY_LENGTH = 500;
  */
 export function sanitizeQueryForLLM(query: string): string {
   return query
-    .replace(/[\r\n]+/g, ' ')   // collapse newlines
-    .replace(/["\\`]/g, '')      // strip quotes and backticks
+    .replace(/[\r\n]+/g, ' ')           // collapse newlines
+    .replace(/["\\`{}[\]()<>]/g, '')     // strip quotes, backticks, brackets, parens
+    .replace(/\b(ignore|forget|disregard|override|system|prompt|instruction)\b/gi, '') // strip injection keywords
+    .replace(/\s+/g, ' ')               // collapse whitespace
     .trim()
     .substring(0, MAX_QUERY_LENGTH);
+}
+
+/**
+ * Validate that an embedding vector is a valid array of finite numbers.
+ * Prevents SQL injection via malformed embedding strings.
+ */
+export function validateEmbedding(embedding: unknown): embedding is number[] {
+  return (
+    Array.isArray(embedding) &&
+    embedding.length > 0 &&
+    embedding.length <= 4096 &&
+    embedding.every((n) => typeof n === 'number' && Number.isFinite(n))
+  );
+}
+
+/**
+ * Safely convert a validated embedding array to a PostgreSQL vector string.
+ */
+export function embeddingToSqlString(embedding: number[]): string {
+  return `[${embedding.map((n) => Number(n).toString()).join(',')}]`;
+}
+
+/**
+ * Strip HTML/script content from user-provided strings.
+ */
+export function sanitizeUserText(text: string): string {
+  return text
+    .replace(/[<>]/g, '')
+    .replace(/javascript:/gi, '')
+    .replace(/on\w+\s*=/gi, '')
+    .trim();
 }

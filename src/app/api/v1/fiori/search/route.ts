@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    console.error('Fiori search error:', error);
+    console.error('Fiori search error:', error instanceof Error ? error.message : 'Unknown error');
     return NextResponse.json({ error: 'Search failed' }, { status: 500 });
   }
 }
@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.error('Fiori search error:', error);
+    console.error('Fiori search error:', error instanceof Error ? error.message : 'Unknown error');
     return NextResponse.json({ error: 'Search failed' }, { status: 500 });
   }
 }

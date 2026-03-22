@@ -2,12 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import prisma from '@/lib/db';
 import { invalidateFeedbackCache } from '@/lib/search/feedback-ranking';
+import { sanitizeUserText } from '@/lib/utils';
 
 const feedbackSchema = z.object({
   tcodeId: z.number().optional(),
-  tcode: z.string().min(1),
+  tcode: z.string().min(1).max(40).regex(/^[A-Za-z0-9_/]+$/, 'Invalid T-code format'),
   vote: z.union([z.literal(1), z.literal(-1)]),
-  comment: z.string().max(1000).optional(),
+  comment: z.string().max(1000).optional().transform((val) => val ? sanitizeUserText(val) : val),
 });
 
 export async function POST(request: NextRequest) {
@@ -69,7 +70,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.error('Feedback error:', error);
+    console.error('Feedback error:', error instanceof Error ? error.message : 'Unknown error');
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

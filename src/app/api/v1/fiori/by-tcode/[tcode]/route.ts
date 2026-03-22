@@ -54,7 +54,7 @@ export async function GET(
       total: fioriApps.length,
     });
   } catch (error) {
-    console.error('Error fetching Fiori apps by T-code:', error);
+    console.error('Error fetching Fiori apps by T-code:', error instanceof Error ? error.message : 'Unknown error');
     return NextResponse.json({ error: 'Failed to fetch Fiori apps' }, { status: 500 });
   }
 }

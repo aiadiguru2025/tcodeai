@@ -2,6 +2,7 @@ import prisma from '@/lib/db';
 import OpenAI from 'openai';
 import type { FioriSearchResult } from '@/types';
 import { getCached, setCached } from '@/lib/cache';
+import { validateEmbedding, embeddingToSqlString } from '@/lib/utils';
 
 const openai = new OpenAI();
 const EMBEDDING_MODEL = 'text-embedding-3-small';
@@ -77,7 +78,10 @@ export async function searchFioriAppsSemantic(
   });
 
   const queryEmbedding = embeddingResponse.data[0].embedding;
-  const embeddingStr = JSON.stringify(queryEmbedding);
+  if (!validateEmbedding(queryEmbedding)) {
+    return [];
+  }
+  const embeddingStr = embeddingToSqlString(queryEmbedding);
 
   // Search using vector similarity
   const results = await prisma.$queryRaw<FioriAppRow[]>`

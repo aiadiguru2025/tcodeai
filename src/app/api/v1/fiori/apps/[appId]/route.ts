@@ -55,7 +55,7 @@ export async function GET(
       })),
     });
   } catch (error) {
-    console.error('Error fetching Fiori app:', error);
+    console.error('Error fetching Fiori app:', error instanceof Error ? error.message : 'Unknown error');
     return NextResponse.json({ error: 'Failed to fetch Fiori app' }, { status: 500 });
   }
 }

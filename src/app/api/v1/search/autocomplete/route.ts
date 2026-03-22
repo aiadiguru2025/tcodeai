@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ suggestions });
   } catch (error) {
-    console.error('Autocomplete error:', error);
+    console.error('Autocomplete error:', error instanceof Error ? error.message : 'Unknown error');
     return NextResponse.json({ suggestions: [] });
   }
 }

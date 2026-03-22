@@ -80,7 +80,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Error fetching Fiori apps:', error);
+    console.error('Error fetching Fiori apps:', error instanceof Error ? error.message : 'Unknown error');
     return NextResponse.json({ error: 'Failed to fetch Fiori apps' }, { status: 500 });
   }
 }
