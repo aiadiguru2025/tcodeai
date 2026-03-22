@@ -6,7 +6,8 @@ generator client {
 datasource db {
   provider   = "postgresql"
   url        = env("DATABASE_URL")
-  extensions = [pg_trgm, vector]
+  directUrl  = env("DIRECT_URL")
+  extensions = [pg_trgm, uuid_ossp(map: "uuid-ossp", schema: "extensions"), vector]
 }
 
 model TransactionCode {
@@ -17,18 +18,18 @@ model TransactionCode {
   descriptionEnriched String?                @map("description_enriched")
   module              String?                @db.VarChar(100)
   subModule           String?                @map("sub_module") @db.VarChar(200)
-  packageDesc         String?                @map("package_desc") @db.VarChar(500)
   isDeprecated        Boolean                @default(false) @map("is_deprecated")
   s4hanaStatus        String?                @map("s4hana_status") @db.VarChar(20)
   usageCategory       String?                @map("usage_category") @db.VarChar(30)
   embedding           Unsupported("vector")?
   createdAt           DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt           DateTime               @updatedAt @map("updated_at") @db.Timestamptz(6)
+  packageDesc         String?                @map("package_desc") @db.VarChar(500)
   feedback            Feedback[]
+  fioriMappings       FioriTCodeMapping[]
   searchLogs          SearchLog[]
   sourceRelationships TCodeRelationship[]    @relation("SourceTCode")
   targetRelationships TCodeRelationship[]    @relation("TargetTCode")
-  fioriMappings       FioriTCodeMapping[]
 
   @@index([tcode])
   @@index([module])
@@ -48,7 +49,6 @@ model TCodeRelationship {
   @@unique([sourceTcodeId, targetTcodeId, relationshipType])
   @@map("tcode_relationships")
 }
-
 
 model SAPModule {
   code         String   @id @db.VarChar(20)
@@ -86,40 +86,31 @@ model Feedback {
   @@map("feedback")
 }
 
-// ============================================
-// MOLGA (Country Grouping) TABLE
-// ============================================
-
 model Molga {
-  molga      Int      @id
-  isoCode    String   @map("iso_code") @db.VarChar(5)
-  country    String   @db.VarChar(100)
-  // Additional aliases for country name variations (e.g., "United States", "America")
-  aliases    String[] @default([])
-  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  molga     Int      @id
+  isoCode   String   @map("iso_code") @db.VarChar(5)
+  country   String   @db.VarChar(100)
+  aliases   String[] @default([])
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 
   @@index([isoCode])
   @@index([country])
   @@map("molga")
 }
 
-// ============================================
-// FIORI REFERENCE LIBRARY MODELS
-// ============================================
-
 model FioriApp {
-  id                   Int                 @id @default(autoincrement())
-  appId                String              @unique @map("app_id") @db.VarChar(100)
-  appName              String              @map("app_name") @db.VarChar(500)
-  appLauncherTitle     String?             @map("app_launcher_title")
-  uiTechnology         String              @map("ui_technology") @db.VarChar(80)
-  appComponentDesc     String?             @map("app_component_desc")
-  lineOfBusiness       String[]            @map("line_of_business")
-  semanticObjectAction String[]            @map("semantic_object_action")
-  businessCatalogTitle String?             @map("business_catalog_title")
-  productVersion       String?             @map("product_version")
+  id                   Int                    @id @default(autoincrement())
+  appId                String                 @unique @map("app_id") @db.VarChar(100)
+  appName              String                 @map("app_name") @db.VarChar(500)
+  appLauncherTitle     String?                @map("app_launcher_title")
+  uiTechnology         String                 @map("ui_technology") @db.VarChar(80)
+  appComponentDesc     String?                @map("app_component_desc")
+  lineOfBusiness       String[]               @map("line_of_business")
+  semanticObjectAction String[]               @map("semantic_object_action")
+  businessCatalogTitle String?                @map("business_catalog_title")
   embedding            Unsupported("vector")?
-  createdAt            DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdAt            DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
+  productVersion       String?                @map("product_version")
   tcodeMappings        FioriTCodeMapping[]
 
   @@index([appName])

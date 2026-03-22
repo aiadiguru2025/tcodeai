@@ -46,6 +46,9 @@ prisma/migrations/**/migration_lock.toml
 *.swp
 *.swo
 
+# Migration backups
+migration/
+
 # Playwright
 /test-results/
 /playwright-report/
