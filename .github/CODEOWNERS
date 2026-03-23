@@ -1,0 +1,10 @@
+# Default owners for everything in the repo
+* @aiadiguru2025
+
+# Database schema changes require review
+prisma/ @aiadiguru2025
+
+# Security-sensitive files require review
+src/middleware.ts @aiadiguru2025
+next.config.js @aiadiguru2025
+SECURITY.md @aiadiguru2025

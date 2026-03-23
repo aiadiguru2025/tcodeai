@@ -1,8 +1,30 @@
 {
   "name": "tcodeai",
-  "version": "1.0.0",
-  "description": "SAP T-Code Intelligence Engine - Natural language search for SAP transaction codes",
-  "private": true,
+  "version": "1.4.0",
+  "description": "SAP T-Code Intelligence Engine - Natural language search for 134K+ SAP transaction codes using hybrid AI-powered search",
+  "private": false,
+  "license": "MIT",
+  "author": "aiadiguru2025",
+  "homepage": "https://github.com/aiadiguru2025/tcodeai#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aiadiguru2025/tcodeai.git"
+  },
+  "bugs": {
+    "url": "https://github.com/aiadiguru2025/tcodeai/issues"
+  },
+  "keywords": [
+    "sap",
+    "tcode",
+    "transaction-code",
+    "search",
+    "ai",
+    "semantic-search",
+    "nextjs",
+    "openai",
+    "pgvector",
+    "fiori"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
