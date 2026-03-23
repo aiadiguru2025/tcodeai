@@ -49,6 +49,11 @@ prisma/migrations/**/migration_lock.toml
 # Migration backups
 migration/
 
+# Claude Code
+.claude/
+claude.md
+.playwright-mcp/
+
 # Playwright
 /test-results/
 /playwright-report/
