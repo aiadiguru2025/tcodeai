@@ -34,6 +34,7 @@ model TransactionCode {
   @@index([tcode])
   @@index([module])
   @@index([description])
+  @@index([module, isDeprecated, tcode])
   @@map("transaction_codes")
 }
 
@@ -47,6 +48,8 @@ model TCodeRelationship {
   targetTcode      TransactionCode @relation("TargetTCode", fields: [targetTcodeId], references: [id], onDelete: Cascade)
 
   @@unique([sourceTcodeId, targetTcodeId, relationshipType])
+  @@index([sourceTcodeId, relationshipType])
+  @@index([targetTcodeId, relationshipType])
   @@map("tcode_relationships")
 }
 
@@ -83,6 +86,7 @@ model Feedback {
   tcode     TransactionCode @relation(fields: [tcodeId], references: [id], onDelete: Cascade)
 
   @@index([tcodeId])
+  @@index([tcodeId, vote])
   @@map("feedback")
 }
 

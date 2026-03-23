@@ -129,6 +129,14 @@ async function executeExactSearch(
 
   const results = await prisma.transactionCode.findMany({
     where: whereClause,
+    select: {
+      tcode: true,
+      program: true,
+      description: true,
+      descriptionEnriched: true,
+      module: true,
+      isDeprecated: true,
+    },
     take: 5,
   });
 
@@ -168,6 +176,14 @@ async function executeFuzzySearch(
 
   const results = await prisma.transactionCode.findMany({
     where: whereClause,
+    select: {
+      tcode: true,
+      program: true,
+      description: true,
+      descriptionEnriched: true,
+      module: true,
+      isDeprecated: true,
+    },
     take: 20,
     orderBy: { tcode: 'asc' },
   });

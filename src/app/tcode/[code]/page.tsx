@@ -59,51 +59,83 @@ async function getFioriApps(tcode: string): Promise<FioriApp[]> {
   }));
 }
 
-async function getRelatedTCodes(tcode: string, description: string | null, module: string | null) {
-  // Try semantic similarity first
-  try {
-    if (description && process.env.OPENAI_API_KEY) {
-      const semanticResults = await executeSemanticSearch(description, undefined, false, 6);
-      const filtered = semanticResults.filter((r) => r.tcode !== tcode).slice(0, 5);
-      if (filtered.length > 0) {
-        return filtered.map((r) => ({
-          tcode: r.tcode,
-          description: r.description,
-          program: r.program,
-          module: r.module,
-          isDeprecated: r.isDeprecated,
-        }));
-      }
-    }
-  } catch (error) {
-    console.error('Semantic related search failed, falling back to prefix:', error);
-  }
-
-  // Fallback: prefix-based matching
-  const prefix = tcode.replace(/[0-9N]+$/, '');
-  const related = await prisma.transactionCode.findMany({
-    where: {
-      tcode: { startsWith: prefix, not: tcode },
-      isDeprecated: false,
+async function getRelatedTCodes(tcodeId: number, tcode: string, description: string | null, module: string | null) {
+  // 1. Use pre-computed tcode_relationships table (single indexed query)
+  const relationships = await prisma.tCodeRelationship.findMany({
+    where: { sourceTcodeId: tcodeId },
+    include: {
+      targetTcode: {
+        select: { tcode: true, description: true, program: true, module: true, isDeprecated: true },
+      },
     },
+    orderBy: { confidence: 'desc' },
     take: 5,
-    orderBy: { tcode: 'asc' },
   });
 
-  let sameModule: typeof related = [];
-  if (module && related.length < 5) {
-    sameModule = await prisma.transactionCode.findMany({
+  if (relationships.length > 0) {
+    return relationships.map((r) => r.targetTcode);
+  }
+
+  // 2. Fallback: run semantic + prefix search in parallel
+  const prefix = tcode.replace(/[0-9N]+$/, '');
+
+  const [semanticResults, prefixResults] = await Promise.all([
+    description && process.env.OPENAI_API_KEY
+      ? executeSemanticSearch(description, undefined, false, 6).catch(() => [])
+      : Promise.resolve([]),
+    prisma.transactionCode.findMany({
+      where: {
+        tcode: { startsWith: prefix, not: tcode },
+        isDeprecated: false,
+      },
+      select: { tcode: true, description: true, program: true, module: true, isDeprecated: true },
+      take: 5,
+      orderBy: { tcode: 'asc' },
+    }),
+  ]);
+
+  // Prefer semantic results if available
+  const semanticFiltered = semanticResults
+    .filter((r) => r.tcode !== tcode)
+    .slice(0, 5)
+    .map((r) => ({
+      tcode: r.tcode,
+      description: r.description,
+      program: r.program,
+      module: r.module,
+      isDeprecated: r.isDeprecated,
+    }));
+
+  if (semanticFiltered.length >= 3) {
+    return semanticFiltered;
+  }
+
+  // Merge prefix results to fill gaps
+  const seen = new Set(semanticFiltered.map((r) => r.tcode));
+  const merged = [...semanticFiltered];
+  for (const r of prefixResults) {
+    if (!seen.has(r.tcode) && merged.length < 5) {
+      merged.push(r);
+      seen.add(r.tcode);
+    }
+  }
+
+  // If still short, get same-module codes
+  if (merged.length < 5 && module) {
+    const sameModule = await prisma.transactionCode.findMany({
       where: {
         module,
-        NOT: { tcode: { in: [...related.map((r) => r.tcode), tcode] } },
+        NOT: { tcode: { in: [...merged.map((r) => r.tcode), tcode] } },
         isDeprecated: false,
         description: { not: null },
       },
-      take: 5 - related.length,
+      select: { tcode: true, description: true, program: true, module: true, isDeprecated: true },
+      take: 5 - merged.length,
     });
+    merged.push(...sameModule);
   }
 
-  return [...related, ...sameModule];
+  return merged;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -135,7 +167,7 @@ export default async function TCodePage({ params }: Props) {
   }
 
   const [relatedTCodes, fioriApps] = await Promise.all([
-    getRelatedTCodes(tcode.tcode, tcode.description || tcode.descriptionEnriched, tcode.module),
+    getRelatedTCodes(tcode.id, tcode.tcode, tcode.description || tcode.descriptionEnriched, tcode.module),
     getFioriApps(tcode.tcode),
   ]);
 

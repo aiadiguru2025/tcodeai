@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { hybridSearch } from '@/lib/search/hybrid-search';
+import { logSearch } from '@/lib/search/search-logger';
 import { MAX_QUERY_LENGTH } from '@/lib/utils';
 
 const searchRequestSchema = z.object({
@@ -25,6 +26,9 @@ export async function POST(request: NextRequest) {
     });
 
     const processingTimeMs = Date.now() - startTime;
+
+    // Fire-and-forget search logging
+    logSearch(validatedData.query, results.length);
 
     return NextResponse.json({
       results,
@@ -78,6 +82,9 @@ export async function GET(request: NextRequest) {
     });
 
     const processingTimeMs = Date.now() - startTime;
+
+    // Fire-and-forget search logging
+    logSearch(query, results.length);
 
     return NextResponse.json({
       results,

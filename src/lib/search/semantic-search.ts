@@ -76,34 +76,35 @@ export async function executeSemanticSearch(
       whereClause = Prisma.sql`${whereClause} AND module IN (${Prisma.join(modules)})`;
     }
 
-    // Set HNSW search parameters for faster approximate search
-    await prisma.$executeRaw`SET hnsw.ef_search = 40`;
+    // Use $transaction to scope SET LOCAL — prevents session leaking on PgBouncer
+    const results = await prisma.$transaction(async (tx) => {
+      await tx.$executeRaw`SET LOCAL hnsw.ef_search = 40`;
 
-    // Execute vector similarity search using cosine distance with HNSW index
-    const results = await prisma.$queryRaw<
-      {
-        id: number;
-        tcode: string;
-        program: string | null;
-        description: string | null;
-        module: string | null;
-        is_deprecated: boolean;
-        similarity: number;
-      }[]
-    >(
-      Prisma.sql`SELECT
-        id,
-        tcode,
-        program,
-        description,
-        module,
-        is_deprecated,
-        1 - (embedding <=> ${embeddingStr}::vector) as similarity
-      FROM transaction_codes
-      WHERE ${whereClause}
-      ORDER BY embedding <=> ${embeddingStr}::vector
-      LIMIT ${limit}`
-    );
+      return tx.$queryRaw<
+        {
+          id: number;
+          tcode: string;
+          program: string | null;
+          description: string | null;
+          module: string | null;
+          is_deprecated: boolean;
+          similarity: number;
+        }[]
+      >(
+        Prisma.sql`SELECT
+          id,
+          tcode,
+          program,
+          description,
+          module,
+          is_deprecated,
+          1 - (embedding <=> ${embeddingStr}::vector) as similarity
+        FROM transaction_codes
+        WHERE ${whereClause}
+        ORDER BY embedding <=> ${embeddingStr}::vector
+        LIMIT ${limit}`
+      );
+    });
 
     const searchResults = results.map((r) => ({
       tcode: r.tcode,

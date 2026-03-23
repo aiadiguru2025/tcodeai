@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { executeAISearch } from '@/lib/search/ai-search';
+import { logSearch } from '@/lib/search/search-logger';
 import { MAX_QUERY_LENGTH } from '@/lib/utils';
 
 const querySchema = z.object({
@@ -56,6 +57,9 @@ export async function POST(request: NextRequest) {
 
     const processingTimeMs = Date.now() - startTime;
 
+    // Fire-and-forget search logging
+    logSearch(query, results.length);
+
     const response = {
       results,
       query,
@@ -96,6 +100,9 @@ export async function GET(request: NextRequest) {
     const { results, cached, timedOut } = await executeWithTimeout(query, 5, GLOBAL_TIMEOUT_MS);
 
     const processingTimeMs = Date.now() - startTime;
+
+    // Fire-and-forget search logging
+    logSearch(query, results.length);
 
     const response = {
       results,

@@ -75,21 +75,22 @@ export async function searchFioriAppsSemantic(
   }
   const embeddingStr = embeddingToSqlString(queryEmbedding);
 
-  // Set HNSW search parameters for faster approximate search
-  await prisma.$executeRaw`SET hnsw.ef_search = 40`;
+  // Use $transaction to scope SET LOCAL — prevents session leaking on PgBouncer
+  const results = await prisma.$transaction(async (tx) => {
+    await tx.$executeRaw`SET LOCAL hnsw.ef_search = 40`;
 
-  // Search using vector similarity with HNSW index
-  const results = await prisma.$queryRaw<FioriAppRow[]>`
-    SELECT
-      id, app_id, app_name, app_launcher_title, ui_technology,
-      app_component_desc, line_of_business, semantic_object_action,
-      business_catalog_title, product_version, created_at,
-      1 - (embedding <=> ${embeddingStr}::vector) as similarity
-    FROM fiori_apps
-    WHERE embedding IS NOT NULL
-    ORDER BY embedding <=> ${embeddingStr}::vector
-    LIMIT ${limit}
-  `;
+    return tx.$queryRaw<FioriAppRow[]>`
+      SELECT
+        id, app_id, app_name, app_launcher_title, ui_technology,
+        app_component_desc, line_of_business, semantic_object_action,
+        business_catalog_title, product_version, created_at,
+        1 - (embedding <=> ${embeddingStr}::vector) as similarity
+      FROM fiori_apps
+      WHERE embedding IS NOT NULL
+      ORDER BY embedding <=> ${embeddingStr}::vector
+      LIMIT ${limit}
+    `;
+  });
 
   return results.map((app) => ({
     id: app.id,
