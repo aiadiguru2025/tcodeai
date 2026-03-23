@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="public/logo.svg" alt="TCodeAI Logo" width="80" height="80" />
+  <img src="public/logo.png" alt="TCodeAI Logo" width="120" height="120" />
 </p>
 
 <h1 align="center">TCodeAI</h1>
