@@ -14,7 +14,7 @@ const SEMANTIC_CACHE_TTL = 60 * 60 * 4; // 4 hours for full search results
 /**
  * Get embedding for a query, using cache when available
  */
-async function getQueryEmbedding(query: string): Promise<number[] | null> {
+export async function getQueryEmbedding(query: string): Promise<number[] | null> {
   // Check embedding cache first
   const cached = await getCached<number[]>(EMBEDDING_CACHE_PREFIX, query);
   if (cached) {
@@ -76,7 +76,10 @@ export async function executeSemanticSearch(
       whereClause = Prisma.sql`${whereClause} AND module IN (${Prisma.join(modules)})`;
     }
 
-    // Execute vector similarity search using cosine distance with parameterized query
+    // Set HNSW search parameters for faster approximate search
+    await prisma.$executeRaw`SET hnsw.ef_search = 40`;
+
+    // Execute vector similarity search using cosine distance with HNSW index
     const results = await prisma.$queryRaw<
       {
         id: number;

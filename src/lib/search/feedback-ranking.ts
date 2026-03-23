@@ -44,9 +44,15 @@ export async function getFeedbackScores(
   const result = new Map<string, FeedbackScore>();
   const uncachedTcodes: string[] = [];
 
-  // Check cache first for each T-code
-  for (const tcode of tcodes) {
-    const cached = await getCached<FeedbackScore>(FEEDBACK_CACHE_PREFIX, tcode);
+  // Check cache in parallel for all T-codes at once (was sequential before)
+  const cacheResults = await Promise.all(
+    tcodes.map(async (tcode) => ({
+      tcode,
+      cached: await getCached<FeedbackScore>(FEEDBACK_CACHE_PREFIX, tcode),
+    }))
+  );
+
+  for (const { tcode, cached } of cacheResults) {
     if (cached) {
       result.set(tcode, cached);
     } else {
@@ -85,18 +91,15 @@ export async function getFeedbackScores(
 
     const idToTcode = new Map(tcodeMapping.map((t) => [t.id, t.tcode]));
 
-    // Process feedback data
+    // Process feedback data and batch cache writes
+    const cacheWrites: Promise<void>[] = [];
+
     for (const feedback of feedbackData) {
       const tcode = idToTcode.get(feedback.tcodeId);
       if (!tcode) continue;
 
       const totalVotes = feedback._count._all;
       const netScore = feedback._sum.vote ?? 0;
-
-      // Calculate upvotes and downvotes from total and net
-      // upvotes - downvotes = netScore
-      // upvotes + downvotes = totalVotes
-      // Therefore: upvotes = (totalVotes + netScore) / 2
       const upvotes = Math.round((totalVotes + netScore) / 2);
       const downvotes = totalVotes - upvotes;
 
@@ -109,9 +112,7 @@ export async function getFeedbackScores(
       };
 
       result.set(tcode, score);
-
-      // Cache the result
-      await setCached(FEEDBACK_CACHE_PREFIX, tcode, score, FEEDBACK_CACHE_TTL);
+      cacheWrites.push(setCached(FEEDBACK_CACHE_PREFIX, tcode, score, FEEDBACK_CACHE_TTL));
     }
 
     // Cache zero-score for T-codes with no feedback
@@ -125,9 +126,12 @@ export async function getFeedbackScores(
           boostFactor: 1.0,
         };
         result.set(tcode, zeroScore);
-        await setCached(FEEDBACK_CACHE_PREFIX, tcode, zeroScore, FEEDBACK_CACHE_TTL);
+        cacheWrites.push(setCached(FEEDBACK_CACHE_PREFIX, tcode, zeroScore, FEEDBACK_CACHE_TTL));
       }
     }
+
+    // Write all cache entries in parallel (non-blocking)
+    Promise.all(cacheWrites).catch(() => {});
   } catch (error) {
     console.error('Error fetching feedback scores:', error);
     // Return what we have from cache, with default scores for uncached

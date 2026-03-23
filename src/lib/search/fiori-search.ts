@@ -1,11 +1,8 @@
 import prisma from '@/lib/db';
-import OpenAI from 'openai';
 import type { FioriSearchResult } from '@/types';
 import { getCached, setCached } from '@/lib/cache';
 import { validateEmbedding, embeddingToSqlString } from '@/lib/utils';
-
-const openai = new OpenAI();
-const EMBEDDING_MODEL = 'text-embedding-3-small';
+import { getQueryEmbedding } from './semantic-search';
 
 // Cache configuration
 const FIORI_CACHE_PREFIX = 'fiori-search';
@@ -71,19 +68,17 @@ export async function searchFioriAppsSemantic(
   query: string,
   limit: number = 20
 ): Promise<FioriSearchResult[]> {
-  // Generate embedding for query
-  const embeddingResponse = await openai.embeddings.create({
-    model: EMBEDDING_MODEL,
-    input: query,
-  });
-
-  const queryEmbedding = embeddingResponse.data[0].embedding;
-  if (!validateEmbedding(queryEmbedding)) {
+  // Use shared cached embedding function (avoids duplicate OpenAI calls)
+  const queryEmbedding = await getQueryEmbedding(query);
+  if (!queryEmbedding || !validateEmbedding(queryEmbedding)) {
     return [];
   }
   const embeddingStr = embeddingToSqlString(queryEmbedding);
 
-  // Search using vector similarity
+  // Set HNSW search parameters for faster approximate search
+  await prisma.$executeRaw`SET hnsw.ef_search = 40`;
+
+  // Search using vector similarity with HNSW index
   const results = await prisma.$queryRaw<FioriAppRow[]>`
     SELECT
       id, app_id, app_name, app_launcher_title, ui_technology,

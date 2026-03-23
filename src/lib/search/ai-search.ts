@@ -1,7 +1,6 @@
 import OpenAI from 'openai';
 import { executeSemanticSearch } from './semantic-search';
 import { expandQueryWithSAPTerms } from './query-expander';
-import { validateSearchResults } from './llm-judge';
 import { generateAIFallbackSuggestions } from './ai-fallback';
 import { enhancedLowConfidenceFallback } from './enhanced-fallback';
 import { applyFeedbackBoostToAI } from './feedback-ranking';
@@ -10,13 +9,12 @@ import { getCached, setCached } from '@/lib/cache';
 import { sanitizeQueryForLLM, debugLog } from '@/lib/utils';
 import type { AISearchResult } from '@/types';
 
-const ENHANCED_FALLBACK_THRESHOLD = 0.8; // Trigger enhanced fallback when top confidence is below 80%
-const SKIP_JUDGE_THRESHOLD = 0.85; // Skip LLM Judge if top confidence is above this
+// Enhanced fallback only for very low confidence results (saves 10s+ on most queries)
 
 const EXPLANATION_MODEL = 'gpt-4o-mini';
-const CACHE_PREFIX = 'ai-search-v3'; // v3: optimized pipeline with parallel execution
+const CACHE_PREFIX = 'ai-search-v4'; // v4: aggressive parallelization, skip LLM judge
 const CACHE_TTL = 60 * 60 * 24; // 24 hours
-const GPT_TIMEOUT_MS = 5000; // 5 seconds max for GPT call (reduced for faster response)
+const GPT_TIMEOUT_MS = 4000; // 4 seconds max for GPT call
 
 /**
  * Create a timeout promise
@@ -64,11 +62,12 @@ export async function executeAISearch(
 
   debugLog('AI search cache miss:', query);
 
-  // Run query expansion, semantic search, AND country detection in parallel
+  // Run query expansion, semantic search, AND country detection ALL in parallel
+  // Previously: expansion ran first, THEN expanded search ran sequentially (adding 3-6s)
   const [expandedQuery, directCandidates, countryMatches] = await Promise.all([
     expandQueryWithSAPTerms(query),
-    executeSemanticSearch(query, undefined, false, limit),
-    detectCountryInQuery(query).catch(() => []), // Non-blocking country detection
+    executeSemanticSearch(query, undefined, false, limit * 2), // Fetch more to compensate for skipping expanded search
+    detectCountryInQuery(query).catch(() => []),
   ]);
 
   // Build country context from parallel result
@@ -77,9 +76,11 @@ export async function executeAISearch(
     countryContext = `\n\nDETECTED COUNTRY: ${countryMatches[0].country} (MOLGA ${countryMatches[0].molga}, pattern: ${countryMatches[0].pattern}). T-codes containing "${countryMatches[0].pattern}" are for this country and MUST rank highest.`;
   }
 
-  // Get additional candidates using expanded query (if different from original)
+  // Only run expanded query search if expansion returned quickly AND is meaningfully different
   let expandedCandidates: Awaited<ReturnType<typeof executeSemanticSearch>> = [];
-  if (expandedQuery !== query) {
+  const isExpansionUseful = expandedQuery !== query &&
+    expandedQuery.split(' ').length > query.split(' ').length + 1;
+  if (isExpansionUseful) {
     expandedCandidates = await executeSemanticSearch(expandedQuery, undefined, false, limit);
   }
 
@@ -205,30 +206,21 @@ Output JSON: {"results":[{"tcode":"XX01","explanation":"brief reason","confidenc
   // Sort results by confidence score (highest first) for accurate "Best Match"
   results.sort((a, b) => b.confidence - a.confidence);
 
+  // OPTIMIZATION: Skip LLM Judge entirely — saves 3-5s per request with marginal quality gain
+  // The GPT ranking call above already provides good confidence scores
+  debugLog('Skipping LLM Judge for performance');
+
+  // OPTIMIZATION: Only run enhanced fallback for very low confidence results
   const topConfidence = results[0]?.confidence ?? 0;
-
-  // OPTIMIZATION: Skip LLM Judge if top confidence is already high (>85%)
-  let validatedResults = results;
-  if (topConfidence < SKIP_JUDGE_THRESHOLD) {
-    const { results: judgedResults } = await validateSearchResults(query, results);
-    validatedResults = judgedResults;
-    validatedResults.sort((a, b) => b.confidence - a.confidence);
-  } else {
-    debugLog(`Skipping LLM Judge: top confidence ${(topConfidence * 100).toFixed(0)}% >= ${(SKIP_JUDGE_THRESHOLD * 100).toFixed(0)}%`);
-  }
-
-  // Enhance with Google Search, Brave Search, and Deep GPT if confidence is below threshold
-  const { results: enhancedResults, enhancementUsed, enhancementDetails } =
-    await enhancedLowConfidenceFallback(
-      query,
-      validatedResults,
-      ENHANCED_FALLBACK_THRESHOLD
-    );
-
-  // Re-sort after enhancement
-  if (enhancementUsed !== 'none') {
-    enhancedResults.sort((a, b) => b.confidence - a.confidence);
-    debugLog(`Enhanced fallback (${enhancementUsed}) used for: ${query}`, enhancementDetails);
+  let enhancedResults = results;
+  if (topConfidence < 0.5) {
+    // Only trigger expensive web search fallback for very poor results
+    const fallback = await enhancedLowConfidenceFallback(query, results, 0.5);
+    enhancedResults = fallback.results;
+    if (fallback.enhancementUsed !== 'none') {
+      enhancedResults.sort((a, b) => b.confidence - a.confidence);
+      debugLog(`Enhanced fallback (${fallback.enhancementUsed}) used for: ${query}`);
+    }
   }
 
   // OPTIMIZATION: Run MOLGA and feedback boosts in parallel

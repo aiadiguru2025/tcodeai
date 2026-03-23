@@ -1,4 +1,5 @@
 import prisma from '@/lib/db';
+import { Prisma } from '@prisma/client';
 import type { SearchResult } from '@/types';
 import { executeSemanticSearch } from './semantic-search';
 import { getCached, setCached } from '@/lib/cache';
@@ -201,58 +202,57 @@ async function executeFullTextSearch(
   modules?: string[],
   includeDeprecated?: boolean
 ): Promise<SearchResult[]> {
-  // Build the search query - split into words for better matching
   const words = query
     .split(/\s+/)
-    .filter((w) => w.length > 2)
-    .map((w) => w.toLowerCase());
+    .filter((w) => w.length > 2);
 
   if (words.length === 0) {
     return [];
   }
 
-  // Build conditions for each word
-  const wordConditions = words.map((word) => ({
-    OR: [
-      { description: { contains: word, mode: 'insensitive' as const } },
-      { descriptionEnriched: { contains: word, mode: 'insensitive' as const } },
-      { tcode: { contains: word, mode: 'insensitive' as const } },
-      { subModule: { contains: word, mode: 'insensitive' as const } },
-      { packageDesc: { contains: word, mode: 'insensitive' as const } },
-    ],
-  }));
+  // Use PostgreSQL full-text search with the pre-computed search_vector column
+  // This uses the GIN index and is orders of magnitude faster than LIKE '%word%'
+  const tsQuery = words.map((w) => w.replace(/[^a-zA-Z0-9]/g, '')).filter(Boolean).join(' & ');
 
-  const whereClause: Record<string, unknown> = {
-    AND: wordConditions,
-  };
+  if (!tsQuery) return [];
 
+  let moduleFilter = Prisma.sql``;
   if (modules && modules.length > 0) {
-    whereClause.module = { in: modules };
+    moduleFilter = Prisma.sql` AND module IN (${Prisma.join(modules)})`;
   }
 
+  let deprecatedFilter = Prisma.sql``;
   if (!includeDeprecated) {
-    whereClause.isDeprecated = false;
+    deprecatedFilter = Prisma.sql` AND is_deprecated = false`;
   }
 
-  const results = await prisma.transactionCode.findMany({
-    where: whereClause,
-    take: 30,
-  });
+  const results = await prisma.$queryRaw<
+    {
+      id: number;
+      tcode: string;
+      program: string | null;
+      description: string | null;
+      description_enriched: string | null;
+      module: string | null;
+      is_deprecated: boolean;
+      rank: number;
+    }[]
+  >(
+    Prisma.sql`SELECT id, tcode, program, description, description_enriched, module, is_deprecated,
+      ts_rank_cd(search_vector, to_tsquery('english', ${tsQuery})) as rank
+    FROM transaction_codes
+    WHERE search_vector @@ to_tsquery('english', ${tsQuery})${moduleFilter}${deprecatedFilter}
+    ORDER BY rank DESC
+    LIMIT 30`
+  );
 
-  return results.map((r) => {
-    // Calculate relevance based on how many words match (now including subModule and packageDesc)
-    const text = `${r.tcode} ${r.description || ''} ${r.descriptionEnriched || ''} ${r.subModule || ''} ${r.packageDesc || ''}`.toLowerCase();
-    const matchedWords = words.filter((w) => text.includes(w));
-    const score = (matchedWords.length / words.length) * 0.8;
-
-    return {
-      tcode: r.tcode,
-      program: r.program,
-      description: r.description || r.descriptionEnriched,
-      module: r.module,
-      relevanceScore: Math.max(0.1, score),
-      matchType: 'fulltext' as const,
-      isDeprecated: r.isDeprecated,
-    };
-  });
+  return results.map((r) => ({
+    tcode: r.tcode,
+    program: r.program,
+    description: r.description || r.description_enriched,
+    module: r.module,
+    relevanceScore: Math.max(0.1, Math.min(0.8, r.rank)),
+    matchType: 'fulltext' as const,
+    isDeprecated: r.is_deprecated,
+  }));
 }
